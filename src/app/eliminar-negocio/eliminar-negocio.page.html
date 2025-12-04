@@ -1,0 +1,110 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <div class="header-title">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <span>Solicitud Eliminación</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="closeModal()">
+        <ion-icon name="close" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-wrapper">
+    <!-- Header con información del negocio -->
+    <div class="business-header">
+      <div class="business-info">
+        <h2>{{ businessName || 'Solicitud de Eliminación' }}</h2>
+        <p>Se realizará una solicitud de eliminación sobre este negocio</p>
+      </div>
+    </div>
+
+    <!-- Alerta informativa -->
+    <div class="info-alert">
+      <ion-icon name="information-circle" color="primary"></ion-icon>
+      <div class="alert-content">
+        <strong>Proceso de eliminación:</strong> Esta solicitud será enviada al administrador principal para su revisión y aprobación. El negocio permanecerá activo hasta que se tome una decisión.
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="form-container">
+      <form>
+        <!-- Campo Nombre del Negocio -->
+        <div class="form-group">
+          <ion-item class="form-item" lines="none">
+            <ion-input 
+              [(ngModel)]="businessName" 
+              name="businessName"
+              placeholder="Nombre del negocio"
+              [readonly]="!!businessId"
+              class="custom-input">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <!-- Motivo de la solicitud -->
+        <div class="form-group">
+          <h3 class="section-title">Motivo de la solicitud *</h3>
+          
+          <ion-radio-group [(ngModel)]="motivo" name="motivo">
+            <div class="radio-options">
+              <label class="radio-item" *ngFor="let motivoOption of motivos">
+                <ion-radio [value]="motivoOption.value"></ion-radio>
+                <div class="radio-content">
+                  <span class="radio-label">{{ motivoOption.label }}</span>
+                </div>
+              </label>
+            </div>
+          </ion-radio-group>
+        </div>
+
+        <!-- Justificación detallada -->
+        <div class="form-group">
+          <h3 class="section-title">Justificación detallada *</h3>
+          <div class="textarea-container">
+            <ion-textarea 
+              [(ngModel)]="justificacion" 
+              name="justificacion"
+              placeholder="Explique detalladamente el motivo de la solicitud de eliminación relevante que ayude al administrador a tomar una decisión informada..."
+              rows="5"
+              maxlength="500"
+              counter="true"
+              class="custom-textarea">
+            </ion-textarea>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <ion-button 
+            fill="outline" 
+            color="medium"
+            size="large"
+            expand="block"
+            class="secondary-button"
+            (click)="motivo = ''; justificacion = ''">
+            Cancelar
+          </ion-button>
+          
+          <ion-button 
+            color="danger"
+            size="large"
+            expand="block"
+            class="primary-button"
+            [disabled]="!isFormValid || loading"
+            (click)="confirmDeletion()">
+            <ion-spinner name="crescent" *ngIf="loading"></ion-spinner>
+            <span *ngIf="!loading">Enviar Solicitud</span>
+            <span *ngIf="loading">Enviando...</span>
+          </ion-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

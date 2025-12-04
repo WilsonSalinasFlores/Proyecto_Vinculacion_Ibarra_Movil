@@ -1,0 +1,164 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
+
+export interface Promocion {
+  idBusinessPromo?: number;
+  businessId: number;
+  businessName?: string;
+  tipoPromocion: string;
+  tituloPromocion: string;
+  fechaPromoInicio: string;
+  fechaPromoFin: string;
+  businessImageUrl?: string;
+  condiciones: string;
+}
+
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+  data: any;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PromocionesService {
+  private apiUrl = 'http://136.115.209.17:8080';
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
+
+  getPromociones(businessId: number): Observable<ApiResponse> {
+    const params = new HttpParams().set('businessId', businessId.toString());
+    const headers = this.getHeaders();
+
+    return this.http.get<ApiResponse>(
+      `${this.apiUrl}/promotions/business/private`,
+      { params, headers }
+    );
+  }
+
+  getPromotionPublic(
+    promotionType?: string,
+    categoryId?: number
+  ): Observable<ApiResponse> {
+    let params = new HttpParams();
+
+    if (promotionType) {
+      params = params.set('promotionType', promotionType);
+    }
+
+    if (categoryId) {
+      params = params.set('categoryId', categoryId.toString());
+    }
+
+    return this.http.get<ApiResponse>(
+      `${this.apiUrl}/promotions/business/public/search`,
+      { params }
+    );
+  }
+
+  crearPromocion(dto: any, photo: File): Observable<ApiResponse> {
+    const formData = new FormData();
+
+    const promocionDto = {
+      businessId: dto.businessId,
+      tipoPromocion: dto.tipoPromocion,
+      tituloPromocion: dto.tituloPromocion,
+      fechaPromoInicio: this.formatDateForServer(dto.fechaPromoInicio),
+      fechaPromoFin: this.formatDateForServer(dto.fechaPromoFin),
+      condiciones: dto.condiciones,
+    };
+
+    formData.append(
+      'dto',
+      new Blob([JSON.stringify(promocionDto)], { type: 'application/json' })
+    );
+
+    formData.append('photo', photo);
+
+    const headers = this.getHeaders();
+
+    console.log('Enviando promoción:', promocionDto);
+    console.log('Archivo:', photo.name, photo.type, photo.size);
+
+    return this.http.post<ApiResponse>(
+      `${this.apiUrl}/promotions/business/create`,
+      formData,
+      { headers }
+    );
+  }
+
+  editarPromocion(id: number, dto: any, photo?: File): Observable<ApiResponse> {
+    const formData = new FormData();
+
+    const promocionDto = {
+      businessId: dto.businessId,
+      promoType: dto.tipoPromocion,
+      titlePromotion: dto.tituloPromocion,
+      datePromoStart: this.formatDateForServer(dto.fechaPromoInicio),
+      datePromoEnd: this.formatDateForServer(dto.fechaPromoFin),
+      conditions: dto.condiciones,
+    };
+
+    formData.append(
+      'dto',
+      new Blob([JSON.stringify(promocionDto)], { type: 'application/json' })
+    );
+
+    if (photo) {
+      formData.append('photo', photo);
+    }
+
+    const headers = this.getHeaders();
+
+    return this.http.put<ApiResponse>(
+      `${this.apiUrl}/promotions/business/update/${id}`,
+      formData,
+      { headers }
+    );
+  }
+
+  eliminarPromocion(id: number): Observable<ApiResponse> {
+    const headers = this.getHeaders();
+    const params = new HttpParams().set('promoId', id.toString());
+
+    return this.http.delete<ApiResponse>(
+      `${this.apiUrl}/promotions/business/delete`,
+      { headers, params }
+    );
+  }
+
+  // Métodos para manejar fechas
+  private formatDateForServer(dateString: string): string {
+    if (!dateString) return dateString;
+
+    // Si ya está en formato YYYY-MM-DD, devolver directamente
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+
+    // tomar solo la fecha
+    return dateString.split('T')[0];
+  }
+
+  private parseDateFromServer(dateString: string): string {
+    if (!dateString) return dateString;
+
+    // Si ya viene en YYYY-MM-DD, devolver directamente
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+
+    // Si viene con hora, extraer solo la fecha
+    return dateString.split('T')[0];
+  }
+}

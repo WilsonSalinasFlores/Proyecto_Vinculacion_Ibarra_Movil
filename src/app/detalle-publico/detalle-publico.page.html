@@ -1,0 +1,234 @@
+<!-- Modal/Overlay -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Detalles del Negocio</h2>
+      <p class="modal-subtitle">Información completa del emprendimiento</p>
+      <button class="close-button" (click)="closeModal()">
+        <span>&times;</span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando detalles del negocio...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="error-container">
+      <ion-icon class="error-icon-ic" name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      
+      <p>{{ error }}</p>
+      <button class="retry-button" (click)="loadApprovedBusinesses()">Reintentar</button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!loading && !error && business" class="modal-content">
+      
+      <!-- Image Carousel -->
+      <div class="carousel-container">
+        <div class="carousel-header">
+          <h3>Carrusel de Imágenes</h3>
+        </div>
+        
+        <div class="carousel-wrapper" *ngIf="business.photos && business.photos.length > 0">
+          <div class="carousel-main">
+            <button class="carousel-button prev" (click)="prevImage()" *ngIf="hasMultipleImages">‹</button>
+            <div class="image-container">
+              <img [src]="currentImage" [alt]="business.commercialName" class="carousel-image">
+            </div>
+            <button class="carousel-button next" (click)="nextImage()" *ngIf="hasMultipleImages">›</button>
+          </div>
+          
+          <!-- Image indicators -->
+          <div class="carousel-indicators" *ngIf="hasMultipleImages">
+            <button 
+              *ngFor="let photo of business.photos; let i = index" 
+              class="indicator"
+              [class.active]="i === currentImageIndex"
+              (click)="selectImage(i)">
+            </button>
+          </div>
+        </div>
+
+      <div class="no-images" *ngIf="!business.photos || business.photos.length === 0">
+        <ion-icon class="no-images-icon-ic" name="images-outline" aria-hidden="true"></ion-icon>
+        <ion-icon class="no-images-icon-ic" name="images-outline" aria-hidden="true"></ion-icon>
+        <p>No hay imágenes disponibles</p>
+      </div>
+    </div>
+
+    <!-- Business Logo -->
+    <div class="logo-container" *ngIf="business.logoUrl">
+      <img [src]="business.logoUrl" [alt]="business.commercialName" class="business-logo" />
+    </div>
+
+    <!-- Business Name -->
+    <div class="form-group">
+      <label class="form-label">Nombre del Negocio</label>
+      <div class="input-display">{{ business.commercialName }}</div>
+    </div>
+
+      <!-- Representative -->
+      <div class="form-group" *ngIf="business.representativeName">
+        <label class="form-label">Representante</label>
+        <div class="input-display">{{ business.representativeName }}</div>
+      </div>
+
+      <!-- Representative -->
+      <div class="form-group" *ngIf="business.representativeName">
+        <label class="form-label">Representante</label>
+        <div class="input-display">{{ business.representativeName }}</div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <div class="textarea-display">{{ business.description }}</div>
+      </div>
+
+      <!-- Schedules and Social Media Row -->
+      <div class="form-row">
+        <!-- Schedules -->
+        <div class="form-group half-width">
+          <label class="form-label">Horarios</label>
+          <div class="schedules-container">
+            <div class="schedule-item" *ngFor="let schedule of formattedSchedules">
+              <span class="day">{{ schedule.day }}</span>
+              <span class="hours" [class.closed]="schedule.hours === 'Cerrado'">{{ schedule.hours }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="form-group half-width">
+          <label class="form-label">Redes Sociales</label>
+          <div class="social-media-container">
+            <div class="social-item" *ngIf="business.instagram">
+              <ion-icon class="social-icon" name="logo-instagram" aria-hidden="true"></ion-icon>
+              <span class="social-label">Instagram</span>
+              <button class="social-button" (click)="openSocialMedia('instagram')">Ver</button>
+            </div>
+            <div class="social-item" *ngIf="business.facebook">
+              <ion-icon class="social-icon" name="logo-facebook" aria-hidden="true"></ion-icon>
+              <span class="social-label">Facebook</span>
+              <button class="social-button" (click)="openSocialMedia('facebook')">Ver</button>
+            </div>
+            <div class="social-item" *ngIf="business.tiktok">
+              <ion-icon class="social-icon" name="logo-tiktok" aria-hidden="true"></ion-icon>
+              <span class="social-label">TikTok</span>
+              <button class="social-button" (click)="openSocialMedia('tiktok')">Ver</button>
+            </div>
+            <div class="social-item" *ngIf="business.website">
+              <ion-icon class="social-icon" name="globe-outline" aria-hidden="true"></ion-icon>
+              <span class="social-label">Sitio Web</span>
+              <button class="social-button" (click)="openSocialMedia('website')">Visitar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-group">
+        <label class="form-label">Información de Contacto</label>
+        <div class="contact-container">
+          <div class="contact-item" *ngIf="business.phone">
+            <ion-icon class="contact-icon" name="call-outline" aria-hidden="true"></ion-icon>
+            <div class="contact-info">
+              <span class="contact-label">Teléfono</span>
+              <span class="contact-value">{{ business.phone }}</span>
+            </div>
+            <button class="contact-button" (click)="callPhone()">Llamar</button>
+          </div>
+          
+          <div class="contact-item" *ngIf="business.email">
+            <ion-icon class="contact-icon" name="mail-outline" aria-hidden="true"></ion-icon>
+            <div class="contact-info">
+              <span class="contact-label">Email</span>
+              <span class="contact-value">{{ business.email }}</span>
+            </div>
+            <button class="contact-button" (click)="sendEmail()">Escribir</button>
+          </div>
+          
+          <div class="contact-item" *ngIf="business.whatsappNumber">
+            <ion-icon class="contact-icon" name="logo-whatsapp" aria-hidden="true"></ion-icon>
+            <div class="contact-info">
+              <span class="contact-label">WhatsApp</span>
+              <span class="contact-value">{{ business.whatsappNumber }}</span>
+            </div>
+            <button class="contact-button whatsapp" (click)="openWhatsApp()">Chatear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label class="form-label">Ubicación</label>
+        <div class="location-container">
+          <div class="location-info">
+            <div class="address">
+              <ion-icon class="location-icon" name="location-outline" aria-hidden="true"></ion-icon>
+              <span>{{ business.address }}</span>
+            </div>
+            <div class="sector" *ngIf="business.parishCommunitySector">
+              <span class="sector-label">Sector:</span>
+              <span>{{ business.parishCommunitySector }}</span>
+            </div>
+          </div>
+          <button class="map-button" (click)="openMaps()">
+            <ion-icon class="map-icon" name="map-outline" aria-hidden="true"></ion-icon>
+            <span>Ver en Mapa</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="form-row">
+        <div class="info-card">
+          <ion-icon class="info-icon" name="storefront-outline" aria-hidden="true"></ion-icon>
+          <div class="info-content">
+            <h4>Tipo de Venta</h4>
+            <p>{{ salePlaceText }}</p>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <ion-icon class="info-icon" name="bicycle-outline" aria-hidden="true"></ion-icon>
+          <div class="info-content">
+            <h4>Delivery</h4>
+            <p>{{ deliveryText }}</p>
+          </div>
+        </div>
+        
+        <div class="info-card">
+          <ion-icon class="info-icon" name="call-outline" aria-hidden="true"></ion-icon>
+          <div class="info-content">
+            <h4>Teléfono</h4>
+            <p>{{ business.phone || 'No especificado' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp Orders -->
+      <div class="form-group" *ngIf="business.acceptsWhatsappOrders">
+        <div class="whatsapp-orders">
+          <ion-icon class="whatsapp-icon-ic" name="logo-whatsapp" aria-hidden="true"></ion-icon>
+          
+          <div class="whatsapp-text">
+            <h4>Pedidos por WhatsApp</h4>
+            <p>Este negocio acepta pedidos a través de WhatsApp</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="modal-footer" *ngIf="!loading && !error">
+      <button class="cancel-button" (click)="closeModal()">Cancelar</button>
+      <button class="save-button" (click)="saveDetails()">Volver</button>
+    </div>
+  </div>
+</div>

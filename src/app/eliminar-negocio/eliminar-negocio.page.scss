@@ -1,0 +1,381 @@
+// Toolbar personalizado
+ion-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #dc143c 0%, #b91c3c 50%, #991b1b 100%);
+    --color: white;
+    box-shadow: 0 4px 20px rgba(220, 20, 60, 0.4);
+    
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      
+      ion-icon {
+        font-size: 1.3rem;
+      }
+    }
+  }
+}
+
+// Content principal
+ion-content {
+  --background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  
+  .content-wrapper {
+    padding: 0;
+    min-height: 100vh;
+  }
+}
+
+// Header del negocio
+.business-header {
+  background: linear-gradient(135deg, #dc143c 0%, #b91c3c 100%);
+  padding: 24px 20px;
+  color: white;
+  margin-bottom: 0;
+  
+  .business-info {
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+  }
+}
+
+// Alerta informativa
+.info-alert {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 1px solid #90caf9;
+  border-radius: 0;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  
+  ion-icon {
+    font-size: 1.3rem;
+    margin-top: 2px;
+    color: #1976d2;
+    flex-shrink: 0;
+  }
+  
+  .alert-content {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #1565c0;
+    
+    strong {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+}
+
+// Contenedor del formulario
+.form-container {
+  background: white;
+  padding: 32px 24px;
+  margin: 0;
+  min-height: calc(100vh - 160px);
+  
+  form {
+    max-width: 100%;
+  }
+}
+
+// Grupos del formulario
+.form-group {
+  margin-bottom: 32px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Títulos de sección
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(135deg, #dc143c 0%, #991b1b 100%);
+    border-radius: 2px;
+  }
+}
+
+// Inputs personalizados
+.form-item {
+  --background: #f8fafc;
+  --border-radius: 12px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --border-width: 2px;
+  --border-style: solid;
+  --border-color: #e2e8f0;
+  
+  border-radius: 12px;
+  margin-bottom: 0;
+  transition: all 0.3s ease;
+  
+  &:focus-within,
+  &.item-has-focus {
+    --border-color: #dc143c;
+    --background: white;
+    box-shadow: 0 0 0 4px rgba(220, 20, 60, 0.15);
+  }
+  
+  .custom-input {
+    --color: #2d3748;
+    --placeholder-color: #a0aec0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+}
+
+// Opciones de radio personalizadas
+.radio-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  .radio-item {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    
+    &:hover {
+      border-color: #dc143c;
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    &:has(ion-radio[aria-checked="true"]) {
+      border-color: #dc143c;
+      background: white;
+      box-shadow: 0 4px 20px rgba(220, 20, 60, 0.3);
+      border-width: 3px;
+      
+      .radio-content .radio-label {
+        color: #dc143c;
+        font-weight: 600;
+      }
+    }
+    
+    ion-radio {
+      --color: #dc143c;
+      --color-checked: #dc143c;
+      --border-radius: 50%;
+      --border-width: 3px;
+      --border-color: #cbd5e0;
+      --border-color-checked: #dc143c;
+      --checkmark-color: white;
+      --inner-border-radius: 50%;
+      --checkmark-width: 3px;
+      width: 28px;
+      height: 28px;
+      margin: 0;
+      
+      &::part(container) {
+        border-width: 3px;
+      }
+      
+      &::part(mark) {
+        background-color: #dc143c;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        transform: scale(1);
+      }
+    }
+    
+    .radio-content {
+      flex: 1;
+      
+      .radio-label {
+        color: #2d3748;
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+      }
+    }
+  }
+}
+
+// Textarea personalizada
+.textarea-container {
+  position: relative;
+  
+  .custom-textarea {
+    --background: #f8fafc;
+    --color: #2d3748;
+    --placeholder-color: #a0aec0;
+    
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      border-color: #dc143c;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(220, 20, 60, 0.15);
+      outline: none;
+    }
+  }
+}
+
+// Botones de acción
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 40px;
+  
+  .primary-button {
+    --background: linear-gradient(135deg, #dc143c 0%, #b91c3c 50%, #991b1b 100%);
+    --background-hover: linear-gradient(135deg, #b91c3c 0%, #991b1b 50%, #7f1d1d 100%);
+    --box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
+    --border-radius: 12px;
+    
+    height: 56px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    
+    &:not([disabled]):hover {
+      transform: translateY(-2px);
+      --box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
+    }
+    
+    &[disabled] {
+      --background: #a0aec0;
+      --box-shadow: none;
+      opacity: 0.7;
+    }
+  }
+  
+  .secondary-button {
+    --border-color: #e2e8f0;
+    --color: #718096;
+    --border-radius: 12px;
+    
+    height: 56px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      --border-color: #cbd5e0;
+      --color: #4a5568;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Loading spinner
+ion-spinner {
+  --color: white;
+  margin-right: 8px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .business-header {
+    padding: 20px 16px;
+    
+    .business-icon {
+      width: 50px;
+      height: 50px;
+      
+      ion-icon {
+        font-size: 1.6rem;
+      }
+    }
+    
+    .business-info {
+      h2 {
+        font-size: 1.2rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  .info-alert {
+    padding: 16px;
+    
+    .alert-content {
+      font-size: 0.85rem;
+    }
+  }
+  
+  .form-container {
+    padding: 24px 16px;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+  }
+  
+  .radio-options .radio-item {
+    padding: 14px 16px;
+    
+    .radio-label {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    .primary-button,
+    .secondary-button {
+      height: 52px;
+      font-size: 1rem;
+    }
+  }
+  
+  .business-header .business-info h2 {
+    font-size: 1.1rem;
+  }
+}

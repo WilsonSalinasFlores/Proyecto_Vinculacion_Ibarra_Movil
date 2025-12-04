@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Documentos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">
+          <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon> Documentos Personales
+        </ion-card-title>
+        <ion-card-subtitle class="ion-text-center">
+          Revisa y descarga tus archivos
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="ion-justify-content-center">
+            <ion-col size="12" size-md="6">
+             <ion-button expand="block" color="tertiary" (click)="verIdentidad()">
+                <ion-icon name="card" slot="start"></ion-icon>
+                Documento de Identidad
+              </ion-button>
+            </ion-col>
+
+            <ion-col size="12" size-md="6">
+              <ion-button expand="block" color="success" (click)="verCertificado()">
+                <ion-icon name="ribbon" slot="start"></ion-icon>
+                Certificado del Emprendedor
+              </ion-button>
+            </ion-col>
+
+             <ion-col size="12" size-md="6">
+              <ion-button expand="block" color="primary" (click)="verFirmado()">
+                <ion-icon name="document" slot="start"></ion-icon>
+                Acuerdo de Comercialización
+              </ion-button>
+            </ion-col>
+
+            <ion-col size="12" size-md="6">
+              <ion-button expand="block" color="warning" (click)="verComprobante()">
+                <ion-icon name="receipt" slot="start"></ion-icon>
+                Comprobante de Pago
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-loading
+    [isOpen]="loading"
+    message="Cargando documento..."
+    spinner="circles"
+    translucent
+    backdropDismiss="false">
+  </ion-loading>
+</ion-content>

@@ -1,0 +1,312 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles del Negocio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando detalles del negocio...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <ion-icon class="error-icon-ic" name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>{{ error }}</p>
+    <button class="retry-button" (click)="loadBusinessDetails()">Reintentar</button>
+  </div>
+
+  <!-- Business Content -->
+  <div *ngIf="!loading && !error && business" class="business-content">
+
+    <!-- Business Header -->
+    <div class="business-header">
+      <div class="logo-container" *ngIf="business.logoUrl">
+        <img [src]="business.logoUrl" [alt]="business.commercialName" class="business-logo"
+          (error)="handleImageError($event, 'logo')" />
+      </div>
+
+      <div class="header-info">
+        <h1 class="business-title">{{ business.commercialName }}</h1>
+        <p class="representative" *ngIf="business.representativeName">
+          <ion-icon class="rep-icon" name="person-circle" aria-hidden="true"></ion-icon>
+          {{ business.representativeName }}
+        </p>
+        <div class="status-badge" [ngClass]="businessStatusClass">
+          {{ businessStatusText }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Rejection Notice -->
+    <div *ngIf="business.validationStatus === 'REJECTED'" class="rejection-notice">
+      <ion-icon class="rejection-icon-ic" name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      <div class="rejection-text">
+        <h4>Negocio Rechazado</h4>
+        <p>Tu negocio fue rechazado durante la validación. Para corregir los datos y enviar a nueva revisión, contacta
+          al administrador.</p>
+        <p *ngIf="business.rejectionReason"><strong>Razón:</strong> {{ business.rejectionReason }}</p>
+      </div>
+    </div>
+
+    <!-- Image Carousel -->
+    <div class="carousel-container" *ngIf="photoUrls && photoUrls.length > 0">
+      <div class="carousel-header">
+        <h3>
+          <ion-icon class="section-icon" name="images-outline" aria-hidden="true"></ion-icon>
+          Imágenes del Negocio ({{ currentImageIndex + 1 }}/{{ photoUrls.length }})
+        </h3>
+      </div>
+
+      <div class="carousel-wrapper">
+        <div class="carousel-main">
+          <!-- Previous Arrow -->
+          <button class="carousel-button prev" (click)="prevImage()" *ngIf="hasMultipleImages">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
+
+          <!-- Image Container -->
+          <div class="image-container">
+            <img [src]="currentImage" [alt]="business.commercialName" class="carousel-image"
+              (error)="handleImageError($event, 'carousel')">
+          </div>
+
+          <!-- Next Arrow -->
+          <button class="carousel-button next" (click)="nextImage()" *ngIf="hasMultipleImages">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+
+          <!-- Image Counter (overlay) -->
+          <div class="image-counter" *ngIf="hasMultipleImages">
+            {{ currentImageIndex + 1 }} / {{ photoUrls.length }}
+          </div>
+        </div>
+
+        <!-- Dot Indicators -->
+        <div class="carousel-indicators" *ngIf="hasMultipleImages">
+          <button *ngFor="let url of photoUrls; let i = index" class="indicator"
+            [class.active]="i === currentImageIndex" (click)="selectImage(i)" [title]="'Imagen ' + (i + 1)">
+          </button>
+        </div>
+
+        <!-- Thumbnail View (for more than 3 images) -->
+        <div class="carousel-thumbnails" *ngIf="photoUrls.length > 3">
+          <div class="thumbnail-scroll">
+            <div *ngFor="let url of photoUrls; let i = index" class="thumbnail-item"
+              [class.active]="i === currentImageIndex" (click)="selectImage(i)">
+              <img [src]="url" [alt]="'Miniatura ' + (i + 1)" class="thumbnail-image">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Images State -->
+    <div class="no-images" *ngIf="!photoUrls || photoUrls.length === 0">
+      <ion-icon class="no-images-icon-ic" name="images-outline" aria-hidden="true"></ion-icon>
+      <h4>No hay imágenes disponibles</h4>
+      <p>Este negocio aún no ha subido imágenes de sus productos o servicios</p>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <div class="textarea-display">{{ business.description || 'Sin descripción disponible' }}</div>
+    </div>
+
+    <!-- Schedules and Social Media Row -->
+    <div class="form-row">
+      <!-- Schedules -->
+      <div class="form-group half-width" *ngIf="formattedSchedules.length > 0">
+        <label class="form-label">Horarios de Atención</label>
+        <div class="schedules-container">
+          <div class="schedule-item" *ngFor="let schedule of formattedSchedules">
+            <span class="day">{{ schedule.day }}</span>
+            <span class="hours" [class.closed]="schedule.hours === 'Cerrado'">{{ schedule.hours }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Media -->
+      <div class="form-group half-width"
+        *ngIf="business.facebook || business.instagram || business.tiktok || business.website">
+        <label class="form-label">Redes Sociales</label>
+        <div class="social-media-container">
+          <div class="social-item" *ngIf="business.instagram">
+            <ion-icon class="social-icon" name="logo-instagram" aria-hidden="true"></ion-icon>
+            <span class="social-label">Instagram</span>
+            <button class="social-button" (click)="openSocialMedia('instagram')">Ver</button>
+          </div>
+          <div class="social-item" *ngIf="business.facebook">
+            <ion-icon class="social-icon" name="logo-facebook" aria-hidden="true"></ion-icon>
+            <span class="social-label">Facebook</span>
+            <button class="social-button" (click)="openSocialMedia('facebook')">Ver</button>
+          </div>
+          <div class="social-item" *ngIf="business.tiktok">
+            <ion-icon class="social-icon" name="logo-tiktok" aria-hidden="true"></ion-icon>
+            <span class="social-label">TikTok</span>
+            <button class="social-button" (click)="openSocialMedia('tiktok')">Ver</button>
+          </div>
+          <div class="social-item" *ngIf="business.website">
+            <ion-icon class="social-icon" name="globe-outline" aria-hidden="true"></ion-icon>
+            <span class="social-label">Sitio Web</span>
+            <button class="social-button" (click)="openSocialMedia('website')">Visitar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="form-group">
+      <label class="form-label">
+        <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+        Información de Contacto
+      </label>
+      <div class="contact-container">
+        <div class="contact-item" *ngIf="business.phone">
+          <ion-icon class="contact-icon" name="call-outline" aria-hidden="true"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">Teléfono</span>
+            <span class="contact-value">{{ business.phone }}</span>
+          </div>
+          <button class="contact-button" (click)="callPhone()">Llamar</button>
+        </div>
+
+        <div class="contact-item" *ngIf="business.email">
+          <ion-icon class="contact-icon" name="mail-outline" aria-hidden="true"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">{{ business.email }}</span>
+          </div>
+          <button class="contact-button" (click)="sendEmail()">Escribir</button>
+        </div>
+
+        <div class="contact-item" *ngIf="business.whatsappNumber">
+          <ion-icon class="contact-icon" name="logo-whatsapp" aria-hidden="true"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">WhatsApp</span>
+            <span class="contact-value">{{ business.whatsappNumber }}</span>
+          </div>
+          <button class="contact-button whatsapp" (click)="openWhatsApp()">Chatear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="form-group">
+      <label class="form-label">
+        <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+        Ubicación
+      </label>
+      <div class="location-container">
+        <div class="location-info">
+          <div class="address">
+            <ion-icon class="location-icon" name="location-outline" aria-hidden="true"></ion-icon>
+            <span>{{ business.address || 'Dirección no especificada' }}</span>
+          </div>
+          <div class="sector" *ngIf="business.parishCommunitySector">
+            <span class="sector-label">Sector:</span>
+            <span>{{ business.parishCommunitySector }}</span>
+          </div>
+        </div>
+        <button class="map-button" (click)="openMaps()" *ngIf="business.googleMapsCoordinates">
+          <ion-icon class="map-icon" name="map-outline" aria-hidden="true"></ion-icon>
+          <span>Ver en Mapa</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Additional Info Cards -->
+    <div class="form-row">
+      <div class="info-card">
+        <ion-icon class="info-icon" name="storefront-outline" aria-hidden="true"></ion-icon>
+        <div class="info-content">
+          <h4>Tipo de Venta</h4>
+          <p>{{ salePlaceText }}</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <ion-icon class="info-icon" name="bicycle-outline" aria-hidden="true"></ion-icon>
+        <div class="info-content">
+          <h4>Delivery</h4>
+          <p>{{ deliveryText }}</p>
+        </div>
+      </div>
+
+      <div class="info-card" *ngIf="business.category">
+        <ion-icon class="info-icon" name="pricetag-outline" aria-hidden="true"></ion-icon>
+        <div class="info-content">
+          <h4>Categoría</h4>
+          <p>{{ business.category.name || 'Sin categoría' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Orders -->
+    <div class="form-group" *ngIf="business.acceptsWhatsappOrders">
+      <div class="whatsapp-orders">
+        <ion-icon class="whatsapp-icon-ic" name="logo-whatsapp" aria-hidden="true"></ion-icon>
+        <div class="whatsapp-text">
+          <h4>Pedidos por WhatsApp</h4>
+          <p>Este negocio acepta pedidos a través de WhatsApp</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- UDEL Support -->
+    <div class="form-group" *ngIf="business.receivedUdelSupport">
+      <div class="udel-support">
+        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
+        <div class="udel-text">
+          <h4>Apoyo UDEL</h4>
+          <p>Este negocio ha recibido apoyo de la Universidad de las Fuerzas Armadas ESPE</p>
+          <p *ngIf="business.udelSupportDetails" class="udel-details">{{ business.udelSupportDetails }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section">
+      <h3 class="action-title">Opciones del Negocio</h3>
+      <div class="action-buttons-grid">
+
+        <!-- Botón Volver - Siempre visible -->
+        <button class="action-btn cancel-btn" (click)="goBack()">
+          <ion-icon class="btn-icon" name="arrow-back-outline"></ion-icon>
+          <span>Volver</span>
+          <small class="btn-subtitle">Regresar a mis negocios</small>
+        </button>
+
+        <!-- Botón de Editar/Corregir - Para VALIDATED y REJECTED -->
+        <button class="action-btn edit-btn" (click)="editBusiness()" *ngIf="shouldShowEditButton">
+          <ion-icon class="btn-icon" name="create-outline"></ion-icon>
+          <span>{{ editButtonText }}</span>
+          <small class="btn-subtitle">{{ editButtonSubtitle }}</small>
+        </button>
+        
+        <!-- Botón Solicitar Eliminación - Para todos los estados -->
+        <button class="action-btn delete-btn" (click)="openDeleteFunctionality()" *ngIf="shouldShowDeleteButton">
+          <ion-icon class="btn-icon" name="trash-outline"></ion-icon>
+          <span>Solicitar Eliminación</span>
+          <small class="btn-subtitle">Enviar solicitud de eliminación</small>
+        </button>
+
+        <!-- Botón Administrar Negocio - Solo para VALIDATED -->
+        <button class="action-btn admin-btn" (click)="openAdministrationPanel()" *ngIf="shouldShowAdminButton">
+          <ion-icon class="btn-icon" name="settings-outline"></ion-icon>
+          <span>Administrar Negocio</span>
+          <small class="btn-subtitle">Gestionar promociones</small>
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

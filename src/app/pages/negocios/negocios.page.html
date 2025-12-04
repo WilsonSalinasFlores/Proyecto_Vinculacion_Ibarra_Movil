@@ -1,0 +1,184 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Lista de Negocios</ion-title>
+
+    <!-- Botón para limpiar filtros -->
+    <ion-buttons slot="end" *ngIf="categoriaSeleccionada">
+      <ion-button (click)="limpiarFiltros()">
+        <ion-icon name="close-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="no-padding">
+  <!-- Mostrar categoría activa -->
+  <div *ngIf="categoriaNombre" class="active-filter">
+    <ion-chip color="primary">
+      <ion-label>Filtrado por: {{ categoriaNombre }}</ion-label>
+      <ion-icon name="close" (click)="limpiarFiltros()"></ion-icon>
+    </ion-chip>
+  </div>
+
+  <!-- Filtro por categoría -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Filtrar por Categoría</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-select
+          [(ngModel)]="categoriaSeleccionada"
+          (ionChange)="onCategoriaChange()"
+        >
+          <ion-select-option value="">Todos los negocios</ion-select-option>
+          <ion-select-option *ngFor="let cat of categorias" [value]="cat.id">
+            {{ cat.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filtro de cantidad por página -->
+  <ion-item>
+    <ion-label>Items por página</ion-label>
+    <ion-select [(ngModel)]="limite" (ionChange)="cargarNegocios(1)">
+      <ion-select-option *ngFor="let opt of [2, 5, 10, 20]" [value]="opt"
+        >{{ opt }}</ion-select-option
+      >
+    </ion-select>
+  </ion-item>
+
+  <!-- Mostrar total (cuando ya cargó) -->
+  <ion-item *ngIf="totalElements !== null">
+    <ion-label>Total de negocios: {{ totalElements }}</ion-label>
+  </ion-item>
+
+  <!-- Lista de negocios -->
+  <div class="business-list">
+    <ng-container *ngIf="negocios.length > 0; else noResults">
+      <ion-card
+        *ngFor="let negocio of negocios"
+        class="full-width-card"
+        button
+        (click)="openBusiness(negocio)"
+      >
+        <!-- Cabecera con imagen -->
+        <div class="card-header">
+          <img
+            [src]="negocio.logoUrl || 'assets/icon/ibarra.jpg'"
+            alt="{{ negocio.commercialName }}"
+            class="business-image"
+          />
+        </div>
+
+        <!-- Información principal -->
+        <ion-card-header>
+          <ion-card-title>{{ negocio.commercialName }}</ion-card-title>
+          <ion-card-subtitle
+            *ngIf="negocio.representativeName || negocio.ownerName || negocio.name"
+          >
+            <ion-icon name="person-outline"></ion-icon>
+            {{ negocio.representativeName || negocio.ownerName || negocio.name
+            }}
+          </ion-card-subtitle>
+        </ion-card-header>
+
+        <!-- Detalles del negocio -->
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12">
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="location-outline"></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    {{ negocio.address || 'Dirección no especificada' }}
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="12">
+                <ion-item lines="none">
+                  <ion-icon
+                    slot="start"
+                    name="document-text-outline"
+                  ></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    {{ negocio.description || 'Sin descripción' }}
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="12">
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="call-outline"></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    {{ negocio.phone || 'Teléfono no disponible' }}
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <!-- Botones de acción -->
+          <div class="action-buttons">
+            <ion-button
+              expand="block"
+              fill="outline"
+              size="small"
+              (click)="openBusiness(negocio); $event.stopPropagation()"
+            >
+              <ion-icon slot="start" name="eye-outline"></ion-icon>
+              Ver Detalles
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <ng-template #noResults>
+      <div class="empty-state">
+        <ion-icon name="storefront-outline" size="large"></ion-icon>
+        <h3>No hay negocios para esta categoría</h3>
+        <p>Intenta cambiar los filtros o buscar en otra categoría</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paginación -->
+  <div class="pagination">
+    <ion-button
+      size="small"
+      fill="solid"
+      color="danger"
+      [disabled]="paginaActual === 1"
+      (click)="paginaAnterior()"
+    >
+      <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+      Anterior
+    </ion-button>
+
+    <span class="pagination-info"
+      >Página {{ paginaActual }} de {{ totalPaginas }}</span
+    >
+
+    <ion-button
+      size="small"
+      fill="solid"
+      color="danger"
+      [disabled]="paginaActual === totalPaginas"
+      (click)="paginaSiguiente()"
+    >
+      Siguiente
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-content>
