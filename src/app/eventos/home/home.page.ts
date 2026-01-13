@@ -62,7 +62,11 @@ export class HomePage implements OnInit {
 
   eventos: Evento[] = [];
   mostrados: Evento[] = [];
+  eventosFiltradosPromocion: Evento[] = [];
   paginaIndex = 0;
+  readonly INICIAL_COUNT = 3;
+  readonly BATCH_SIZE = 5;
+  fuenteCount = 0;
   filtroFecha?: string;
   mesSeleccionado?: string; // YYYY-MM
   tieneEventosMes = false;
@@ -77,15 +81,23 @@ export class HomePage implements OnInit {
 
   cargarInicial() {
     this.eventos = this.eventosSrv.listarEventos();
-    this.mostrados = this.eventosSrv.obtenerMasCercanos(5);
+    // obtener eventos cuya promoción está activa ahora
+    this.eventosFiltradosPromocion = this.obtenerEventosPromocionActiva();
+    // ordenar por prioridad (desc) y luego por fechaInicio (asc)
+    this.ordenarPorPrioridadYFecha(this.eventosFiltradosPromocion);
+    this.fuenteCount = this.eventosFiltradosPromocion.length;
+    // mostrar los primeros N eventos (inicial)
+    this.mostrados = this.eventosFiltradosPromocion.slice(0, this.INICIAL_COUNT);
     this.paginaIndex = this.mostrados.length;
-    // inicializar mes seleccionado al mes actual
+    // inicializar mes seleccionado al mes actual (no aplicar filtro automáticamente)
     const ahora = new Date();
     this.mesSeleccionado = `${ahora.getFullYear()}-${String(ahora.getMonth()+1).padStart(2,'0')}`;
     this.generarMesesConEventos();
-    // por defecto mostrar todos
+    // por defecto mostrar todos en el selector, pero mantener la vista inicial de promociones
     this.mesSeleccionado = 'todos';
-    this.comprobarMesConEventos();
+    // indicar número de eventos para el indicador del selector (evita mostrar "No hay eventos" al iniciar)
+    this.tieneEventosMes = this.eventos.length > 0;
+    this.eventosEnMes = this.eventos.length;
   }
 
   async abrirGaleria(evento: Evento) {
@@ -119,23 +131,22 @@ export class HomePage implements OnInit {
   }
 
   async mostrarNuevos(event?: any) {
-    const nuevos = this.eventosSrv.cargarNuevos(this.paginaIndex, 5);
-    this.mostrados = this.mostrados.concat(nuevos);
-    this.paginaIndex = this.mostrados.length;
+    const fuente = this.obtenerFuenteActual();
+    const desde = this.paginaIndex;
+    const hasta = this.paginaIndex + this.BATCH_SIZE;
+    const nuevos = fuente.slice(desde, hasta);
+    if (nuevos && nuevos.length) {
+      this.mostrados = this.mostrados.concat(nuevos);
+      // mantener orden: prioridad desc, fechaInicio asc
+      this.ordenarPorPrioridadYFecha(this.mostrados);
+      this.paginaIndex = this.mostrados.length;
+    }
     if (event && event.target) event.target.complete();
   }
 
   async mostrarAnteriores(event?: any) {
-    // Si no hay eventos mostrados, recargar lista inicial
-    if (!this.mostrados || this.mostrados.length === 0) {
-      this.cargarInicial();
-      if (event && event.target) event.target.complete();
-      return;
-    }
-
-    const anteriores = this.eventosSrv.cargarAnteriores(this.paginaIndex, 5);
-    this.mostrados = anteriores.concat(this.mostrados);
-    this.paginaIndex = this.mostrados.length;
+    // Al deslizar hacia arriba: recargar completamente la página
+    this.cargarInicial();
     if (event && event.target) event.target.complete();
     await this.content.scrollToTop(200);
   }
@@ -147,16 +158,24 @@ export class HomePage implements OnInit {
       const inicio = new Date(ev.fechaInicio).setHours(0,0,0,0);
       return inicio === fechaSel;
     });
+    this.ordenarPorPrioridadYFecha(this.mostrados);
+    this.paginaIndex = this.mostrados.length;
+    this.fuenteCount = this.mostrados.length;
   }
 
   comprobarMesConEventos() {
     this.tieneEventosMes = false;
     this.eventosEnMes = 0;
     if (!this.mesSeleccionado || this.mesSeleccionado === 'todos') {
-      // mostrar todos
+      // mostrar todos (cuando el usuario elige 'Todos' mostramos todos los eventos
+      // ordenados por prioridad y fecha)
       this.tieneEventosMes = this.eventos.length > 0;
       this.eventosEnMes = this.eventos.length;
-      this.mostrados = this.eventosSrv.obtenerMasCercanos(5);
+      const fuente = [...this.eventos];
+      this.ordenarPorPrioridadYFecha(fuente);
+      this.fuenteCount = fuente.length;
+      this.mostrados = fuente.slice(0, this.INICIAL_COUNT);
+      this.paginaIndex = this.mostrados.length;
       return;
     }
     const [y, m] = this.mesSeleccionado.split('-').map(v => parseInt(v, 10));
@@ -180,6 +199,71 @@ export class HomePage implements OnInit {
       const finEv = new Date(ev.fechaFin).getTime();
       return finEv >= mesInicio && inicioEv <= mesFin;
     });
+    this.ordenarPorPrioridadYFecha(this.mostrados);
+    this.paginaIndex = this.mostrados.length;
+  }
+
+  private ordenarEventosAsc() {
+    if (!this.eventos) return;
+    this.eventos.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
+  }
+
+  private ordenarMostradosAsc() {
+    if (!this.mostrados) return;
+    this.mostrados.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
+  }
+
+  private obtenerEventosPromocionActiva(): Evento[] {
+    const ahora = Date.now();
+    return this.eventos.filter(ev => {
+      const inicioPromo = ev.inicioPromocion ? new Date(ev.inicioPromocion).getTime() : -Infinity;
+      const finPromo = ev.finPromocion ? new Date(ev.finPromocion).getTime() : Infinity;
+      return inicioPromo <= ahora && ahora <= finPromo;
+    });
+  }
+
+  private ordenarPorPrioridadYFecha(arr: Evento[]) {
+    if (!arr) return;
+    arr.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
+  }
+
+  private compararFechaLuegoPrioridad(a: Evento, b: Evento): number {
+    const da = a.fechaInicio instanceof Date ? a.fechaInicio.getTime() : new Date(a.fechaInicio).getTime();
+    const db = b.fechaInicio instanceof Date ? b.fechaInicio.getTime() : new Date(b.fechaInicio).getTime();
+    if (da !== db) return da - db; // fechaInicio ascendente
+    const pa = a.prioridad ?? 0;
+    const pb = b.prioridad ?? 0;
+    return pb - pa; // prioridad descendente (mayor prioridad primero)
+  }
+
+  private obtenerFuenteActual(): Evento[] {
+    // Si hay un filtro de fecha específico
+    if (this.filtroFecha) {
+      const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
+      const arr = this.eventos.filter(ev => new Date(ev.fechaInicio).setHours(0,0,0,0) === fechaSel);
+      this.ordenarPorPrioridadYFecha(arr);
+      this.fuenteCount = arr.length;
+      return arr;
+    }
+    // Si se ha seleccionado un mes distinto a 'todos'
+    if (this.mesSeleccionado && this.mesSeleccionado !== 'todos') {
+      const [y, m] = this.mesSeleccionado.split('-').map(v => parseInt(v, 10));
+      const year = y;
+      const month = m - 1;
+      const mesInicio = new Date(year, month, 1, 0, 0, 0, 0).getTime();
+      const mesFin = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
+      const arr = this.eventos.filter(ev => {
+        const inicioEv = new Date(ev.fechaInicio).getTime();
+        const finEv = new Date(ev.fechaFin).getTime();
+        return finEv >= mesInicio && inicioEv <= mesFin;
+      });
+      this.ordenarPorPrioridadYFecha(arr);
+      this.fuenteCount = arr.length;
+      return arr;
+    }
+    // por defecto: la lista de promociones activas
+    this.fuenteCount = (this.eventosFiltradosPromocion || []).length;
+    return this.eventosFiltradosPromocion || [];
   }
 
   generarMesesConEventos() {

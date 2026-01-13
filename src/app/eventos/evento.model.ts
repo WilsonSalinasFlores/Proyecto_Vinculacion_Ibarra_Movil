@@ -4,10 +4,10 @@ export interface Evento {
   descripcion: string;
   imagenPrincipal: string;
   galeria: string[];
-  fechaInicio: string; // ISO
-  fechaFin: string; // ISO
-  inicioPromocion?: string; // ISO
-  finPromocion?: string; // ISO
+  fechaInicio: Date;
+  fechaFin: Date;
+  inicioPromocion?: Date;
+  finPromocion?: Date;
   ubicacion: {
     lat: number;
     lng: number;
