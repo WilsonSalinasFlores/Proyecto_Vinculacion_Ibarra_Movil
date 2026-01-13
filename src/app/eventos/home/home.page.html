@@ -27,7 +27,11 @@
 
     <!-- Estado vacío cuando no hay eventos a mostrar -->
     <div *ngIf="mostrados.length === 0" class="empty-state">
-      <div>
+      <div *ngIf="fuenteCount && fuenteCount > 0">
+        <h2>Hay {{ fuenteCount }} evento(s) disponibles</h2>
+        <p>Actualmente no se muestran eventos en la vista seleccionada. Cambia el mes o desliza hacia abajo para cargar más.</p>
+      </div>
+      <div *ngIf="!fuenteCount || fuenteCount === 0">
         <h2>No hay eventos disponibles</h2>
         <p>Actualmente no existen eventos para la selección actual.</p>
       </div>
@@ -44,8 +48,8 @@
         <p>{{ evento.descripcion }}</p>
         <div class="info-bottom-vertical">
           <ion-item button (click)="abrirMapa(evento)">
-            <ion-icon name="location" slot="start" class="pin-icon"></ion-icon>
-            <ion-label>{{ evento.ubicacion.direccion || (evento.ubicacion.lat + ', ' + evento.ubicacion.lng) }}</ion-label>
+            
+            <ion-label><ion-icon name="location" slot="start" class="pin-icon"></ion-icon> {{ evento.ubicacion.direccion || (evento.ubicacion.lat + ', ' + evento.ubicacion.lng) }}</ion-label>
           </ion-item>
 
           <div class="contact-row">
@@ -54,7 +58,7 @@
               <ion-icon name="call" slot="start"></ion-icon>
               {{ evento.contacto || 'No disponible' }}
             </ion-button>
-            <ion-button size="small" color="secondary" (click)="abrirGaleria(evento)">Ver galería</ion-button>
+            <ion-button size="small" color="secondary" (click)="abrirGaleria(evento)">Galería</ion-button>
           </div>
 
           <div class="chips">
