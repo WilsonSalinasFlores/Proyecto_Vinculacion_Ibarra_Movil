@@ -1,0 +1,87 @@
+:host {
+	--card-radius: 8px;
+}
+.lista-eventos {
+	padding: 12px;
+}
+.calendario-container { padding: 8px 12px; }
+/* Use Ionic theme variables to remain consistent with light/dark themes */
+.mes-indicador { margin-top: 8px; padding: 8px; border-radius: 8px; background: var(--ion-color-step-50); }
+.mes-indicador .tiene { color: var(--ion-color-primary); font-weight:600 }
+.mes-indicador .no-tiene { color: var(--ion-color-medium) }
+.calendario-container ion-select { width: 60%; }
+.calendario-container ion-label { margin-right: 8px; }
+
+/* Empty state and cards should adapt to theme using Ionic variables */
+.card-evento {
+	background: var(--ion-card-background, var(--ion-background-color));
+}
+.empty-state {
+	background: transparent;
+	color: var(--ion-color-medium);
+}
+
+/* Contact number emphasis uses semantic color */
+.contact-number {
+	color: var(--ion-color-primary);
+}
+
+/* Dark mode adjustments: ensure backgrounds and text contrast */
+@media (prefers-color-scheme: dark) {
+	.mes-indicador { background: var(--ion-color-step-900); }
+	.mes-indicador .no-tiene { color: var(--ion-color-step-300); }
+	.empty-state { color: var(--ion-color-step-200); }
+	.card-evento { background: var(--ion-card-background, #1e1e1e); }
+	.contact-number { color: var(--ion-color-secondary); }
+}
+
+/* Estado vacío centrado en el contenido */
+.empty-state {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 32px 16px;
+	color: var(--ion-color-medium);
+	min-height: 200px;
+}
+.empty-state h2 {
+	margin: 0 0 8px 0;
+	color: var(--ion-color-primary);
+	font-size: 1.4rem;
+}
+.empty-state p {
+	margin: 0;
+}
+.card-evento {
+	margin-bottom: 12px;
+	border-radius: var(--card-radius);
+	overflow: hidden;
+}
+.card-evento ion-img {
+	height: 180px;
+	object-fit: cover;
+}
+.fechas {
+	font-size: 0.9rem;
+	color: var(--ion-color-medium);
+}
+.info-bottom {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 8px;
+}
+.info-bottom-vertical { display: flex; flex-direction: column; gap: 8px; }
+.contact-row { display:flex; align-items:center; gap:8px }
+.contacto-label { font-weight:600; margin-right:6px }
+.contact-number {
+	--ion-color-base: transparent;
+	color: var(--ion-color-primary);
+	font-weight: 700;
+	font-size: 0.95rem;
+}
+.contact-number ion-icon { margin-right: 6px; font-size: 1rem }
+.chips ion-chip {
+	margin-left: 6px;
+}
