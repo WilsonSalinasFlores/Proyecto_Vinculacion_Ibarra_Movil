@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://34.10.172.54:8080'
+  apiUrl: 'https://advice-reseller-tournament-mitchell.trycloudflare.com'
+  
 };
