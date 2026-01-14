@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://34.10.172.54:8080'
+  apiUrl: 'https://priestlier-shavonda-nonwashable.ngrok-free.dev'
 };
