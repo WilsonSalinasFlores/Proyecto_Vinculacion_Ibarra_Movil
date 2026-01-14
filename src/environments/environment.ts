@@ -1,5 +1,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://priestlier-shavonda-nonwashable.ngrok-free.dev'
+  apiUrl: 'https://advice-reseller-tournament-mitchell.trycloudflare.com'
+  
 };
