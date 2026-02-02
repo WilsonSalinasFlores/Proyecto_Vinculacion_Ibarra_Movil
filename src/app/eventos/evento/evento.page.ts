@@ -36,6 +36,10 @@ export class EventoPage implements OnInit {
     window.open(link, '_blank');
   }
 
+  async abrirImagen(src?: string) {
+   
+  }
+
   /** Devuelve el nombre del ion-icon para el tipo de contacto */
   getContactIcon(type?: string) {
     if (!type) return 'call-outline';

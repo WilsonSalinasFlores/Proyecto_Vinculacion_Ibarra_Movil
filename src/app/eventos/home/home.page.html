@@ -55,7 +55,12 @@
           <ion-col size="12" size-md="6" >
           <ion-card class="card-evento" tappable (click)="abrirDetalles(evento)">
             <div class="card-media">
-              <ion-img [src]="evento.mainBanner" (click)="abrirGaleria(evento)"></ion-img>
+              <ng-container *ngIf="evento.mainBanner; else noImage">
+                <ion-img [src]="evento.mainBanner" (click)="abrirGaleria(evento)"></ion-img>
+              </ng-container>
+              <ng-template #noImage>
+                <div class="no-image">Imagen no disponible</div>
+              </ng-template>
               <div class="badge" *ngIf="evento.type">{{ evento.type }}</div>
             </div>
             <ion-card-header>
@@ -84,3 +89,11 @@
   </ion-infinite-scroll>
 
 </ion-content>
+
+<ion-footer>
+    <ion-toolbar color="light" class="footer-toolbar">
+      <ion-title size="small">
+        © 2025 Municipalidad de Ibarra - Todos los derechos reservados
+      </ion-title>
+    </ion-toolbar>
+  </ion-footer>

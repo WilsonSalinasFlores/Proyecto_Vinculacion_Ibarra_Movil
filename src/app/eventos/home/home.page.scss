@@ -76,6 +76,19 @@
 	object-fit: cover;
 }
 
+/* Placeholder when image is not available */
+.no-image {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.12));
+	color: var(--ion-color-medium);
+	font-weight: 600;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+}
+
 /* Diseño del card según mock */
 .card-evento {
 	border-radius: 12px;
@@ -208,4 +221,17 @@ ion-grid { --ion-grid-padding: 0px; }
 	.top-banner { background: var(--ion-color-step-900); }
 	.top-banner__text { color: var(--ion-color-step-100); }
 	.avatar-cluster .avatar { border-color: var(--ion-color-step-900); }
+}
+
+/* Footer styling */
+.footer-toolbar {
+	--background: transparent;
+	padding: 8px 12px;
+	border-top: 1px solid rgba(0,0,0,0.04);
+}
+.footer-toolbar ion-title {
+	font-size: 0.85rem;
+	text-align: center;
+	color: var(--ion-color-medium);
+	width: 100%;
 }

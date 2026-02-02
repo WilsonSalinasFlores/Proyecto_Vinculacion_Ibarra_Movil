@@ -23,7 +23,7 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  ModalController, IonLabel, IonButtons, IonBackButton } from '@ionic/angular/standalone';
+  ModalController, IonLabel, IonButtons, IonBackButton, IonFooter } from '@ionic/angular/standalone';
 import { EventosService } from '../eventos.service';
 import { Evento } from '../evento.model';
 
@@ -33,7 +33,7 @@ import { Evento } from '../evento.model';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonButtons, 
+  imports: [IonFooter, IonBackButton, IonButtons, 
     IonContent,
     IonHeader,
     IonTitle,

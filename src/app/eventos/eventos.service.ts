@@ -43,7 +43,7 @@ export class EventosService {
         id: 2,
         name: 'Capacitación en Emprendimiento',
         description: 'Curso intensivo para emprendedores del cantón Ibarra.',
-        mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
+//        mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
         galery: ['https://picsum.photos/seed/cap1/1200/800','https://picsum.photos/seed/cap2/1200/800'],
         dateStart: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),

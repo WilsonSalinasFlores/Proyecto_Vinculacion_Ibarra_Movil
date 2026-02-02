@@ -16,7 +16,15 @@
   <ng-container *ngIf="evento as e">
     <div class="evento-card">
       <div class="hero">
-        <ion-img *ngIf="e.mainBanner" [src]="e.mainBanner" class="hero-img"></ion-img>
+        <ng-container *ngIf="e.mainBanner; else noHeroImage">
+          <ion-img [src]="e.mainBanner" class="hero-img" (click)="abrirImagen(e.mainBanner)"></ion-img>
+        </ng-container>
+        <ng-template #noHeroImage>
+          <div class="no-image-hero">
+            <ion-icon name="image-outline"></ion-icon>
+            <div>Imagen no disponible</div>
+          </div>
+        </ng-template>
         <ion-chip *ngIf="e.type" class="badge">{{ e.type }}</ion-chip>
       </div>
 
@@ -65,9 +73,14 @@
 
         <h3 class="section-title"><ion-icon name="images-outline"></ion-icon> Galería</h3>
         <div class="gallery">
-          <div class="thumb" *ngFor="let g of (e.galery || [])">
-            <ion-img [src]="g"></ion-img>
-          </div>
+          <ng-container *ngIf="(e.galery || []).length; else noGallery">
+            <div class="thumb" *ngFor="let g of (e.galery || [])">
+              <ion-img [src]="g" (click)="abrirImagen(g)"></ion-img>
+            </div>
+          </ng-container>
+          <ng-template #noGallery>
+            <div class="no-gallery">Imágenes no disponibles</div>
+          </ng-template>
         </div>
 
         <div class="action-access" *ngIf="e.link">

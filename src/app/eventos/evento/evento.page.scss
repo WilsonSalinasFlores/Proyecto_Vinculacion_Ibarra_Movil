@@ -83,6 +83,34 @@
 
 /* Make gallery thumbs slightly larger for touch targets */
 .thumb { width:100px; height:72px }
+.hero-img, .thumb ion-img { cursor: pointer }
+
+/* Placeholder for hero image when missing */
+.no-image-hero {
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
+	color: var(--ion-color-step-300);
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	font-weight: 600;
+}
+.no-image-hero ion-icon { font-size: 1.6rem; color: var(--ion-color-step-300) }
+
+.no-gallery {
+	height: 120px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
+	color: var(--ion-color-step-300);
+	border-radius: 8px;
+	font-weight: 600;
+}
 
 .action-access { margin: 14px 0 6px }
 .acceder-btn {
