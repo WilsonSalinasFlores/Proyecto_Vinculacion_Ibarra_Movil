@@ -21,17 +21,20 @@ import {
   IonSelect,
   IonSelectOption,
   IonImg,
-  ModalController, IonLabel } from '@ionic/angular/standalone';
+  IonGrid,
+  IonRow,
+  IonCol,
+  ModalController, IonLabel, IonButtons, IonBackButton } from '@ionic/angular/standalone';
 import { EventosService } from '../eventos.service';
 import { Evento } from '../evento.model';
-import { GaleriaPage } from '../galeria/galeria.page';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonBackButton, IonButtons, 
     IonContent,
     IonHeader,
     IonTitle,
@@ -52,6 +55,9 @@ import { GaleriaPage } from '../galeria/galeria.page';
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonImg,
+    IonGrid,
+    IonRow,
+    IonCol,
     CommonModule,
     FormsModule
   ],
@@ -101,17 +107,12 @@ export class HomePage implements OnInit {
   }
 
   async abrirGaleria(evento: Evento) {
-    const modal = await this.modalCtrl.create({
-      component: GaleriaPage,
-      componentProps: { imagenes: evento.galeria, titulo: evento.titulo }
-    });
-    await modal.present();
   }
 
   async abrirMapa(evento: Evento) {
-    const lat = evento.ubicacion.lat;
-    const lng = evento.ubicacion.lng;
-    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    // Usar `direction` o `location` del API para buscar en Google Maps
+    const query = evento.direction || evento.location || '';
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     // Abrir con el comportamiento nativo / fallback
     try {
       window.open(url, '_system');
@@ -121,12 +122,21 @@ export class HomePage implements OnInit {
   }
 
   contactar(evento: Evento) {
-    if (evento.contacto) {
+    if (!evento.contact || !evento.contact.length) return;
+    // Buscar primer contacto de tipo teléfono/whatsapp/telefono
+    const phone = evento.contact.find(c => /telefono|whatsapp|phone/i.test(c.type || ''));
+    if (phone && phone.description) {
       try {
-        window.location.href = `tel:${evento.contacto}`;
+        window.location.href = `tel:${phone.description}`;
       } catch (e) {
-        window.open(`tel:${evento.contacto}`, '_blank');
+        window.open(`tel:${phone.description}`, '_blank');
       }
+      return;
+    }
+    // Si hay email, abrir mailto
+    const email = evento.contact.find(c => /email/i.test(c.type || ''));
+    if (email && email.description) {
+      try { window.location.href = `mailto:${email.description}`; } catch (e) { window.open(`mailto:${email.description}`, '_blank'); }
     }
   }
 
@@ -155,7 +165,7 @@ export class HomePage implements OnInit {
     if (!this.filtroFecha) { this.cargarInicial(); return; }
     const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
     this.mostrados = this.eventos.filter(ev => {
-      const inicio = new Date(ev.fechaInicio).setHours(0,0,0,0);
+      const inicio = new Date(ev.dateStart).setHours(0,0,0,0);
       return inicio === fechaSel;
     });
     this.ordenarPorPrioridadYFecha(this.mostrados);
@@ -186,8 +196,8 @@ export class HomePage implements OnInit {
 
     this.eventosEnMes = 0;
     this.eventos.forEach(ev => {
-      const inicioEv = new Date(ev.fechaInicio).getTime();
-      const finEv = new Date(ev.fechaFin).getTime();
+      const inicioEv = new Date(ev.dateStart).getTime();
+      const finEv = new Date(ev.dateEnd).getTime();
       if (finEv >= mesInicio && inicioEv <= mesFin) {
         this.eventosEnMes += 1;
       }
@@ -195,22 +205,12 @@ export class HomePage implements OnInit {
     this.tieneEventosMes = this.eventosEnMes > 0;
     // filtrar mostrados por mes
     this.mostrados = this.eventos.filter(ev => {
-      const inicioEv = new Date(ev.fechaInicio).getTime();
-      const finEv = new Date(ev.fechaFin).getTime();
+      const inicioEv = new Date(ev.dateStart).getTime();
+      const finEv = new Date(ev.dateEnd).getTime();
       return finEv >= mesInicio && inicioEv <= mesFin;
     });
     this.ordenarPorPrioridadYFecha(this.mostrados);
     this.paginaIndex = this.mostrados.length;
-  }
-
-  private ordenarEventosAsc() {
-    if (!this.eventos) return;
-    this.eventos.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
-  }
-
-  private ordenarMostradosAsc() {
-    if (!this.mostrados) return;
-    this.mostrados.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
   }
 
   private obtenerEventosPromocionActiva(): Evento[] {
@@ -228,8 +228,8 @@ export class HomePage implements OnInit {
   }
 
   private compararFechaLuegoPrioridad(a: Evento, b: Evento): number {
-    const da = a.fechaInicio instanceof Date ? a.fechaInicio.getTime() : new Date(a.fechaInicio).getTime();
-    const db = b.fechaInicio instanceof Date ? b.fechaInicio.getTime() : new Date(b.fechaInicio).getTime();
+    const da = new Date(a.dateStart).getTime();
+    const db = new Date(b.dateStart).getTime();
     if (da !== db) return da - db; // fechaInicio ascendente
     const pa = a.prioridad ?? 0;
     const pb = b.prioridad ?? 0;
@@ -240,7 +240,7 @@ export class HomePage implements OnInit {
     // Si hay un filtro de fecha específico
     if (this.filtroFecha) {
       const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
-      const arr = this.eventos.filter(ev => new Date(ev.fechaInicio).setHours(0,0,0,0) === fechaSel);
+      const arr = this.eventos.filter(ev => new Date(ev.dateStart).setHours(0,0,0,0) === fechaSel);
       this.ordenarPorPrioridadYFecha(arr);
       this.fuenteCount = arr.length;
       return arr;
@@ -253,8 +253,8 @@ export class HomePage implements OnInit {
       const mesInicio = new Date(year, month, 1, 0, 0, 0, 0).getTime();
       const mesFin = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
       const arr = this.eventos.filter(ev => {
-        const inicioEv = new Date(ev.fechaInicio).getTime();
-        const finEv = new Date(ev.fechaFin).getTime();
+        const inicioEv = new Date(ev.dateStart).getTime();
+        const finEv = new Date(ev.dateEnd).getTime();
         return finEv >= mesInicio && inicioEv <= mesFin;
       });
       this.ordenarPorPrioridadYFecha(arr);
@@ -270,8 +270,8 @@ export class HomePage implements OnInit {
     const mesesMap: Record<string, { key: string; label: string; count: number }> = {};
     const nombres = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     this.eventos.forEach(ev => {
-      const inicio = new Date(ev.fechaInicio);
-      const fin = new Date(ev.fechaFin);
+      const inicio = new Date(ev.dateStart);
+      const fin = new Date(ev.dateEnd);
       const cur = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
       const end = new Date(fin.getFullYear(), fin.getMonth(), 1);
       while (cur.getTime() <= end.getTime()) {
@@ -288,12 +288,6 @@ export class HomePage implements OnInit {
     this.mesesConEventos.unshift({ key: 'todos', label: 'Todos', count: this.eventos.length });
   }
 
-  desmarcarSeleccion() {
-    this.filtroFecha = undefined;
-    this.mesSeleccionado = undefined;
-    this.tieneEventosMes = false;
-    this.eventosEnMes = 0;
-    this.cargarInicial();
-  }
+
 
 }

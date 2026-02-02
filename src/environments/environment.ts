@@ -1,6 +1,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://advice-reseller-tournament-mitchell.trycloudflare.com'
+  apiUrl: 'https://buildings-involved-alex-switched.trycloudflare.com'
   
 };
