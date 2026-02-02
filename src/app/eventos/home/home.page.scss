@@ -1,6 +1,9 @@
 :host {
 	--card-radius: 8px;
 }
+.header-left { display:flex; flex-direction:column; gap:2px; padding: 8px 0; }
+.header-left .brand { font-weight:700; font-size:1.05rem; color: var(--ion-color-step-900) }
+.header-left .subtitle { font-size:0.78rem; opacity:0.9; color: var(--ion-color-step-700) }
 .lista-eventos {
 	padding: 12px;
 }
@@ -144,6 +147,7 @@
 .descripcion {
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;

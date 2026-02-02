@@ -3,7 +3,10 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" text="" aria-label="Volver"></ion-back-button>
     </ion-buttons>
-    <ion-title>Eventos - Ibarra</ion-title>
+    <div class="header-left">
+      <div class="brand">Eventos - GAD de Ibarra</div>
+      <div class="subtitle">Gobierno Autónomo Descentralizado</div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -48,8 +51,9 @@
   <div class="lista-eventos">
     <ion-grid>
       <ion-row>
-        <ion-col size="12" size-md="6" *ngFor="let evento of mostrados">
-          <ion-card class="card-evento" >
+        <ng-container *ngFor="let evento of mostrados">
+          <ion-col size="12" size-md="6" >
+          <ion-card class="card-evento" tappable (click)="abrirDetalles(evento)">
             <div class="card-media">
               <ion-img [src]="evento.mainBanner" (click)="abrirGaleria(evento)"></ion-img>
               <div class="badge" *ngIf="evento.type">{{ evento.type }}</div>
@@ -68,7 +72,8 @@
               </div>
             </ion-card-content>
           </ion-card>
-        </ion-col>
+          </ion-col>
+        </ng-container>
       </ion-row>
     </ion-grid>
   </div>

@@ -12,7 +12,6 @@ import {
   IonCardContent,
   IonRefresher,
   IonRefresherContent,
-  IonButton,
   IonIcon,
   IonChip,
   IonItem,
@@ -48,7 +47,6 @@ import { Evento } from '../evento.model';
     IonCardContent,
     IonRefresher,
     IonRefresherContent,
-    IonButton,
     IonIcon,
     IonChip,
     IonItem,
@@ -107,6 +105,16 @@ export class HomePage implements OnInit {
   }
 
   async abrirGaleria(evento: Evento) {
+  }
+
+  async abrirDetalles(evento: Evento) {
+    // Abrir la page `EventoPage` como modal pasando el objeto `evento` (estructura API)
+    const { EventoPage } = await import('../evento/evento.page');
+    const modal = await this.modalCtrl.create({
+      component: EventoPage,
+      componentProps: { evento }
+    });
+    await modal.present();
   }
 
   async abrirMapa(evento: Evento) {

@@ -36,7 +36,8 @@ export class EventosService {
         contact: [{ type: 'telefono', description: '+5930999999999' }],
         services: ['Comercio', 'Alimentos', 'Entretenimiento'],
         type: 'comercial',
-        state: true
+        state: true,
+        link: 'https://gadibarra.gob.ec/feria-comercial-2026'
       },
       {
         id: 2,
@@ -51,7 +52,8 @@ export class EventosService {
         contact: [{ type: 'telefono', description: '+5930988888888' }],
         services: ['Formación', 'Networking'],
         type: 'capacitación',
-        state: true
+        state: true,
+        link: 'https://gadibarra.gob.ec/capacitacion-emprendimiento'
       },
       {
         id: 3,
@@ -63,10 +65,15 @@ export class EventosService {
         dateEnd: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         direction: 'Centro de Convenciones Ibarra',
         location: 'Ibarra',
-        contact: [{ type: 'telefono', description: '+5930988888888' }],
+        contact: [
+          { type: 'telefono', description: '+5930988888888' },
+          { type: 'whatsapp', description: '+5930988888888' },
+          { type: 'email', description: '+5930988888888' }
+        ],
         services: ['Formación', 'Networking'],
         type: 'capacitación',
         state: true
+        
       }
     ];
 

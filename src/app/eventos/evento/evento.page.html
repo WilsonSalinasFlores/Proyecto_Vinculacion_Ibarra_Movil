@@ -1,13 +1,81 @@
-<ion-header [translucent]="true">
+<ion-header class="evento-header">
   <ion-toolbar>
-    <ion-title>evento</ion-title>
+    <div class="header-left">
+      <div class="brand">GAD de Ibarra</div>
+      <div class="subtitle">Gobierno Autónomo Descentralizado</div>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="dismiss()" aria-label="Cerrar">
+        <ion-icon slot="icon-only" name="close" class="close-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">evento</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="evento-content" [fullscreen]="true">
+  <ng-container *ngIf="evento as e">
+    <div class="evento-card">
+      <div class="hero">
+        <ion-img *ngIf="e.mainBanner" [src]="e.mainBanner" class="hero-img"></ion-img>
+        <ion-chip *ngIf="e.type" class="badge">{{ e.type }}</ion-chip>
+      </div>
+
+      <div class="card-body">
+        <h2 class="title">{{ e.name }}</h2>
+
+        <div class="fechas-box" *ngIf="e.dateStart || e.dateEnd">
+          <div class="fechas-header">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <strong>Fechas del evento</strong>
+          </div>
+          <div class="fechas-dates">
+            <div><small>Fecha de inicio:</small> {{ e.dateStart | date:'dd/MM/yyyy' }}</div>
+            <div><small>Fecha de fin:</small> {{ e.dateEnd | date:'dd/MM/yyyy' }}</div>
+          </div>
+        </div>
+
+        <h3 class="section-title"><ion-icon name="document-text-outline"></ion-icon> Descripción</h3>
+        <p class="descripcion-full">{{ e.description }}</p>
+
+        <h3 class="section-title"><ion-icon name="pricetag-outline"></ion-icon> Servicios</h3>
+        <div class="services-chips">
+          <ion-chip *ngFor="let s of (e.services || [])" class="service-chip" outline>
+            {{ s }}
+          </ion-chip>
+        </div>
+
+        <h3 class="section-title"><ion-icon name="location-outline"></ion-icon> Ubicación</h3>
+        <div class="location">{{ e.direction || e.location }}</div>
+        <div class="location-actions">
+          <ion-button class="maps-btn" fill="outline" expand="block" (click)="abrirUbicacion(e.direction || e.location)">
+            
+            <span>Abrir en Maps</span>
+          </ion-button>
+        </div>
+
+        <h3 class="section-title"><ion-icon name="people-outline"></ion-icon> Contactos</h3>
+        <div class="contacts">
+          <div class="contact-item" *ngFor="let c of (e.contact || [])">
+            <div class="contact-icon">
+              <ion-icon [name]="getContactIcon(c.type)" aria-hidden="true"></ion-icon>
+            </div>
+            <div class="contact-value">{{ c.description }}</div>
+          </div>
+        </div>
+
+        <h3 class="section-title"><ion-icon name="images-outline"></ion-icon> Galería</h3>
+        <div class="gallery">
+          <div class="thumb" *ngFor="let g of (e.galery || [])">
+            <ion-img [src]="g"></ion-img>
+          </div>
+        </div>
+
+        <div class="action-access" *ngIf="e.link">
+          <ion-button class="acceder-btn" fill="solid" expand="block" (click)="accederEvento(e.link)">
+            Acceder al Evento
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </ion-content>
