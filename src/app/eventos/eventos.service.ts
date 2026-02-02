@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { Evento } from './evento.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EventosService {
   private eventos: Evento[] = [];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.eventos = this.crearDatosFicticios();
   }
-
+  private apiUrl = environment.apiUrl;
   /**
    * Carga eventos desde el JSON del API y los mapea al modelo interno.
    * Puede ser llamado pasando el objeto JSON que contiene `data: ApiEvento[]`.
@@ -17,6 +20,27 @@ export class EventosService {
     if (!json || !Array.isArray(json.data)) return;
     // Asumimos que la estructura ya coincide con `Evento` (nombres del API)
     this.eventos = json.data.slice();
+  }
+
+  /**
+   * Carga eventos desde una URL base del API. Construye la ruta `/events` y hace GET.
+   * Devuelve el arreglo de eventos cargados o null en caso de error.
+   */
+  async cargarDesdeApiUrl(): Promise<Evento[] | null> {
+    
+    const url = this.apiUrl + '/events';
+    try {
+      const res = await firstValueFrom(this.http.get<{ success: boolean; message?: string; data: Evento[] }>(url));
+      if (res && Array.isArray(res.data)) {
+        this.eventos = res.data.slice();
+        return this.eventos;
+      }
+      console.warn('Respuesta inválida al cargar eventos desde API', res);
+      return null;
+    } catch (err) {
+      console.error('Error cargando eventos desde API:', err);
+      return null;
+    }
   }
 
   private crearDatosFicticios(): Evento[] {
@@ -84,30 +108,4 @@ export class EventosService {
     return this.eventos.slice();
   }
 
-  obtenerMasCercanos(n = 5): Evento[] {
-    const ahora = new Date().getTime();
-    const copia = this.eventos.slice();
-    copia.sort((a, b) => {
-      const da = Math.abs(new Date(a.dateStart).getTime() - ahora);
-      const db = Math.abs(new Date(b.dateStart).getTime() - ahora);
-      if (da === db) {
-        const pa = a.prioridad || 0;
-        const pb = b.prioridad || 0;
-        return pb - pa;
-      }
-      return da - db;
-    });
-    return copia.slice(0, n);
-  }
-
-  cargarNuevos(desdeIndex: number, cantidad = 5): Evento[] {
-    const orden = this.eventos.slice().sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime());
-    return orden.slice(desdeIndex, desdeIndex + cantidad);
-  }
-
-  cargarAnteriores(hastaIndex: number, cantidad = 5): Evento[] {
-    const orden = this.eventos.slice().sort((a, b) => new Date(a.dateStart).getTime() - new Date(b.dateStart).getTime());
-    const start = Math.max(0, hastaIndex - cantidad);
-    return orden.slice(start, hastaIndex);
-  }
 }

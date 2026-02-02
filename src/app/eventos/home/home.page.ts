@@ -25,6 +25,7 @@ import {
   IonCol,
   ModalController, IonLabel, IonButtons, IonBackButton, IonFooter } from '@ionic/angular/standalone';
 import { EventosService } from '../eventos.service';
+import { environment } from '../../../environments/environment';
 import { Evento } from '../evento.model';
 
 
@@ -83,8 +84,19 @@ export class HomePage implements OnInit {
     this.cargarInicial();
   }
 
-  cargarInicial() {
-    this.eventos = this.eventosSrv.listarEventos();
+  async cargarInicial() {
+    // Intentar cargar desde la API configurada en environment.apiUrl
+    let desdeApi: Evento[] | null = null;
+    try {
+      const useApiEvents=true;
+      if (environment?.apiUrl && useApiEvents) {
+        desdeApi = await this.eventosSrv.cargarDesdeApiUrl();
+      }
+    } catch (e) {
+      console.warn('Error al cargar eventos desde API en inicialización', e);
+    }
+
+    this.eventos = desdeApi || this.eventosSrv.listarEventos();
     // obtener eventos cuya promoción está activa ahora
     this.eventosFiltradosPromocion = this.obtenerEventosPromocionActiva();
     // ordenar por prioridad (desc) y luego por fechaInicio (asc)
@@ -116,38 +128,6 @@ export class HomePage implements OnInit {
     });
     await modal.present();
   }
-
-  async abrirMapa(evento: Evento) {
-    // Usar `direction` o `location` del API para buscar en Google Maps
-    const query = evento.direction || evento.location || '';
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-    // Abrir con el comportamiento nativo / fallback
-    try {
-      window.open(url, '_system');
-    } catch (e) {
-      window.open(url, '_blank');
-    }
-  }
-
-  contactar(evento: Evento) {
-    if (!evento.contact || !evento.contact.length) return;
-    // Buscar primer contacto de tipo teléfono/whatsapp/telefono
-    const phone = evento.contact.find(c => /telefono|whatsapp|phone/i.test(c.type || ''));
-    if (phone && phone.description) {
-      try {
-        window.location.href = `tel:${phone.description}`;
-      } catch (e) {
-        window.open(`tel:${phone.description}`, '_blank');
-      }
-      return;
-    }
-    // Si hay email, abrir mailto
-    const email = evento.contact.find(c => /email/i.test(c.type || ''));
-    if (email && email.description) {
-      try { window.location.href = `mailto:${email.description}`; } catch (e) { window.open(`mailto:${email.description}`, '_blank'); }
-    }
-  }
-
   async mostrarNuevos(event?: any) {
     const fuente = this.obtenerFuenteActual();
     const desde = this.paginaIndex;
