@@ -12,7 +12,6 @@ import {
   IonCardContent,
   IonRefresher,
   IonRefresherContent,
-  IonButton,
   IonIcon,
   IonChip,
   IonItem,
@@ -21,17 +20,21 @@ import {
   IonSelect,
   IonSelectOption,
   IonImg,
-  ModalController, IonLabel } from '@ionic/angular/standalone';
+  IonGrid,
+  IonRow,
+  IonCol,
+  ModalController, IonLabel, IonButtons, IonBackButton, IonFooter } from '@ionic/angular/standalone';
 import { EventosService } from '../eventos.service';
+import { environment } from '../../../environments/environment';
 import { Evento } from '../evento.model';
-import { GaleriaPage } from '../galeria/galeria.page';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonFooter, IonBackButton, IonButtons, 
     IonContent,
     IonHeader,
     IonTitle,
@@ -45,13 +48,15 @@ import { GaleriaPage } from '../galeria/galeria.page';
     IonCardContent,
     IonRefresher,
     IonRefresherContent,
-    IonButton,
     IonIcon,
     IonChip,
     IonItem,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonImg,
+    IonGrid,
+    IonRow,
+    IonCol,
     CommonModule,
     FormsModule
   ],
@@ -79,8 +84,19 @@ export class HomePage implements OnInit {
     this.cargarInicial();
   }
 
-  cargarInicial() {
-    this.eventos = this.eventosSrv.listarEventos();
+  async cargarInicial() {
+    // Intentar cargar desde la API configurada en environment.apiUrl
+    let desdeApi: Evento[] | null = null;
+    try {
+      const useApiEvents=true;
+      if (environment?.apiUrl && useApiEvents) {
+        desdeApi = await this.eventosSrv.cargarDesdeApiUrl();
+      }
+    } catch (e) {
+      console.warn('Error al cargar eventos desde API en inicialización', e);
+    }
+
+    this.eventos = desdeApi || this.eventosSrv.listarEventos();
     // obtener eventos cuya promoción está activa ahora
     this.eventosFiltradosPromocion = this.obtenerEventosPromocionActiva();
     // ordenar por prioridad (desc) y luego por fechaInicio (asc)
@@ -101,35 +117,17 @@ export class HomePage implements OnInit {
   }
 
   async abrirGaleria(evento: Evento) {
+  }
+
+  async abrirDetalles(evento: Evento) {
+    // Abrir la page `EventoPage` como modal pasando el objeto `evento` (estructura API)
+    const { EventoPage } = await import('../evento/evento.page');
     const modal = await this.modalCtrl.create({
-      component: GaleriaPage,
-      componentProps: { imagenes: evento.galeria, titulo: evento.titulo }
+      component: EventoPage,
+      componentProps: { evento }
     });
     await modal.present();
   }
-
-  async abrirMapa(evento: Evento) {
-    const lat = evento.ubicacion.lat;
-    const lng = evento.ubicacion.lng;
-    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    // Abrir con el comportamiento nativo / fallback
-    try {
-      window.open(url, '_system');
-    } catch (e) {
-      window.open(url, '_blank');
-    }
-  }
-
-  contactar(evento: Evento) {
-    if (evento.contacto) {
-      try {
-        window.location.href = `tel:${evento.contacto}`;
-      } catch (e) {
-        window.open(`tel:${evento.contacto}`, '_blank');
-      }
-    }
-  }
-
   async mostrarNuevos(event?: any) {
     const fuente = this.obtenerFuenteActual();
     const desde = this.paginaIndex;
@@ -155,7 +153,7 @@ export class HomePage implements OnInit {
     if (!this.filtroFecha) { this.cargarInicial(); return; }
     const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
     this.mostrados = this.eventos.filter(ev => {
-      const inicio = new Date(ev.fechaInicio).setHours(0,0,0,0);
+      const inicio = new Date(ev.dateStart).setHours(0,0,0,0);
       return inicio === fechaSel;
     });
     this.ordenarPorPrioridadYFecha(this.mostrados);
@@ -186,8 +184,8 @@ export class HomePage implements OnInit {
 
     this.eventosEnMes = 0;
     this.eventos.forEach(ev => {
-      const inicioEv = new Date(ev.fechaInicio).getTime();
-      const finEv = new Date(ev.fechaFin).getTime();
+      const inicioEv = new Date(ev.dateStart).getTime();
+      const finEv = new Date(ev.dateEnd).getTime();
       if (finEv >= mesInicio && inicioEv <= mesFin) {
         this.eventosEnMes += 1;
       }
@@ -195,22 +193,12 @@ export class HomePage implements OnInit {
     this.tieneEventosMes = this.eventosEnMes > 0;
     // filtrar mostrados por mes
     this.mostrados = this.eventos.filter(ev => {
-      const inicioEv = new Date(ev.fechaInicio).getTime();
-      const finEv = new Date(ev.fechaFin).getTime();
+      const inicioEv = new Date(ev.dateStart).getTime();
+      const finEv = new Date(ev.dateEnd).getTime();
       return finEv >= mesInicio && inicioEv <= mesFin;
     });
     this.ordenarPorPrioridadYFecha(this.mostrados);
     this.paginaIndex = this.mostrados.length;
-  }
-
-  private ordenarEventosAsc() {
-    if (!this.eventos) return;
-    this.eventos.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
-  }
-
-  private ordenarMostradosAsc() {
-    if (!this.mostrados) return;
-    this.mostrados.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
   }
 
   private obtenerEventosPromocionActiva(): Evento[] {
@@ -228,8 +216,8 @@ export class HomePage implements OnInit {
   }
 
   private compararFechaLuegoPrioridad(a: Evento, b: Evento): number {
-    const da = a.fechaInicio instanceof Date ? a.fechaInicio.getTime() : new Date(a.fechaInicio).getTime();
-    const db = b.fechaInicio instanceof Date ? b.fechaInicio.getTime() : new Date(b.fechaInicio).getTime();
+    const da = new Date(a.dateStart).getTime();
+    const db = new Date(b.dateStart).getTime();
     if (da !== db) return da - db; // fechaInicio ascendente
     const pa = a.prioridad ?? 0;
     const pb = b.prioridad ?? 0;
@@ -240,7 +228,7 @@ export class HomePage implements OnInit {
     // Si hay un filtro de fecha específico
     if (this.filtroFecha) {
       const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
-      const arr = this.eventos.filter(ev => new Date(ev.fechaInicio).setHours(0,0,0,0) === fechaSel);
+      const arr = this.eventos.filter(ev => new Date(ev.dateStart).setHours(0,0,0,0) === fechaSel);
       this.ordenarPorPrioridadYFecha(arr);
       this.fuenteCount = arr.length;
       return arr;
@@ -253,8 +241,8 @@ export class HomePage implements OnInit {
       const mesInicio = new Date(year, month, 1, 0, 0, 0, 0).getTime();
       const mesFin = new Date(year, month + 1, 0, 23, 59, 59, 999).getTime();
       const arr = this.eventos.filter(ev => {
-        const inicioEv = new Date(ev.fechaInicio).getTime();
-        const finEv = new Date(ev.fechaFin).getTime();
+        const inicioEv = new Date(ev.dateStart).getTime();
+        const finEv = new Date(ev.dateEnd).getTime();
         return finEv >= mesInicio && inicioEv <= mesFin;
       });
       this.ordenarPorPrioridadYFecha(arr);
@@ -270,8 +258,8 @@ export class HomePage implements OnInit {
     const mesesMap: Record<string, { key: string; label: string; count: number }> = {};
     const nombres = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
     this.eventos.forEach(ev => {
-      const inicio = new Date(ev.fechaInicio);
-      const fin = new Date(ev.fechaFin);
+      const inicio = new Date(ev.dateStart);
+      const fin = new Date(ev.dateEnd);
       const cur = new Date(inicio.getFullYear(), inicio.getMonth(), 1);
       const end = new Date(fin.getFullYear(), fin.getMonth(), 1);
       while (cur.getTime() <= end.getTime()) {
@@ -288,12 +276,6 @@ export class HomePage implements OnInit {
     this.mesesConEventos.unshift({ key: 'todos', label: 'Todos', count: this.eventos.length });
   }
 
-  desmarcarSeleccion() {
-    this.filtroFecha = undefined;
-    this.mesSeleccionado = undefined;
-    this.tieneEventosMes = false;
-    this.eventosEnMes = 0;
-    this.cargarInicial();
-  }
+
 
 }

@@ -1,6 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Eventos - Ibarra</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="" aria-label="Volver"></ion-back-button>
+    </ion-buttons>
+    <div class="header-left">
+      <div class="brand">Eventos - GAD de Ibarra</div>
+      <div class="subtitle">Gobierno Autónomo Descentralizado</div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -16,16 +22,22 @@
       <ion-select [(ngModel)]="mesSeleccionado" (ionChange)="comprobarMesConEventos()" interface="action-sheet">
         <ion-select-option *ngFor="let m of mesesConEventos" [value]="m.key">{{ m.label }}{{ m.key!=='todos' ? ' (' + m.count + ')' : '' }}</ion-select-option>
       </ion-select>
-      <ion-button fill="clear" (click)="desmarcarSeleccion()">Desmarcar</ion-button>
+      
     </ion-item>
-
+    
     <div class="mes-indicador" *ngIf="mesSeleccionado">
-      <div *ngIf="tieneEventosMes" class="tiene">Este mes tiene {{ eventosEnMes }} evento(s)</div>
+      <div *ngIf="tieneEventosMes" class="tiene">Tienes {{ eventosEnMes }} evento(s) disponible(s)</div>
       <div *ngIf="!tieneEventosMes" class="no-tiene">No hay eventos en este mes</div>
     </div>
   </div>
 
-    <!-- Estado vacío cuando no hay eventos a mostrar -->
+  <!-- Banner informativo (mejora visual) -->
+  <div class="top-banner" role="status">
+    
+    <div class="top-banner__text">Explora los eventos de Ibarra — desliza para actualizar y toca una tarjeta para ver más.</div>
+  </div>
+  
+  <!-- Estado vacío cuando no hay eventos a mostrar -->
     <div *ngIf="mostrados.length === 0" class="empty-state">
       <div *ngIf="fuenteCount && fuenteCount > 0">
         <h2>Hay {{ fuenteCount }} evento(s) disponibles</h2>
@@ -36,38 +48,39 @@
         <p>Actualmente no existen eventos para la selección actual.</p>
       </div>
     </div>
-
-    <div class="lista-eventos">
-    <ion-card *ngFor="let evento of mostrados" class="card-evento">
-      <ion-img [src]="evento.imagenPrincipal" (click)="abrirGaleria(evento)"></ion-img>
-      <ion-card-header>
-        <ion-card-title>{{ evento.titulo }}</ion-card-title>
-        <div class="fechas">{{ evento.fechaInicio | date:'dd/MM/yyyy' }} - {{ evento.fechaFin | date:'dd/MM/yyyy' }}</div>
-      </ion-card-header>
-      <ion-card-content>
-        <p>{{ evento.descripcion }}</p>
-        <div class="info-bottom-vertical">
-          <ion-item button (click)="abrirMapa(evento)">
-            
-            <ion-label><ion-icon name="location" slot="start" class="pin-icon"></ion-icon> {{ evento.ubicacion.direccion || (evento.ubicacion.lat + ', ' + evento.ubicacion.lng) }}</ion-label>
-          </ion-item>
-
-          <div class="contact-row">
-            <ion-label class="contacto-label">Contacto:</ion-label>
-            <ion-button size="small" fill="clear" (click)="contactar(evento)" class="contact-number" aria-label="Llamar al contacto">
-              <ion-icon name="call" slot="start"></ion-icon>
-              {{ evento.contacto || 'No disponible' }}
-            </ion-button>
-            <ion-button size="small" color="secondary" (click)="abrirGaleria(evento)">Galería</ion-button>
-          </div>
-
-          <div class="chips">
-            <ion-chip color="tertiary">{{ evento.tipo }}</ion-chip>
-            <ion-chip *ngFor="let s of evento.servicios">{{ s }}</ion-chip>
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
+  <div class="lista-eventos">
+    <ion-grid>
+      <ion-row>
+        <ng-container *ngFor="let evento of mostrados">
+          <ion-col size="12" size-md="6" >
+          <ion-card class="card-evento" tappable (click)="abrirDetalles(evento)">
+            <div class="card-media">
+              <ng-container *ngIf="evento.mainBanner; else noImage">
+                <ion-img [src]="evento.mainBanner" (click)="abrirGaleria(evento)"></ion-img>
+              </ng-container>
+              <ng-template #noImage>
+                <div class="no-image">Imagen no disponible</div>
+              </ng-template>
+              <div class="badge" *ngIf="evento.type">{{ evento.type }}</div>
+            </div>
+            <ion-card-header>
+              <ion-card-title>{{ evento.name }}</ion-card-title>
+              <div class="fechas"><ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>{{ evento.dateStart | date:'dd/MM/yyyy' }} - {{ evento.dateEnd | date:'dd/MM/yyyy' }}</div>
+            </ion-card-header>
+            <ion-card-content>
+              <p class="descripcion">{{ evento.description }}</p>
+              <br>
+              <div class="info-bottom-vertical">
+                <div class="chips">
+                  <ion-chip *ngFor="let s of evento.services">{{ s }}</ion-chip>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+          </ion-col>
+        </ng-container>
+      </ion-row>
+    </ion-grid>
   </div>
 
   <ion-infinite-scroll threshold="100px" (ionInfinite)="mostrarNuevos($event)">
@@ -76,3 +89,11 @@
   </ion-infinite-scroll>
 
 </ion-content>
+
+<ion-footer>
+    <ion-toolbar color="light" class="footer-toolbar">
+      <ion-title size="small">
+        © 2025 Municipalidad de Ibarra - Todos los derechos reservados
+      </ion-title>
+    </ion-toolbar>
+  </ion-footer>

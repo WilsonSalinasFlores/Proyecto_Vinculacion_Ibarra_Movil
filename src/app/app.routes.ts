@@ -83,7 +83,12 @@ export const routes: Routes = [
   {
     path: 'eventos/home',
     loadComponent: () => import('./eventos/home/home.page').then( m => m.HomePage)
+  },
+  {
+    path: 'eventos/evento',
+    loadComponent: () => import('./eventos/evento/evento.page').then( m => m.EventoPage)
   }
+
 
 
 ];
