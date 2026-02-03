@@ -66,6 +66,7 @@ body.dark {
 ion-toolbar.header-red,
 ion-header.header-red ion-toolbar {
   background: var(--header-red-bg) !important;
+  --background: var(--header-red-bg) !important;
   color: var(--header-red-text) !important;
 }
 
