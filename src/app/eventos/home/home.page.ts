@@ -88,7 +88,7 @@ export class HomePage implements OnInit {
     // Intentar cargar desde la API configurada en environment.apiUrl
     let desdeApi: Evento[] | null = null;
     try {
-      const useApiEvents=true;
+      const useApiEvents=false;
       if (environment?.apiUrl && useApiEvents) {
         desdeApi = await this.eventosSrv.cargarDesdeApiUrl();
       }

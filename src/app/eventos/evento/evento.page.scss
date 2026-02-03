@@ -1,15 +1,47 @@
 :host {
 	--header-bg: #1e60ff;
+
+	/* Evento theme variables (defaults for light theme) */
+	--evento-card-bg: #ffffff;
+	--evento-card-color: #222222;
+	--evento-card-border: rgba(0,0,0,0.06);
+	--evento-chip-bg: rgba(0,0,0,0.03);
+	--evento-chip-color: #222222;
+	--evento-muted: rgba(0,0,0,0.65);
+	--evento-placeholder-grad-top: rgba(0,0,0,0.03);
+	--evento-placeholder-grad-bottom: rgba(0,0,0,0.06);
+}
+
+/* When Ionic applies the global .dark class, adjust variables for dark mode */
+:host-context(.dark) {
+	--evento-card-bg: #2f2f2f;
+	--evento-card-color: #f5f5f5;
+	--evento-card-border: rgba(255,255,255,0.03);
+	--evento-chip-bg: rgba(255,255,255,0.02);
+	--evento-chip-color: var(--ion-color-step-100, #f5f5f5);
+	--evento-muted: rgba(255,255,255,0.85);
+	--evento-placeholder-grad-top: rgba(255,255,255,0.03);
+	--evento-placeholder-grad-bottom: rgba(255,255,255,0.06);
+
+    /* header text for dark mode */
+    --evento-header-text: #fff;
+    --evento-header-text-rgb: 255,255,255;
+}
+
+/* default (light) header text variable */
+:host {
+    --evento-header-text: #222;
+    --evento-header-text-rgb: 34,34,34;
 }
 
 .evento-header ion-toolbar {
 	background: var(--header-bg);
-	color: #fff;
+	color: var(--evento-header-text, #222);
 	padding: 12px 16px;
 }
-.header-left .brand { font-weight:700; font-size:1.05rem; color: var(--ion-color-step-900) }
-.header-left .subtitle { font-size:0.78rem; opacity:0.9; color: var(--ion-color-step-700) }
-.close-icon { color: #fff }
+.header-left .brand { font-weight:700; font-size:1.05rem; color: var(--evento-header-text, #222) }
+.header-left .subtitle { font-size:0.78rem; opacity:0.9; color: rgba(var(--evento-header-text-rgb, 34,34,34), 0.7) }
+.close-icon { color: var(--evento-header-text, #222) }
 
 .evento-content {
 	padding: 12px;
@@ -17,13 +49,13 @@
 }
 
 .evento-card {
-	background: #2f2f2f;
-	color: var(--ion-color-step-100);
+	background: var(--evento-card-bg);
+	color: var(--evento-card-color);
 	border-radius: 12px;
 	box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 	overflow: hidden;
 	margin-top: 8px;
-	border: 1px solid rgba(255,255,255,0.03);
+	border: 1px solid var(--evento-card-border);
 }
 
 .hero { position: relative; }
@@ -38,15 +70,15 @@
 	font-size: 16px;
 }
 .title { font-size: 1.35rem; line-height: 1.2; margin-bottom: 10px }
-.descripcion-full { font-size: 1rem; color: rgba(255,255,255,0.92); line-height:1.6 }
+.descripcion-full { font-size: 1rem; color: var(--evento-muted); line-height:1.6 }
 
 .services-chips { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 16px 0 }
 .services-chips ion-chip.service-chip {
-	--background: rgba(255,255,255,0.02);
-	color: var(--ion-color-step-100);
+	--background: var(--evento-chip-bg);
+	color: var(--evento-chip-color);
 	border-radius: 999px;
 	padding: 6px 10px;
-	--border-color: rgba(255,255,255,0.06);
+	--border-color: rgba(0,0,0,0.06);
 	font-size: 0.95rem;
 }
 .service-chip { display:inline-flex; align-items:center; justify-content:center }
@@ -55,7 +87,7 @@
 .contact-type { font-size: 0.95rem }
 .contact-value { font-size: 0.95rem }
 
-.location { font-size: 0.96rem; color: var(--ion-color-step-100); margin-bottom:8px }
+.location { font-size: 0.96rem; color: var(--evento-card-color); margin-bottom:8px }
 .location-actions { margin-bottom: 12px }
 .location-actions ion-button { --padding-start: 12px; --padding-end: 12px }
 .maps-btn {
@@ -73,13 +105,13 @@
 .maps-btn span { display: inline-block }
 
 /* Section titles with icons */
-.section-title { display:flex; align-items:center; gap:10px; font-size:1rem; margin: 14px 0 8px 0; color: var(--ion-color-step-100); font-weight:600 }
+.section-title { display:flex; align-items:center; gap:10px; font-size:1rem; margin: 14px 0 8px 0; color: var(--evento-card-color); font-weight:600 }
 .section-title ion-icon { color: var(--ion-color-primary); font-size:1.05rem }
 
 /* Reduce visual separators and noise */
 .card-body { padding: 18px }
 .card-body h3 { margin-top: 12px }
-.contact-item { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02) }
+.contact-item { background: var(--evento-chip-bg); border: 1px solid var(--evento-card-border) }
 
 /* Make gallery thumbs slightly larger for touch targets */
 .thumb { width:100px; height:72px }
@@ -93,21 +125,21 @@
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
-	color: var(--ion-color-step-300);
+	background: linear-gradient(180deg, var(--evento-placeholder-grad-top), var(--evento-placeholder-grad-bottom));
+	color: var(--evento-muted);
 	border-top-left-radius: 12px;
 	border-top-right-radius: 12px;
 	font-weight: 600;
 }
-.no-image-hero ion-icon { font-size: 1.6rem; color: var(--ion-color-step-300) }
+.no-image-hero ion-icon { font-size: 1.6rem; color: var(--evento-muted) }
 
 .no-gallery {
 	height: 120px;
 	display:flex;
 	align-items:center;
 	justify-content:center;
-	background: linear-gradient(180deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
-	color: var(--ion-color-step-300);
+	background: linear-gradient(180deg, var(--evento-placeholder-grad-top), var(--evento-placeholder-grad-bottom));
+	color: var(--evento-muted);
 	border-radius: 8px;
 	font-weight: 600;
 }
@@ -129,22 +161,22 @@
 .fechas-header { display:flex; align-items:center; gap:8px; color:var(--ion-color-primary); font-weight:600 }
 .fechas-dates { margin-top:6px; color:var(--ion-color-medium) }
 
-.descripcion-full { color: rgba(255,255,255,0.9); line-height:1.4 }
+.descripcion-full { color: var(--evento-muted); line-height:1.4 }
 
 .services-list { display:grid; grid-template-columns: 1fr 1fr; gap:8px; list-style: none; padding:0; margin:8px 0 16px 0 }
-.services-list li { position:relative; padding-left:18px; color: var(--ion-color-step-100) }
+.services-list li { position:relative; padding-left:18px; color: var(--evento-card-color) }
 .services-list li:before { content: '\2022'; position:absolute; left:0; color:var(--ion-color-primary) }
 
 
-.location { margin-bottom:8px; color:var(--ion-color-step-100) }
-.map-placeholder { height:120px; background:#2b2b2b; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--ion-color-step-300) }
+.location { margin-bottom:8px; color:var(--evento-card-color) }
+.map-placeholder { height:120px; background: linear-gradient(180deg, var(--evento-placeholder-grad-top), var(--evento-placeholder-grad-bottom)); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--evento-muted) }
 
 .contacts { display:flex; flex-direction:column; gap:8px; margin:8px 0 16px 0 }
-.contact-item { background: rgba(255,255,255,0.02); padding:10px; border-radius:8px; display:flex; flex-direction:column }
-.contact-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background: rgba(255,255,255,0.02); margin-right:10px }
+.contact-item { background: var(--evento-chip-bg); padding:10px; border-radius:8px; display:flex; flex-direction:column }
+.contact-icon { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background: var(--evento-chip-bg); margin-right:10px }
 .contact-icon ion-icon { font-size:1.1rem; color: var(--ion-color-primary) }
 .contact-item { display:flex; flex-direction:row; align-items:center; padding:10px }
-.contact-value { color:var(--ion-color-step-100); word-break: break-word }
+.contact-value { color: var(--evento-card-color); word-break: break-word }
 
 .gallery { display:flex; gap:8px; overflow:auto; padding-bottom:8px }
 .thumb { width:88px; height:64px; flex:0 0 auto; border-radius:8px; overflow:hidden }

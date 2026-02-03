@@ -20,6 +20,21 @@
   --category-8: #00ced1; // Turquesa
   --category-9: #95a5a6; // Gris
   --category-10: #34495e; // Gris oscuro
+  /* Theme variables for cards and banners (light defaults) */
+  --home-card-bg: #ffffff;
+  --home-card-color: #222222;
+  --home-card-border: rgba(0,0,0,0.06);
+  --home-banner-overlay: rgba(0,0,0,0.3);
+  --home-banner-text: #ffffff;
+}
+
+/* Dark mode overrides when Ionic applies global .dark */
+:host-context(.dark) {
+  --home-card-bg: #2f2f2f;
+  --home-card-color: #f5f5f5;
+  --home-card-border: rgba(255,255,255,0.04);
+  --home-banner-overlay: rgba(0,0,0,0.45);
+  --home-banner-text: #f5f5f5;
 }
 
 /* Estructura general */
@@ -70,14 +85,14 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--home-banner-overlay);
   }
 
   .banner-text {
     position: absolute;
     bottom: 20px;
     left: 20px;
-    color: white;
+    color: var(--home-banner-text);
     z-index: 1;
 
     h1 {
@@ -90,7 +105,7 @@
     p {
       margin: 5px 0 0;
       font-size: 1rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
     }
   }
 }
@@ -248,6 +263,12 @@
     width: 220px;
     margin: 0 5px;
     position: relative;
+
+    background: var(--home-card-bg);
+    color: var(--home-card-color);
+    border-radius: 10px;
+    border: 1px solid var(--home-card-border);
+    overflow: hidden;
 
     img {
       width: 100%;

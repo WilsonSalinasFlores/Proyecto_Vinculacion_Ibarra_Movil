@@ -35,6 +35,37 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+/* Shared variables for evento header so other pages can match the same style */
+:root {
+  --header-bg: #1e60ff;
+  --evento-header-text: #fff;
+  --evento-header-text-rgb: 255,255,255;
+}
+
+/* Dark theme overrides (applies when `body` or `html` has class `dark`) */
+.dark,
+html.dark,
+body.dark {
+  --header-bg: #0f1724; /* darker background for headers in dark mode */
+  --evento-header-text: #f5f7fa; /* light text */
+  --evento-header-text-rgb: 245,247,250;
+}
+
+/* Make any ion-header with class .evento-header match the evento modal header */
+.evento-header ion-toolbar {
+  background: var(--header-bg);
+  color: var(--evento-header-text);
+  padding: 12px 16px;
+}
+.evento-header .brand { font-weight:700; font-size:1.05rem; color: var(--evento-header-text); }
+.evento-header .subtitle { font-size:0.78rem; opacity:0.9; color: rgba(var(--evento-header-text-rgb), 0.75); }
+.evento-header .close-icon { color: var(--evento-header-text); }
+/* Apply the same header variables to any ion-header/ion-toolbar so they follow theme */
+ion-header ion-toolbar,
+ion-toolbar.header-theme {
+  background: var(--header-bg);
+  color: var(--evento-header-text);
+}
 /* Estilos generales */
 .header-logo {
   height: 28px;

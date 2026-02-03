@@ -56,7 +56,7 @@
           <ion-card class="card-evento" tappable (click)="abrirDetalles(evento)">
             <div class="card-media">
               <ng-container *ngIf="evento.mainBanner; else noImage">
-                <ion-img [src]="evento.mainBanner" (click)="abrirGaleria(evento)"></ion-img>
+                <ion-img [src]="evento.mainBanner"></ion-img>
               </ng-container>
               <ng-template #noImage>
                 <div class="no-image">Imagen no disponible</div>

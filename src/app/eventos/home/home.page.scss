@@ -1,5 +1,22 @@
 :host {
 	--card-radius: 8px;
+
+	/* Theme variables for event cards (light defaults) */
+	--evento-card-bg: #ffffff;
+	--evento-card-color: #222222;
+	--evento-card-border: rgba(0,0,0,0.06);
+	--evento-muted: rgba(0,0,0,0.65);
+	--evento-placeholder-top: rgba(0,0,0,0.03);
+	--evento-placeholder-bottom: rgba(0,0,0,0.06);
+}
+
+:host-context(.dark) {
+	--evento-card-bg: #2f2f2f;
+	--evento-card-color: #f5f5f5;
+	--evento-card-border: rgba(255,255,255,0.04);
+	--evento-muted: rgba(255,255,255,0.85);
+	--evento-placeholder-top: rgba(255,255,255,0.03);
+	--evento-placeholder-bottom: rgba(255,255,255,0.06);
 }
 .header-left { display:flex; flex-direction:column; gap:2px; padding: 8px 0; }
 .header-left .brand { font-weight:700; font-size:1.05rem; color: var(--ion-color-step-900) }
@@ -17,8 +34,8 @@
 
 /* Empty state and cards should adapt to theme using Ionic variables */
 .card-evento {
-	background: #2f2f2f;
-	color: var(--ion-color-step-100);
+	background: var(--evento-card-bg);
+	color: var(--evento-card-color);
 }
 .empty-state {
 	background: transparent;
@@ -62,6 +79,28 @@
 	border-radius: var(--card-radius);
 	overflow: hidden;
 }
+
+/* Ensure card text remains readable regardless of inherited/global styles */
+.card-evento,
+.card-evento ion-card-header,
+.card-evento ion-card-title,
+.card-evento ion-card-subtitle,
+.card-evento ion-card-content,
+.card-evento .descripcion,
+.card-evento .fechas {
+	color: var(--evento-card-color) !important;
+}
+
+/* Badge text should always be white for contrast against primary badge background */
+.card-evento .badge {
+	color: #fff !important;
+}
+
+/* Make sure chips inside cards are visible */
+.card-evento ion-chip {
+	--color: var(--evento-card-color);
+	background: rgba(0,0,0,0.04);
+}
 .card-evento ion-img {
 	height: auto;
 }
@@ -82,8 +121,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.12));
-	color: var(--ion-color-medium);
+	background: linear-gradient(180deg, var(--evento-placeholder-top), var(--evento-placeholder-bottom));
+	color: var(--evento-muted);
 	font-weight: 600;
 	border-top-left-radius: 12px;
 	border-top-right-radius: 12px;
@@ -94,9 +133,9 @@
 	border-radius: 12px;
 	box-shadow: 0 10px 30px rgba(22, 27, 49, 0.10);
 	overflow: hidden;
-	background: #2f2f2f;
-	color: var(--ion-color-step-100);
-	border: 1px solid rgba(0,0,0,0.12);
+	background: var(--evento-card-bg);
+	color: var(--evento-card-color);
+	border: 1px solid var(--evento-card-border);
 	transition: transform 180ms ease-in-out, box-shadow 180ms ease-in-out;
 }
 .card-evento:active, .card-evento:focus-within { transform: translateY(1px); }
@@ -164,7 +203,7 @@
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	color: rgba(255,255,255,0.9);
+	color: var(--evento-muted);
 	margin: 8px 0 0 0;
 }
 .fechas {
