@@ -1,0 +1,27 @@
+<ion-header translucent class="gallery-header">
+  <ion-toolbar>
+    <ion-title>Galería de Imágenes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="close()" aria-label="Cerrar">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="gallery-content">
+  <div class="carousel-wrap">
+    <div class="carousel" #carousel (scroll)="onCarouselScroll()">
+      <div class="slide" *ngFor="let img of images; let i = index">
+        <img #galleryImg [src]="img" alt="Imagen" class="gallery-img" [class.zoomed]="zoomedIndex===i" (dblclick)="toggleZoom(i)" />
+      </div>
+    </div>
+
+    <button class="nav prev" (click)="prev()" aria-label="Anterior" *ngIf="images.length>1">‹</button>
+    <button class="nav next" (click)="next()" aria-label="Siguiente" *ngIf="images.length>1">›</button>
+
+    <div class="indicator">{{currentIndex + 1}} / {{images.length}}</div>
+
+    <div *ngIf="!images || images.length === 0" class="no-images">No hay imágenes disponibles</div>
+  </div>
+</ion-content>

@@ -35,6 +35,110 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+/* Shared variables for evento header so other pages can match the same style */
+:root {
+  --header-bg: #1e60ff;
+  --evento-header-text: #fff;
+  --evento-header-text-rgb: 255,255,255;
+}
+
+/* Dark theme overrides (applies when `body` or `html` has class `dark`) */
+.dark,
+html.dark,
+body.dark {
+  --header-bg: #0f1724; /* darker background for headers in dark mode */
+  --evento-header-text: #f5f7fa; /* light text */
+  --evento-header-text-rgb: 245,247,250;
+}
+
+/* Red header theme (util for alerts or special screens) */
+:root {
+  --header-red-bg: #c62828; /* default red */
+  --header-red-text: #ffffff;
+}
+
+.dark, html.dark, body.dark {
+  --header-red-bg: #b71c1c; /* slightly darker red in dark mode */
+  --header-red-text: #ffffff;
+}
+
+/* Apply red header theme when `header-red` class is used on toolbar or header */
+ion-toolbar.header-red,
+ion-header.header-red ion-toolbar {
+  background: var(--header-red-bg) !important;
+  color: var(--header-red-text) !important;
+}
+
+ion-toolbar.header-red ion-title,
+ion-toolbar.header-red .brand,
+ion-toolbar.header-red .subtitle,
+ion-toolbar.header-red .close-icon,
+ion-toolbar.header-red ion-buttons,
+ion-toolbar.header-red ion-back-button,
+ion-toolbar.header-red ion-icon {
+  color: var(--header-red-text) !important;
+}
+
+/* Ensure native back-button chevron/icon is visible */
+.header-red ion-back-button {
+  color: var(--header-red-text) !important;
+}
+
+/* Slightly increase contrast for titles inside red header */
+.header-red .brand {
+  color: var(--header-red-text) !important;
+  font-weight: 700;
+}
+
+/* Modal: gallery half-screen style */
+.gallery-half-modal .modal-wrapper {
+  height: 50vh !important;
+  max-height: 50vh !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+  overflow: hidden;
+}
+
+.gallery-half-modal .modal-content {
+  height: calc(50vh - 56px) !important; /* subtract header height */
+  max-height: calc(50vh - 56px) !important;
+  padding: 0 !important;
+}
+
+/* Also target the case where `header-red` is applied to `ion-header` (not the toolbar) */
+ion-header.header-red ion-toolbar,
+ion-header.header-red ion-toolbar .brand,
+ion-header.header-red ion-toolbar .subtitle,
+ion-header.header-red ion-toolbar .close-icon,
+ion-header.header-red ion-toolbar ion-buttons,
+ion-header.header-red ion-toolbar ion-back-button,
+ion-header.header-red ion-toolbar ion-icon,
+ion-header.header-red ion-toolbar ion-title {
+  color: var(--header-red-text) !important;
+}
+
+/* Specific tweak for the close icon class used in evento.page */
+.evento-header.header-red .close-icon {
+  color: var(--header-red-text) !important;
+}
+
+/* Make any ion-header with class .evento-header match the evento modal header */
+.evento-header ion-toolbar {
+  background: var(--header-bg);
+  color: var(--evento-header-text);
+  padding: 12px 16px;
+}
+.evento-header .brand { font-weight:700; font-size:1.05rem; color: var(--evento-header-text); }
+.evento-header .subtitle { font-size:0.78rem; opacity:0.9; color: rgba(var(--evento-header-text-rgb), 0.75); }
+.evento-header .close-icon { color: var(--evento-header-text); }
+/* Apply the same header variables to any ion-header/ion-toolbar so they follow theme */
+ion-header ion-toolbar,
+ion-toolbar.header-theme {
+  background: var(--header-bg);
+  color: var(--evento-header-text);
+}
 /* Estilos generales */
 .header-logo {
   height: 28px;

@@ -37,7 +37,21 @@ export class EventoPage implements OnInit {
   }
 
   async abrirImagen(src?: string) {
-   
+    const imgs = this.evento && this.evento.images ? this.evento.images.map(i => (typeof i === 'string' ? i : (i.url || ''))).filter(Boolean) : [];
+    // if src provided, ensure it's present and compute startIndex
+    let startIndex = 0;
+    if (src) {
+      const idx = imgs.indexOf(src);
+      if (idx >= 0) startIndex = idx;
+      else imgs.unshift(src); // include it at start if not present
+    }
+    const { GalleryModalComponent } = await import('../../shared/gallery-modal/gallery-modal.component');
+    const modal = await this.modalCtrl.create({
+      component: GalleryModalComponent,
+      componentProps: { images: imgs, startIndex },
+      cssClass: 'gallery-half-modal'
+    });
+    await modal.present();
   }
 
   /** Devuelve el nombre del ion-icon para el tipo de contacto */
@@ -52,6 +66,38 @@ export class EventoPage implements OnInit {
     if (t.includes('telefono') || t.includes('tel') || t.includes('call')) return 'call-outline';
     // default
     return 'person-circle-outline';
+  }
+
+  formatPhoneDigits(value?: string) {
+    if (!value) return '';
+    return value.replace(/\D+/g, '');
+  }
+
+  whatsappUrl(value?: string) {
+    const digits = this.formatPhoneDigits(value);
+    if (!digits) return 'https://wa.me/';
+    return `https://wa.me/${digits}`;
+  }
+
+  isWhatsApp(type?: string) {
+    return !!type && type.toLowerCase().includes('whatsapp');
+  }
+
+  isPhone(type?: string) {
+    return !!type && (type.toLowerCase().includes('telefono') || type.toLowerCase().includes('tel') || type.toLowerCase().includes('call'));
+  }
+
+  isEmail(type?: string) {
+    return !!type && (type.toLowerCase().includes('email') || type.toLowerCase().includes('correo') || type.toLowerCase().includes('mail'));
+  }
+
+  mailtoUrl(value?: string, subject?: string) {
+    if (!value) return 'mailto:';
+    const m = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    const addr = m ? m[0] : value.trim();
+    if (!addr) return 'mailto:';
+    if (subject) return `mailto:${addr}?subject=${encodeURIComponent(subject)}`;
+    return `mailto:${addr}`;
   }
 
 }

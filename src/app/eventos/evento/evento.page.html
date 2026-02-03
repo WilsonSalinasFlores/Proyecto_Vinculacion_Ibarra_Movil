@@ -1,4 +1,4 @@
-<ion-header class="evento-header">
+<ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
     <div class="header-left">
       <div class="brand">GAD de Ibarra</div>
@@ -6,7 +6,7 @@
     </div>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="dismiss()" aria-label="Cerrar">
-        <ion-icon slot="icon-only" name="close" class="close-icon"></ion-icon>
+        <ion-icon slot="icon-only" name="close" class="close-icon" ></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -17,7 +17,7 @@
     <div class="evento-card">
       <div class="hero">
         <ng-container *ngIf="e.mainBanner; else noHeroImage">
-          <ion-img [src]="e.mainBanner" class="hero-img" (click)="abrirImagen(e.mainBanner)"></ion-img>
+          <ion-img [src]="e.mainBanner" class="hero-img" ></ion-img>
         </ng-container>
         <ng-template #noHeroImage>
           <div class="no-image-hero">
@@ -55,10 +55,10 @@
         <h3 class="section-title"><ion-icon name="location-outline"></ion-icon> Ubicación</h3>
         <div class="location">{{ e.direction || e.location }}</div>
         <div class="location-actions">
-          <ion-button class="maps-btn" fill="outline" expand="block" (click)="abrirUbicacion(e.direction || e.location)">
+            <ion-button class="maps-btn" fill="outline" expand="block" color="primary" (click)="abrirUbicacion(e.direction || e.location)">
             
             <span>Abrir en Maps</span>
-          </ion-button>
+            </ion-button>
         </div>
 
         <h3 class="section-title"><ion-icon name="people-outline"></ion-icon> Contactos</h3>
@@ -67,15 +67,20 @@
             <div class="contact-icon">
               <ion-icon [name]="getContactIcon(c.type)" aria-hidden="true"></ion-icon>
             </div>
-            <div class="contact-value">{{ c.description }}</div>
+            <div class="contact-value">
+              <a *ngIf="isPhone(c.type)" [href]="'tel:' + formatPhoneDigits(c.description)">{{ c.description }}</a>
+              <a *ngIf="isWhatsApp(c.type)" [href]="whatsappUrl(c.description)" target="_blank" rel="noopener">{{ c.description }}</a>
+              <a *ngIf="isEmail(c.type)" [href]="mailtoUrl(c.description)" target="_blank" rel="noopener">{{ c.description }}</a>
+              <span *ngIf="!isPhone(c.type) && !isWhatsApp(c.type) && !isEmail(c.type)">{{ c.description }}</span>
+            </div>
           </div>
         </div>
 
         <h3 class="section-title"><ion-icon name="images-outline"></ion-icon> Galería</h3>
         <div class="gallery">
-          <ng-container *ngIf="(e.galery || []).length; else noGallery">
-            <div class="thumb" *ngFor="let g of (e.galery || [])">
-              <ion-img [src]="g" (click)="abrirImagen(g)"></ion-img>
+          <ng-container *ngIf="(e.images || []).length; else noGallery">
+            <div class="thumb" *ngFor="let img of (e.images || [])">
+              <ion-img [src]="img.url" (click)="abrirImagen(img.url)"></ion-img>
             </div>
           </ng-container>
           <ng-template #noGallery>
