@@ -68,4 +68,36 @@ export class EventoPage implements OnInit {
     return 'person-circle-outline';
   }
 
+  formatPhoneDigits(value?: string) {
+    if (!value) return '';
+    return value.replace(/\D+/g, '');
+  }
+
+  whatsappUrl(value?: string) {
+    const digits = this.formatPhoneDigits(value);
+    if (!digits) return 'https://wa.me/';
+    return `https://wa.me/${digits}`;
+  }
+
+  isWhatsApp(type?: string) {
+    return !!type && type.toLowerCase().includes('whatsapp');
+  }
+
+  isPhone(type?: string) {
+    return !!type && (type.toLowerCase().includes('telefono') || type.toLowerCase().includes('tel') || type.toLowerCase().includes('call'));
+  }
+
+  isEmail(type?: string) {
+    return !!type && (type.toLowerCase().includes('email') || type.toLowerCase().includes('correo') || type.toLowerCase().includes('mail'));
+  }
+
+  mailtoUrl(value?: string, subject?: string) {
+    if (!value) return 'mailto:';
+    const m = value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    const addr = m ? m[0] : value.trim();
+    if (!addr) return 'mailto:';
+    if (subject) return `mailto:${addr}?subject=${encodeURIComponent(subject)}`;
+    return `mailto:${addr}`;
+  }
+
 }

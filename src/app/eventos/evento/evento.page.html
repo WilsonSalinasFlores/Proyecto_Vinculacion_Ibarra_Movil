@@ -17,7 +17,7 @@
     <div class="evento-card">
       <div class="hero">
         <ng-container *ngIf="e.mainBanner; else noHeroImage">
-          <ion-img [src]="e.mainBanner" class="hero-img" (click)="abrirImagen(e.mainBanner)"></ion-img>
+          <ion-img [src]="e.mainBanner" class="hero-img" ></ion-img>
         </ng-container>
         <ng-template #noHeroImage>
           <div class="no-image-hero">
@@ -67,7 +67,12 @@
             <div class="contact-icon">
               <ion-icon [name]="getContactIcon(c.type)" aria-hidden="true"></ion-icon>
             </div>
-            <div class="contact-value">{{ c.description }}</div>
+            <div class="contact-value">
+              <a *ngIf="isPhone(c.type)" [href]="'tel:' + formatPhoneDigits(c.description)">{{ c.description }}</a>
+              <a *ngIf="isWhatsApp(c.type)" [href]="whatsappUrl(c.description)" target="_blank" rel="noopener">{{ c.description }}</a>
+              <a *ngIf="isEmail(c.type)" [href]="mailtoUrl(c.description)" target="_blank" rel="noopener">{{ c.description }}</a>
+              <span *ngIf="!isPhone(c.type) && !isWhatsApp(c.type) && !isEmail(c.type)">{{ c.description }}</span>
+            </div>
           </div>
         </div>
 

@@ -102,7 +102,7 @@ export class EventosService {
         contact: [
           { type: 'telefono', description: '+5930988888888' },
           { type: 'whatsapp', description: '+5930988888888' },
-          { type: 'email', description: '+5930988888888' }
+          { type: 'email', description: 'wilson-ivan-salinas@hotmail.com' }
         ],
         services: ['Formación', 'Networking'],
         type: 'capacitación',
