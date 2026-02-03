@@ -164,7 +164,8 @@
       hyphens: auto; // Guiones automáticos
       width: 100%; // Ocupa todo el ancho disponible
       display: -webkit-box;
-      -webkit-line-clamp: 2; // Máximo 2 líneas
+      line-clamp: 2;
+      -webkit-line-clamp: 2; /* Máximo 2 líneas */
       -webkit-box-orient: vertical;
       overflow: hidden;
       max-height: 2.2em; // Altura para 2 líneas aproximadamente

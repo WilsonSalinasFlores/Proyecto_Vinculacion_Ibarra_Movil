@@ -37,7 +37,21 @@ export class EventoPage implements OnInit {
   }
 
   async abrirImagen(src?: string) {
-   
+    const imgs = this.evento && this.evento.images ? this.evento.images.map(i => (typeof i === 'string' ? i : (i.url || ''))).filter(Boolean) : [];
+    // if src provided, ensure it's present and compute startIndex
+    let startIndex = 0;
+    if (src) {
+      const idx = imgs.indexOf(src);
+      if (idx >= 0) startIndex = idx;
+      else imgs.unshift(src); // include it at start if not present
+    }
+    const { GalleryModalComponent } = await import('../../shared/gallery-modal/gallery-modal.component');
+    const modal = await this.modalCtrl.create({
+      component: GalleryModalComponent,
+      componentProps: { images: imgs, startIndex },
+      cssClass: 'gallery-half-modal'
+    });
+    await modal.present();
   }
 
   /** Devuelve el nombre del ion-icon para el tipo de contacto */

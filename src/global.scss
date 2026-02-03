@@ -90,6 +90,23 @@ ion-toolbar.header-red ion-icon {
   font-weight: 700;
 }
 
+/* Modal: gallery half-screen style */
+.gallery-half-modal .modal-wrapper {
+  height: 50vh !important;
+  max-height: 50vh !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+  overflow: hidden;
+}
+
+.gallery-half-modal .modal-content {
+  height: calc(50vh - 56px) !important; /* subtract header height */
+  max-height: calc(50vh - 56px) !important;
+  padding: 0 !important;
+}
+
 /* Also target the case where `header-red` is applied to `ion-header` (not the toolbar) */
 ion-header.header-red ion-toolbar,
 ion-header.header-red ion-toolbar .brand,
