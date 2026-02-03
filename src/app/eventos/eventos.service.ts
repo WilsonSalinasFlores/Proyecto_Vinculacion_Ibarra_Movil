@@ -52,7 +52,11 @@ export class EventosService {
         name: 'Feria Comercial Ibarra 2026',
         description: 'Gran feria con productores locales, ventas y actividades culturales.',
         mainBanner: 'https://picsum.photos/seed/feria/800/450',
-        galery: ['https://picsum.photos/seed/feria1/1200/800','https://picsum.photos/seed/feria2/1200/800','https://picsum.photos/seed/feria3/1200/800'],
+        images: [
+          { name: 'feria1.png', url: 'https://picsum.photos/seed/feria1/1200/800' },
+          { name: 'feria2.png', url: 'https://picsum.photos/seed/feria2/1200/800' },
+          { name: 'feria3.png', url: 'https://picsum.photos/seed/feria3/1200/800' }
+        ],
         dateStart: new Date(hoy.getTime() + 2 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 3 * 24*60*60*1000).toISOString(),
         direction: 'Parque Pedro Moncayo, Ibarra',
@@ -68,7 +72,10 @@ export class EventosService {
         name: 'Capacitación en Emprendimiento',
         description: 'Curso intensivo para emprendedores del cantón Ibarra.',
 //        mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
-        galery: ['https://picsum.photos/seed/cap1/1200/800','https://picsum.photos/seed/cap2/1200/800'],
+        images: [
+          { name: 'cap1.png', url: 'https://picsum.photos/seed/cap1/1200/800' },
+          { name: 'cap2.png', url: 'https://picsum.photos/seed/cap2/1200/800' }
+        ],
         dateStart: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         direction: 'Centro de Convenciones Ibarra',
@@ -84,7 +91,10 @@ export class EventosService {
         name: 'Capacitación en Emprendimiento Enero',
         description: 'Curso intensivo para emprendedores del cantón Ibarra.',
         mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
-        galery: ['https://picsum.photos/seed/cap1/1200/800','https://picsum.photos/seed/cap2/1200/800'],
+        images: [
+          { name: 'cap1.png', url: 'https://picsum.photos/seed/cap1/1200/800' },
+          { name: 'cap2.png', url: 'https://picsum.photos/seed/cap2/1200/800' }
+        ],
         dateStart: new Date(hoy.getTime() - 10 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         direction: 'Centro de Convenciones Ibarra',

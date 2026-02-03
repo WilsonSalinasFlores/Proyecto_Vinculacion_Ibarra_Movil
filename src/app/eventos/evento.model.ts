@@ -11,7 +11,7 @@ export interface Evento {
   location?: string;
   contact?: { type: string; description: string }[];
   services?: string[];
-  galery?: string[];
+  images?: { name: string; url: string }[];
   link?: string;
   state?: boolean;
   // Campos opcionales usados internamente por la app (no vienen del API normalmente)
