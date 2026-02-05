@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { Evento } from './evento.model';
+import { Evento, extractMediaFromImages } from './evento.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +20,7 @@ export class EventosService {
     if (!json || !Array.isArray(json.data)) return;
     // Asumimos que la estructura ya coincide con `Evento` (nombres del API)
     this.eventos = json.data.slice();
+    this.eventos.forEach(ev => extractMediaFromImages(ev));
   }
 
   /**
@@ -33,6 +34,7 @@ export class EventosService {
       const res = await firstValueFrom(this.http.get<{ success: boolean; message?: string; data: Evento[] }>(url));
       if (res && Array.isArray(res.data)) {
         this.eventos = res.data.slice();
+        this.eventos.forEach(ev => extractMediaFromImages(ev));
         return this.eventos;
       }
       console.warn('Respuesta inválida al cargar eventos desde API', res);
@@ -51,11 +53,11 @@ export class EventosService {
         id: 1,
         name: 'Feria Comercial Ibarra 2026',
         description: 'Gran feria con productores locales, ventas y actividades culturales.',
-        mainBanner: 'https://picsum.photos/seed/feria/800/450',
+        //mainBanner: 'https://picsum.photos/seed/feria/800/450',
         images: [
-          { name: 'feria1.png', url: 'https://picsum.photos/seed/feria1/1200/800' },
-          { name: 'feria2.png', url: 'https://picsum.photos/seed/feria2/1200/800' },
-          { name: 'feria3.png', url: 'https://picsum.photos/seed/feria3/1200/800' }
+          { name: 'banner', url: 'https://picsum.photos/seed/feria1/1200/800' },
+          { name: 'galeria', url: 'https://picsum.photos/seed/feria2/1200/800' },
+          { name: 'galeria', url: 'https://picsum.photos/seed/feria3/1200/800' }
         ],
         dateStart: new Date(hoy.getTime() + 2 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 3 * 24*60*60*1000).toISOString(),
@@ -73,8 +75,8 @@ export class EventosService {
         description: 'Curso intensivo para emprendedores del cantón Ibarra.',
 //        mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
         images: [
-          { name: 'cap1.png', url: 'https://picsum.photos/seed/cap1/1200/800' },
-          { name: 'cap2.png', url: 'https://picsum.photos/seed/cap2/1200/800' }
+          { name: 'banner', url: 'https://picsum.photos/seed/cap1/1200/800' },
+          { name: 'gallery', url: 'https://picsum.photos/seed/cap2/1200/800' }
         ],
         dateStart: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
         dateEnd: new Date(hoy.getTime() + 5 * 24*60*60*1000).toISOString(),
@@ -90,7 +92,7 @@ export class EventosService {
         id: 3,
         name: 'Capacitación en Emprendimiento Enero',
         description: 'Curso intensivo para emprendedores del cantón Ibarra.',
-        mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
+        //mainBanner: 'https://picsum.photos/seed/capacitacion/800/450',
         images: [
           { name: 'cap1.png', url: 'https://picsum.photos/seed/cap1/1200/800' },
           { name: 'cap2.png', url: 'https://picsum.photos/seed/cap2/1200/800' }
@@ -110,6 +112,9 @@ export class EventosService {
         
       }
     ];
+
+    // Extraer banner/gallery para los datos ficticios
+    datos.forEach(ev => extractMediaFromImages(ev));
 
     return datos;
   }

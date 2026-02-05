@@ -25,7 +25,21 @@ export class EventoPage implements OnInit {
 
   abrirUbicacion(address?: string) {
     if (!address) return;
-    const query = encodeURIComponent(address);
+    const s = address.trim();
+    // Remover el símbolo de grado (°) si existe
+    const point = s.replace(/°/g, '').replace(/, /g, ',');
+    // Intentar extraer dos números separados por coma o punto y coma
+    
+    if (point!='') {
+      // Si se encuentran coordenadas, abrir en Google Maps
+      
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${point}`;
+      window.open(mapsUrl, '_blank');
+      return;
+    }
+    //https://www.google.com/maps/search/?api=1&query=-0.362778° N, -78.130000° O
+    // Si no son coordenadas, tratar como dirección
+    const query = encodeURIComponent(s);
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
     window.open(googleMapsUrl, '_blank');
   }
@@ -37,7 +51,15 @@ export class EventoPage implements OnInit {
   }
 
   async abrirImagen(src?: string) {
-    const imgs = this.evento && this.evento.images ? this.evento.images.map(i => (typeof i === 'string' ? i : (i.url || ''))).filter(Boolean) : [];
+    // Prefer `gallery`, then `images`. Prepend banner/mainBanner if present.
+    const imgs: string[] = [];
+    if (this.evento?.gallery && this.evento.gallery.length) {
+      imgs.push(...this.evento.gallery);
+    } else if (this.evento?.images && this.evento.images.length) {
+      imgs.push(...this.evento.images.map(i => (typeof i === 'string' ? i : (i.url || ''))).filter(Boolean));
+    }
+    const bannerUrl = this.evento?.banner || (this.evento as any)?.mainBanner;
+    if (bannerUrl && imgs.indexOf(bannerUrl) === -1) imgs.unshift(bannerUrl);
     // if src provided, ensure it's present and compute startIndex
     let startIndex = 0;
     if (src) {

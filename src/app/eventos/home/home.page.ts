@@ -117,15 +117,18 @@ export class HomePage implements OnInit {
   }
 
   async abrirGaleria(evento: Evento) {
-    // Build image list: prefer evento.images URLs, fall back to mainBanner
+    // Prefer `gallery` (new), then `images` (legacy). Prepend `banner` (new) or `mainBanner` as fallback.
     const imgs: string[] = [];
-    if (evento?.images && evento.images.length) {
+    if (evento?.gallery && evento.gallery.length) {
+      imgs.push(...evento.gallery);
+    } else if (evento?.images && evento.images.length) {
       for (const it of evento.images) {
         if (typeof it === 'string') imgs.push(it);
         else if (it && (it.url)) imgs.push(it.url);
       }
     }
-    if (evento?.mainBanner && imgs.indexOf(evento.mainBanner) === -1) imgs.unshift(evento.mainBanner);
+    const bannerUrl = evento.banner || (evento as any).mainBanner;
+    if (bannerUrl && imgs.indexOf(bannerUrl) === -1) imgs.unshift(bannerUrl);
 
     const { GalleryModalComponent } = await import('../../shared/gallery-modal/gallery-modal.component');
     const modal = await this.modalCtrl.create({

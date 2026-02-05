@@ -16,8 +16,8 @@
   <ng-container *ngIf="evento as e">
     <div class="evento-card">
       <div class="hero">
-        <ng-container *ngIf="e.mainBanner; else noHeroImage">
-          <ion-img [src]="e.mainBanner" class="hero-img" ></ion-img>
+        <ng-container *ngIf="(e.banner || e.mainBanner); else noHeroImage">
+          <ion-img [src]="e.banner || e.mainBanner" class="hero-img" ></ion-img>
         </ng-container>
         <ng-template #noHeroImage>
           <div class="no-image-hero">
@@ -52,14 +52,15 @@
           </ion-chip>
         </div>
 
-        <h3 class="section-title"><ion-icon name="location-outline"></ion-icon> Ubicación</h3>
-        <div class="location">{{ e.direction || e.location }}</div>
-        <div class="location-actions">
-            <ion-button class="maps-btn" fill="outline" expand="block" color="primary" (click)="abrirUbicacion(e.direction || e.location)">
-            
-            <span>Abrir en Maps</span>
+        <ng-container *ngIf="e.location || e.direction">
+          <h3 class="section-title"><ion-icon name="location-outline"></ion-icon> Ubicación</h3>
+          <div class="location">{{ e.direction || e.location }}</div>
+          <div class="location-actions">
+            <ion-button class="maps-btn" fill="outline" expand="block" color="primary" (click)="abrirUbicacion(e.location || e.direction)">
+              <span>Abrir en Maps</span>
             </ion-button>
-        </div>
+          </div>
+        </ng-container>
 
         <h3 class="section-title"><ion-icon name="people-outline"></ion-icon> Contactos</h3>
         <div class="contacts">
@@ -78,11 +79,18 @@
 
         <h3 class="section-title"><ion-icon name="images-outline"></ion-icon> Galería</h3>
         <div class="gallery">
-          <ng-container *ngIf="(e.images || []).length; else noGallery">
-            <div class="thumb" *ngFor="let img of (e.images || [])">
-              <ion-img [src]="img.url" (click)="abrirImagen(img.url)"></ion-img>
+          <ng-container *ngIf="e.gallery && e.gallery.length; else imagesBlock">
+            <div class="thumb" *ngFor="let img of e.gallery">
+              <ion-img [src]="img" (click)="abrirImagen(img)"></ion-img>
             </div>
           </ng-container>
+          <ng-template #imagesBlock>
+            <ng-container *ngIf="(e.images || []).length; else noGallery">
+              <div class="thumb" *ngFor="let img of e.images">
+                <ion-img [src]="img.url" (click)="abrirImagen(img.url)"></ion-img>
+              </div>
+            </ng-container>
+          </ng-template>
           <ng-template #noGallery>
             <div class="no-gallery">Imágenes no disponibles</div>
           </ng-template>
