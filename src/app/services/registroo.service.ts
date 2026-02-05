@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class RegistroAppService {
-   private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
+   private apiUrl = environment.apiUrl;
    private registroUrl = `${this.apiUrl}/users/register`;
 
 

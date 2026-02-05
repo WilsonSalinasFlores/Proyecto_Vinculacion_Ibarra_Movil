@@ -9,7 +9,7 @@ import { Business } from './detalle-privado.service';
   providedIn: 'root'
 })
 export class EditarNegocioService {
-  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
+  private apiUrl = environment.apiUrl;
   private businessUrl = `${this.apiUrl}/business`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }

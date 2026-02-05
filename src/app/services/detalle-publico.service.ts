@@ -57,7 +57,7 @@ export interface BusinessResponse {
   providedIn: 'root'
 })
 export class DetallePublicoService {
-  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
+  private apiUrl = environment.apiUrl;
   private businessUrl = `${this.apiUrl}/business`;
 
   constructor(private http: HttpClient) {}
