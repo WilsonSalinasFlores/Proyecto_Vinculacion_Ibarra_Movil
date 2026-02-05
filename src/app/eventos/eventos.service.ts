@@ -11,7 +11,7 @@ export class EventosService {
   constructor(private http: HttpClient) {
     this.eventos = this.crearDatosFicticios();
   }
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
   /**
    * Carga eventos desde el JSON del API y los mapea al modelo interno.
    * Puede ser llamado pasando el objeto JSON que contiene `data: ApiEvento[]`.

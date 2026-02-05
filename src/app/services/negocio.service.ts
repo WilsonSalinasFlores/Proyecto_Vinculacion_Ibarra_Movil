@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class NegocioService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
   private businessUrl = `${this.apiUrl}/business`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}

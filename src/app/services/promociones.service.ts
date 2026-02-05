@@ -26,7 +26,7 @@ export interface ApiResponse {
   providedIn: 'root',
 })
 export class PromocionesService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

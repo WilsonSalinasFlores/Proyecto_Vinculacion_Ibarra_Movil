@@ -14,7 +14,7 @@ export interface UpdateUserDto {
   providedIn: 'root'
 })
 export class PerfilService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

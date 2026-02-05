@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class BusquedaService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

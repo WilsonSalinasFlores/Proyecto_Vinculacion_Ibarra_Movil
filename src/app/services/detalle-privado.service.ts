@@ -63,7 +63,7 @@ export interface ApiResponse {
   providedIn: 'root'
 })
 export class DetallePrivadoService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
   
   constructor(private http: HttpClient) {}
 

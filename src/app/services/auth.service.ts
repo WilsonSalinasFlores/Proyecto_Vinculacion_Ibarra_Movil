@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-   private apiUrl = environment.apiUrl;
+   private apiUrl = 'https://advice-reseller-tournament-mitchell.trycloudflare.com'; // environment.apiUrl;
 
   private loginUrl = `${this.apiUrl}/auth/login`;
   private validateEmailUrl = `${this.apiUrl}/recovery/email/validation`;
