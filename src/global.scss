@@ -42,6 +42,48 @@
   --evento-header-text-rgb: 255,255,255;
 }
 
+  /* Utility card to reduce duplicated component styles */
+  .card {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Button utility */
+  .btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  /* Icon size utilities */
+  .icon-lg { font-size: 2rem; }
+  .icon-md { font-size: 1.25rem; }
+  .icon-sm { font-size: 0.9rem; }
+
+  /* Global scrollbar styles for thumbnail scrollers */
+  .thumbnail-scroll {
+    &::-webkit-scrollbar { height: 4px; }
+    &::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 2px; }
+    &::-webkit-scrollbar-thumb { background: var(--ion-color-primary); border-radius: 2px; }
+  }
+
+  /* Common animations */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
 /* Dark theme overrides (applies when `body` or `html` has class `dark`) */
 .dark,
 html.dark,
@@ -66,6 +108,7 @@ body.dark {
 ion-toolbar.header-red,
 ion-header.header-red ion-toolbar {
   background: var(--header-red-bg) !important;
+  --background: var(--header-red-bg) !important;
   color: var(--header-red-text) !important;
 }
 
