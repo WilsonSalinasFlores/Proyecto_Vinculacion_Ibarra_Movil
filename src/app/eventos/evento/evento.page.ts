@@ -37,7 +37,7 @@ export class EventoPage implements OnInit {
       window.open(mapsUrl, '_blank');
       return;
     }
-    //https://www.google.com/maps/search/?api=1&query=-0.362778° N, -78.130000° O
+    //https://www.google.com/maps/search/?api=1&query=-0.190368,-78.485501
     // Si no son coordenadas, tratar como dirección
     const query = encodeURIComponent(s);
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;

@@ -48,7 +48,7 @@ export class EventosService {
   private crearDatosFicticios(): Evento[] {
     const hoy = new Date();
     // Datos de ejemplo usando la estructura del API (nombres idénticos)
-    const datos: Evento[] = [
+    const datos: Evento[] = [/*
       {
         id: 1,
         name: 'Feria Comercial Ibarra 2026',
@@ -111,7 +111,7 @@ export class EventosService {
         state: true
         
       }
-    ];
+    */];
 
     // Extraer banner/gallery para los datos ficticios
     datos.forEach(ev => extractMediaFromImages(ev));
