@@ -36,6 +36,7 @@ import { NegociosService } from '../services/negocios.service';
 import { AuthService } from '../services/auth.service';
 import { Promocion, PromocionesService } from '../services/promociones.service';
 import { BusquedaService } from '../services/busqueda.service';
+import { EventosService } from '../eventos/eventos.service';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -72,7 +73,7 @@ export class HomePage implements OnInit {
   selectedCategoryId: number | undefined = undefined;
 
   //Sección de Eventos
-  mostrarEventos = false;
+  mostrarEventos = true;
 
   getTipoPromocionLabel(tipo: string): string {
     return this.tipoPromocionMap[tipo] || 'Promoción';
@@ -86,25 +87,8 @@ export class HomePage implements OnInit {
   hasMoreSearchResults: boolean = true;
   totalSearchElements: number = 0;
 
-  // Datos estáticos para eventos
-  upcomingEvents: any[] = [
-    {
-      id: 1,
-      title: 'Feria de Emprendedores',
-      date: '2023-12-15',
-      location: 'Plaza de Ponchos',
-      imageUrl: 'assets/icon/FeriaEmprendedores.jpg',
-      description: 'Evento anual para emprendedores locales',
-    },
-    {
-      id: 2,
-      title: 'Taller de Marketing Digital',
-      date: '2023-12-20',
-      location: 'Centro de Convenciones',
-      imageUrl: 'assets/icon/TallerMarketing.jpg',
-      description: 'Aprende a promocionar tu negocio en línea',
-    },
-  ];
+  // Eventos cargados desde EventosService
+  upcomingEvents: any[] = [];
 
   private loading: HTMLIonLoadingElement | null = null;
 
@@ -116,7 +100,8 @@ export class HomePage implements OnInit {
     private negociosService: NegociosService,
     private loadingCtrl: LoadingController,
     private authService: AuthService,
-    private busquedaService: BusquedaService
+    private busquedaService: BusquedaService,
+    private eventosService: EventosService
   ) {
     addIcons({
       locationOutline,
@@ -144,8 +129,37 @@ export class HomePage implements OnInit {
   async ngOnInit() {
     this.checkAuthStatus();
     await this.loadCategories();
+    await this.loadEvents();
     this.setupAuthSubscription();
     this.loadPromotions();
+  }
+  private async loadEvents() {
+    try {
+      let eventos = this.eventosService.listarEventos() || [];
+      // Si no hay datos locales, intenta cargar desde la API
+      if (!eventos.length) {
+        const fromApi = await this.eventosService.cargarDesdeApiUrl();
+        if (Array.isArray(fromApi) && fromApi.length) {
+          eventos = fromApi;
+        }
+      }
+
+      this.upcomingEvents = (eventos || []).map((ev: any) => ({
+        id: ev.id,
+        name: ev.name,
+        title: ev.name,
+        description: ev.description,
+        banner: ev.banner || ev.mainBanner,
+        image: ev.banner || ev.mainBanner || (ev.images && ev.images[0]?.url),
+        date: ev.dateStart || ev.dateEnd,
+        services: ev.services || [],
+        type: ev.type,
+        raw: ev,
+      }));
+    } catch (err) {
+      console.error('Error cargando eventos desde EventosService', err);
+      this.upcomingEvents = [];
+    }
   }
 
   onCategorySelect(event: any) {
@@ -288,6 +302,20 @@ export class HomePage implements OnInit {
 
   openBusinessById(businessId: number) {
     this.router.navigate(['/detalle-publico', businessId]);
+  }
+
+  async openEventDetails(event: any) {
+    try {
+      const { EventoPage } = await import('../eventos/evento/evento.page');
+      const modal = await this.modalCtrl.create({
+        component: EventoPage,
+        componentProps: { evento: event.raw || event },
+        cssClass: 'evento-modal',
+      });
+      await modal.present();
+    } catch (err) {
+      console.error('Error abriendo detalle de evento:', err);
+    }
   }
 
   async showWelcomeAlert() {
