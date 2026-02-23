@@ -31,11 +31,7 @@
     </div>
   </div>
 
-  <!-- Banner informativo (mejora visual) -->
-  <div class="top-banner" role="status">
-    
-    <div class="top-banner__text">Explora los eventos de Ibarra — desliza para actualizar y toca una tarjeta para ver más.</div>
-  </div>
+  
   
   <!-- Estado vacío cuando no hay eventos a mostrar -->
     <div *ngIf="mostrados.length === 0" class="empty-state">
@@ -65,7 +61,7 @@
             </div>
             <ion-card-header>
               <ion-card-title>{{ evento.name }}</ion-card-title>
-              <div class="fechas"><ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>{{ evento.dateStart | date:'dd/MM/yyyy' }} - {{ evento.dateEnd | date:'dd/MM/yyyy' }}</div>
+              <!--<div class="fechas"><ion-icon name="calendar-outline" class="calendar-icon"></ion-icon>{{ evento.dateStart | date:'dd/MM/yyyy' }} - {{ evento.dateEnd | date:'dd/MM/yyyy' }}</div>-->
             </ion-card-header>
             <ion-card-content>
               <p class="descripcion">{{ evento.description }}</p>

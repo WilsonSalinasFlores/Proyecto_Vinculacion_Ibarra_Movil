@@ -13,3 +13,28 @@
 .file-input {
   margin-top: 8px;
 }
+
+/* Estilos locales: forzar texto negro solo en esta página */
+:host {
+  ion-input,
+  ion-textarea,
+  ion-select,
+  input,
+  textarea,
+  select,
+  .native-input {
+    color: #000 !important;
+  }
+
+  /* Forzar color en la parte nativa de los web components Ionic */
+  ion-input::part(native),
+  ion-textarea::part(native) {
+    color: #000 !important;
+  }
+
+  /* Placeholder atenuado pero negro */
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(0,0,0,0.5) !important;
+  }
+}
