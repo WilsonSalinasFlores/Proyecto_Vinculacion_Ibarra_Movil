@@ -188,3 +188,27 @@ ion-button[disabled] {
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+/* Forzar texto negro únicamente en el formulario de esta página */
+:host form ion-input,
+:host form ion-textarea,
+:host form ion-select,
+:host form input,
+:host form textarea,
+:host form select {
+  color: #000 !important;
+  --color: #000 !important;
+}
+
+/* Asegurar color en las partes nativas de los web components (Ionic) */
+:host form ion-input::part(native),
+:host form ion-input::part(input),
+:host form ion-textarea::part(native) {
+  color: #000 !important;
+}
+
+/* Placeholder atenuado pero negro dentro del formulario */
+:host form input::placeholder,
+:host form textarea::placeholder {
+  color: rgba(0,0,0,0.5) !important;
+}
