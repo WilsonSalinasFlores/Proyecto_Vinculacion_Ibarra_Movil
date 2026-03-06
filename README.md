@@ -115,3 +115,133 @@ await modal.present();
 
 Si quieres, puedo ampliar esta sección con diagramas de flujo, ejemplos de payloads reales, o una guía para desplegar la integración con el backend (ej. headers, autenticación). ¿Qué prefieres que añada? 
 
+---
+
+# Documentación general del proyecto
+
+Este repositorio contiene la aplicación móvil híbrida del proyecto de Vinculación (Ibarra). La app está construida con Ionic + Angular y usa Capacitor para builds nativos.
+
+## Tecnologías principales
+- Ionic (Angular)
+- Capacitor (Android)
+- Leaflet (mapas)
+- Node.js, npm
+
+## Estructura relevante
+- `src/` — código fuente de la app (páginas, componentes, servicios, estilos).
+- `src/app/` — módulos y páginas Angular (ej.: `eventos`, `registro-emprendimiento`, `shared`).
+- `src/global.scss` — estilos globales y variables CSS.
+- `android/` — proyecto Android generado por Capacitor (build nativo).
+- `www/` — salida del build web.
+- `package.json` — scripts y dependencias.
+- `capacitor.config.ts` — configuración Capacitor (appId, appName, webDir).
+
+## Requisitos para desarrollo
+- Node.js (v14+ recomendado)
+- npm
+- Ionic CLI (`npm install -g @ionic/cli`)
+- Java JDK + Android SDK (para builds Android)
+
+## Instalar y ejecutar en desarrollo
+
+1. Instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Ejecutar en navegador (live reload):
+
+```bash
+ionic serve
+```
+
+3. Para probar en Android (emulador o dispositivo):
+
+```bash
+ionic build
+npx cap sync android
+npx cap open android
+# luego construir/ejecutar desde Android Studio o usar gradle
+```
+
+## Notas sobre build Android y versión
+- La versión de la app principal se encuentra en `package.json` (campo `version`).
+- Android tiene sus propias propiedades en `android/app/build.gradle`: `versionCode` y `versionName`. Manténlos sincronizados con `package.json` antes de firmar builds de lanzamiento.
+
+Ejemplo:
+
+```text
+package.json -> "version": "0.0.7"
+android/app/build.gradle -> versionCode 7
+						 versionName "0.0.7"
+```
+
+Después de actualizar versiones:
+
+```bash
+npx cap sync android
+npx cap open android
+# o desde la raíz: cd android && ./gradlew assembleRelease
+```
+
+## Theming y detalles de UI
+- En este proyecto se aplicó un ajuste para forzar el tema claro: se comentó la importación de la paleta oscura en `src/global.scss`.
+- Si deseas restaurar modo oscuro o implementar selector de tema, revisa `src/global.scss` y las variables CSS de Ionic.
+- Evitar reglas globales muy agresivas para overlays (`ion-popover`, `ion-alert`, `ion-action-sheet`) ya que pueden romper la interacción; en su lugar usar `cssClass` en los componentes y reglas mínimas y específicas por clase.
+
+Archivos relevantes:
+- `src/global.scss` — theming general
+- `src/app/registro-emprendimiento/registro-emprendimiento.page.scss` — estilos locales aplicados para mejorar legibilidad en esa página
+
+## Pruebas y verificación visual
+- Ejecuta `ionic serve` y revisa las páginas principales (registro, eventos, listado) para validar cambios visuales.
+- Probar selects y overlays tanto en navegador como en emulador/dispositivo real.
+
+## Contribuir
+- Abrir un issue describiendo el cambio o bug.
+- Crear un branch con nombre descriptivo y enviar PR con cambios y una breve descripción de verificación.
+
+## Contacto y licencia
+- Añade aquí la información de contacto del equipo y la licencia aplicable (ej. MIT).
+
+---
+
+Si quieres, amplío este `README` con un diagrama de carpetas, capturas de pantalla o un flujo de CI/CD. Dime qué prefieres y lo agrego.
+
+## Capturas de pantalla
+Se incluyen dos capturas de ejemplo (marcadores de posición) en `assets/docs/`.
+
+- Registro (pantalla de formulario):
+
+![Registro de negocio](assets/docs/screenshot-registro.svg)
+
+- Eventos (lista):
+
+![Listado de eventos](assets/docs/screenshot-eventos.svg)
+
+> Reemplaza los SVGs en `assets/docs/` por capturas reales (PNG/JPG) con los mismos nombres para que se muestren aquí.
+
+## Diagrama de carpetas (resumen)
+Estructura simplificada del proyecto (raíz):
+
+```
+Proyecto_Vinculacion_Ibarra_Movil/
+├─ android/
+├─ src/
+│  ├─ app/
+│  │  ├─ eventos/
+│  │  ├─ registro-emprendimiento/
+│  │  └─ shared/
+│  ├─ assets/
+│  │  └─ docs/                  # capturas y documentación visual
+│  ├─ environments/
+│  ├─ theme/
+│  └─ global.scss
+├─ www/
+├─ package.json
+└─ capacitor.config.ts
+```
+
+Si quieres, genero un `docs/` más completo con capturas por página y ejemplos de payloads, o puedo añadir mini-tutoriales paso a paso para ciertas funcionalidades (registro, gestión de eventos, mapas). ¿Qué prefieres que haga ahora?
+

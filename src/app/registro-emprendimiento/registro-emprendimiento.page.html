@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true" class="ion-padding registro-emprendimiento-page">
   <div class="header-container">
     <div class="header-content">
       <h2>Registro de Negocio</h2>
@@ -32,7 +32,7 @@
     <div class="form-field-wrapper">
       <ion-item class="form-field" fill="outline" [class.error-field]="hasError('categoryId')">
         <ion-label position="stacked">Categoría <span class="required">*</span></ion-label>
-        <ion-select formControlName="categoryId" interface="popover">
+        <ion-select formControlName="categoryId" interface="popover" >
           <ion-select-option *ngFor="let category of categories" [value]="category.id">
             {{ category.name }}
           </ion-select-option>

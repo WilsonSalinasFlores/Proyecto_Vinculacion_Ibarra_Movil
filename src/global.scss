@@ -34,7 +34,7 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* dark.system palette disabled to force light theme globally */
 /* Shared variables for evento header so other pages can match the same style */
 :root {
   --header-bg: #1e60ff;
@@ -483,3 +483,40 @@ ion-col[size="auto"] {
     color: #856404;
   }
 }
+
+/* Forzar tema claro independientemente de la configuración del sistema */
+html, body, ion-app, .ion-app, .ion-page {
+  color-scheme: light !important;
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #000000 !important;
+  background-color: var(--ion-background-color) !important;
+  color: var(--ion-text-color) !important;
+}
+
+/* Neutralizar cualquier clase `.dark` aplicada por el sistema o JS */
+.dark, body.dark, html.dark, ion-app.dark, .dark * {
+  --ion-background-color: #ffffff !important;
+  --ion-text-color: #000000 !important;
+  background-color: var(--ion-background-color) !important;
+  color: var(--ion-text-color) !important;
+  filter: none !important;
+}
+
+
+/* Evitar que media queries de preferencia de color actúen */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #ffffff !important;
+    --ion-text-color: #000000 !important;
+  }
+}
+
+/* Forzar fondo blanco y texto oscuro para las listas de opciones de `ion-select`
+   (popover, alert y action-sheet) incluso cuando la app esté en modo oscuro. */
+ion-alert, ion-action-sheet, .popover-wrapper, .alert-wrapper, .action-sheet-wrapper {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Overlay content styles are managed by Ionic. Removed custom select overrides. */

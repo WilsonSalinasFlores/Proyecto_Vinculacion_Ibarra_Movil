@@ -2,6 +2,14 @@
   padding: 16px;
 }
 
+:host {
+  color: #6e6e6e; /* color plomo */
+}
+
+:host * {
+  color: inherit !important;
+}
+
 .header-actions {
   margin-bottom: 20px;
   display: flex;

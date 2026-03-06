@@ -1,3 +1,40 @@
+.registro-emprendimiento-page {
+  /* Forzar apariencia en modo claro dentro de esta página: fondo claro y texto oscuro
+     Esto evita que la paleta oscura del sistema haga que los campos queden con fondo
+     oscuro y texto difícil de leer. */
+  ion-content, .form-container, ion-item.form-field, .upload-box, .file-name, .file-list {
+    --background: #ffffff !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  /* Asegurar que los inputs nativos y placeholders sean legibles */
+  ion-input input,
+  ion-textarea textarea,
+  ion-select {
+    color: #111827 !important;
+  }
+
+  ion-input input::placeholder,
+  ion-textarea textarea::placeholder {
+    color: #6b7280 !important; /* gris legible para placeholders */
+    opacity: 1 !important;
+  }
+
+  /* Etiquetas y mensajes de error */
+  ion-label, .error-message, .upload-label {
+    color: #111827 !important;
+  }
+
+  /* Forzar bordes de campos para buen contraste */
+  ion-item.form-field {
+    --border-color: #d1d5db !important;
+    border-radius: 8px;
+  }
+
+  /* Aplicar el contenedor como scope */
+}
+
 .form-container {
   padding: 20px;
   max-width: 1200px;
@@ -584,4 +621,19 @@
   margin-right: 4px;
   font-size: 14px;
   color: #ef4444;
+}
+
+ion-alert, ion-action-sheet, .popover-wrapper, .alert-wrapper, .action-sheet-wrapper {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+.radio-wrapper{
+  background-color: rgb(253, 253, 253);
+}
+.item-inner{
+  background-color: rgb(253, 253, 253);
+}
+.item-native{
+  background-color: rgb(253, 253, 253);
 }
