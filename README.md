@@ -172,7 +172,7 @@ npx cap open android
 Ejemplo:
 
 ```text
-package.json -> "version": "0.0.7"
+package.json -> "version": "0.0.8"
 android/app/build.gradle -> versionCode 7
 						 versionName "0.0.7"
 ```
