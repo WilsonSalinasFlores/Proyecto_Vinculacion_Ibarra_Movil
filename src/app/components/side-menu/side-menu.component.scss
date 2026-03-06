@@ -2,17 +2,57 @@ ion-menu {
   --ion-background-color: #ffffff;
   --ion-text-color: #333333;
 
+  ion-header {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
   ion-toolbar {
     --background: #d40000; // Rojo de Ibarra
     --color: white;
+    min-height: 56px;
+  }
+
+  ion-content {
+    --ion-background-color: #ffffff;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+  }
+
+  ion-list {
+    padding: 0;
+    margin: 0;
   }
 
   ion-item {
     --padding-start: 16px;
-    --min-height: 56px;
+    --padding-end: 16px;
+    --min-height: 48px;
+    border-bottom: 1px solid #f0f0f0;
     
     ion-icon {
       margin-right: 12px;
+      color: #666;
+    }
+
+    ion-label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  ion-item[color='danger'] {
+    ion-label {
+      color: #ff3b30;
+    }
+
+    ion-icon {
+      color: #ff3b30;
     }
   }
 }

@@ -32,22 +32,38 @@ private currentUser = new BehaviorSubject<any>(null);
 
 
   login(email: string, password: string): Observable<any> {
+    console.log('=== INICIANDO LOGIN ===');
+    console.log('URL:', this.loginUrl);
+    console.log('Body:', { username: email, password: password });
+    
     return this.http.post<any>(this.loginUrl, {
       username: email,
       password: password
     }).pipe(
       tap(response => {
+        console.log('=== RESPUESTA LOGIN ===');
+        console.log('Response:', response);
         if (response?.jwt) { 
+          console.log('JWT recibido, guardando datos...');
           this.storeAuthData(response);
+          console.log('Emitiendo authState como true');
           this.authState.next(true);
+          console.log('Estado de autenticación actualizado a:', true);
         }
       }),
       catchError(error => {
+        console.error('=== ERROR LOGIN ===');
+        console.error('Error completo:', error);
+        console.error('Status:', error.status);
+        console.error('Body:', error.error);
+        
         let errorMsg = 'Error desconocido';
         if (error.status === 401) {
           errorMsg = 'Credenciales incorrectas';
         } else if (error.status === 0) {
           errorMsg = 'No hay conexión con el servidor';
+        } else if (error.status === 400) {
+          errorMsg = 'Solicitud inválida. Verifique los datos.';
         }
         throw new Error(errorMsg);
       })
@@ -140,6 +156,7 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
 private storeAuthData(response: any): void {
+    console.log('=== GUARDANDO AUTH DATA ===');
     localStorage.setItem('jwt_token', response.jwt);
     
     // Extrae datos del usuario de la respuesta
@@ -158,6 +175,7 @@ private storeAuthData(response: any): void {
     
     localStorage.setItem('user_data', JSON.stringify(userData));
     this.currentUser.next(userData);
+    console.log('Usuario guardado:', userData);
   }
 
   private loadUserData(): void {

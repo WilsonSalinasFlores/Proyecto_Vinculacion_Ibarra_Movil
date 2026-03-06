@@ -354,7 +354,7 @@
           title="Fotos de productos (JPG o PNG, máx. 2 MB cada una)"
           (change)="onFileChange($event, 'carrouselPhotos')" />
       </div>
-      <div class="file-list" *ngIf="carrouselPhotos?.length">
+      <div class="file-list" *ngIf="carrouselPhotos.length">
         <div class="file-item" *ngFor="let photo of carrouselPhotos; let i = index">
           <ion-icon name="image-outline"></ion-icon>
           <span>{{ photo.name }}</span>

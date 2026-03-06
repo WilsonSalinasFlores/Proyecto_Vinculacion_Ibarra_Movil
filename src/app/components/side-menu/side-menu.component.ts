@@ -36,13 +36,6 @@ import { AlertController } from '@ionic/angular';
   ],
 })
 export class SideMenuComponent {
-  menuItems = [
-    { title: 'Inicio', icon: 'home', path: '/home' },
-    { title: 'Perfil', icon: 'person', path: '/perfil' },
-    { title: 'Mis Documentos', icon: 'document-text', path: '/mis-documentos' },
-    { title: 'Configuración', icon: 'settings', path: '/settings' },
-  ];
-
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -61,10 +54,9 @@ export class SideMenuComponent {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
         },
         {
-          text: 'Sí, Cerrar Sesión',
+          text: 'Cerrar Sesión',
           handler: () => {
             this.confirmLogout();
           },
@@ -75,31 +67,10 @@ export class SideMenuComponent {
     await alert.present();
   }
 
-  private async confirmLogout() {
+  private confirmLogout() {
     this.authService.logout();
-    await this.showLogoutAlert();
     this.router.navigate(['/home']);
   }
-  
-  /*enviarSoporte() {
-    const destinatario = 'gabykim928@gmail.com';
-    const asunto = 'Consulta/Problema en la aplicación';
-    const cuerpo = 'Hola, estoy teniendo un problema con...';
-
-    const mailto = `mailto:${destinatario}?subject=${encodeURIComponent(
-      asunto
-    )}&body=${encodeURIComponent(cuerpo)}`;
-    window.location.href = mailto;
-  }*/
-
-  private async showLogoutAlert() {
-    const alert = await this.alertController.create({
-      header: 'Sesión cerrada',
-      message: 'Has cerrado sesión exitosamente.',
-      buttons: ['OK'],
-      cssClass: 'logout-alert',
-    });
-
-    await alert.present();
-  }
 }
+
+

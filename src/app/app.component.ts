@@ -76,12 +76,17 @@ import {
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonApp, IonRouterOutlet, SideMenuComponent],
+  imports: [CommonModule, 
+    IonApp, 
+    IonRouterOutlet, 
+    SideMenuComponent
+  ],
 })
 export class AppComponent {
+  
   constructor(public authService: AuthService) {
     addIcons({
       home,

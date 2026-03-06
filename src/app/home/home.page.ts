@@ -4,6 +4,7 @@ import {
   LoadingController,
   AlertController,
   InfiniteScrollCustomEvent,
+  MenuController,
 } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -101,7 +102,8 @@ export class HomePage implements OnInit {
     private loadingCtrl: LoadingController,
     private authService: AuthService,
     private busquedaService: BusquedaService,
-    private eventosService: EventosService
+    private eventosService: EventosService,
+    private menuController: MenuController
   ) {
     addIcons({
       locationOutline,
@@ -128,8 +130,8 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     this.checkAuthStatus();
-    await this.loadCategories();
-    await this.loadEvents();
+    this.loadCategories();
+    this.loadEvents();
     this.setupAuthSubscription();
     this.loadPromotions();
   }
@@ -165,6 +167,10 @@ export class HomePage implements OnInit {
   onCategorySelect(event: any) {
     this.selectedCategoryId = event.detail.value;
     this.loadPromotions(this.selectedPromotionType, this.selectedCategoryId);
+  }
+
+  openMenu() {
+    this.menuController.open('sidebar');
   }
 
   private setupAuthSubscription() {
@@ -207,7 +213,7 @@ export class HomePage implements OnInit {
   }
 
   private async loadCategories() {
-    await this.showLoading();
+    this.showLoading();
     try {
       const categories = await this.negociosService.getCategorias().toPromise();
       this.categories = (categories || []).map((category) => ({
@@ -217,9 +223,9 @@ export class HomePage implements OnInit {
       }));
     } catch (error) {
       console.error('Error loading categories:', error);
-      await this.showErrorAlert();
+      this.showErrorAlert();
     } finally {
-      await this.hideLoading();
+      this.hideLoading();
     }
   }
 

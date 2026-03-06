@@ -84,7 +84,6 @@ export class LoginPage {
 
     const navigation = this.router.getCurrentNavigation();
     this.isModal = this.navParams?.get('isModal') || false;
-    console.log('isModal value:', this.isModal);
   }
 
   private initializeForms() {
@@ -183,18 +182,29 @@ export class LoginPage {
 
   async onSubmit() {
     if (this.loginForm.valid) {
-      const loading = await this.showLoading('Iniciando sesión...');
 
+      let loading: any;
       try {
-        const response = await lastValueFrom(
-          this.authService.login(
-            this.loginForm.value.email,
-            this.loginForm.value.password
-          )
+        // Crear el loading SIN await
+        const loadingPromise = this.loadingController.create({
+          message: 'Iniciando sesión...',
+          spinner: 'crescent',
+        });
+        
+        loadingPromise.then(l => {
+          loading = l;
+          loading.present();
+        }).catch(err => console.error('Error crear loading:', err));
+        
+        const loginObservable = this.authService.login(
+          this.loginForm.value.email,
+          this.loginForm.value.password
         );
-
-        await this.handleSuccessfulLogin();
+        
+        const response = await lastValueFrom(loginObservable);
+        this.handleSuccessfulLogin();
       } catch (error: any) {
+        console.error('Error en onSubmit:', error);
         let errorMessage = 'Error en el login';
 
         if (error.message) {
@@ -205,10 +215,11 @@ export class LoginPage {
 
         await this.showError(errorMessage);
       } finally {
-        loading.dismiss();
+        if (loading) {
+          loading.dismiss();
+        }
       }
     } else {
-      // Mostrar errores de validación
       this.markFormGroupTouched(this.loginForm);
     }
   }
@@ -222,15 +233,12 @@ export class LoginPage {
       }
     });
   }
-  private async handleSuccessfulLogin() {
-    console.log('Login exitoso, isModal:', this.isModal);
+  private handleSuccessfulLogin() {
     try {
       // Obtener datos del usuario del AuthService
       const userData = this.authService.getCurrentUser();
-      console.log('Datos usuario:', userData);
 
       if (this.isModal) {
-        console.log('Cerrando modal...');
         // Cerrar el modal inmediatamente después de login exitoso
         this.closeModal(true, userData);
       } else {
@@ -248,7 +256,7 @@ export class LoginPage {
     } catch (error) {
       console.error('Error:', error);
       console.error('Error handling successful login:', error);
-      await this.showError('Error al procesar el inicio de sesión');
+      this.showError('Error al procesar el inicio de sesión');
     }
   }
 
@@ -262,24 +270,20 @@ export class LoginPage {
       cssClass: 'success-alert',
     });
 
-    await alert.present();
+    alert.present();
   }
 
   async onForgotPasswordSubmit() {
     if (this.forgotPasswordForm.valid) {
       const loading = await this.showLoading('Validando correo electrónico...');
       this.userEmail = this.forgotPasswordForm.value.email;
-      console.log('Validando email:', this.userEmail);
 
       try {
         const response = await lastValueFrom(
           this.authService.validateEmail(this.userEmail)
         );
 
-        console.log('Respuesta de validación email:', response);
-
         this.recoveryUuid = response.uuid;
-        console.log('UUID guardado:', this.recoveryUuid);
 
         this.currentView = 'enter-otp';
       } catch (error) {
@@ -300,16 +304,10 @@ export class LoginPage {
       const loading = await this.showLoading('Validando código...');
 
       const otpCode = Object.values(this.otpForm.value).join('');
-      console.log('Enviando OTP:', otpCode, 'con UUID:', this.recoveryUuid);
 
       try {
         const response = await lastValueFrom(
           this.authService.validateOTP(otpCode, this.recoveryUuid)
-        );
-
-        console.log(
-          'Respuesta COMPLETA de validación OTP:',
-          JSON.stringify(response, null, 2)
         );
 
         if (!response) {
@@ -330,21 +328,15 @@ export class LoginPage {
         for (const key of possibleKeys) {
           if (response[key] !== undefined && response[key] !== null) {
             foundUserId = response[key];
-            console.log(`ID encontrado en propiedad '${key}':`, foundUserId);
             break;
           }
         }
 
         if (foundUserId !== null) {
           this.validatedId = foundUserId;
-          console.log('ValidatedId guardado:', this.validatedId);
           this.currentView = 'new-password';
         } else {
-          console.log(
-            'No se encontró ID específico, usando respuesta completa'
-          );
           this.validatedId = this.recoveryUuid;
-          console.log('Usando UUID como fallback:', this.validatedId);
           this.currentView = 'new-password';
         }
       } catch (error) {
@@ -377,17 +369,8 @@ export class LoginPage {
 
         this.userId = this.validatedId;
 
-        console.log('Intentando cambiar contraseña para userId:', this.userId);
-
         const userIdNumber = parseInt(this.userId);
         if (isNaN(userIdNumber)) {
-          console.error('userId no es un número válido:', this.userId);
-          throw new Error(
-            'ID de usuario inválido. Intente nuevamente desde el inicio.'
-          );
-        }
-
-        console.log('UserId convertido a número:', userIdNumber);
 
         await lastValueFrom(
           this.authService.resetPassword(

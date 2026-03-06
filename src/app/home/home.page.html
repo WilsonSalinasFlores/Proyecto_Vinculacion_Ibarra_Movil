@@ -4,7 +4,7 @@
       <ion-menu-button autoHide="false" menu="start"></ion-menu-button>
     </ion-buttons>
     <ion-title class="app-title">
-      <div class="title-content">
+      <div class="title-content" (click)="$event.stopPropagation(); openMenu()" role="button" tabindex="0">
         <img
           src="assets/icon/EscudoIbarra.png"
           alt="Logo GAD Ibarra"

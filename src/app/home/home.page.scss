@@ -66,10 +66,14 @@
   .title-content {
     display: flex;
     align-items: center;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px;
 
     .header-logo {
       height: 28px;
       margin-right: 10px;
+      cursor: pointer;
     }
 
     span {
