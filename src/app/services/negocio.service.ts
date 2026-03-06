@@ -41,9 +41,6 @@ export class NegocioService {
 
   // Método para actualizar negocio con archivos (negocios validados)
   updateBusinessWithFiles(businessId: number, formData: FormData): Observable<any> {
-    console.log('=== NEGOCIO SERVICE: UPDATE BUSINESS WITH FILES ===');
-    console.log('Business ID:', businessId);
-    
     if (!businessId || businessId <= 0) {
       return throwError(() => new Error('ID de negocio inválido'));
     }
@@ -89,9 +86,6 @@ export class NegocioService {
 
   // Método específico para actualizar negocios rechazados con archivos
   updateRejectedBusiness(businessId: number, formData: FormData): Observable<any> {
-    console.log('=== NEGOCIO SERVICE: UPDATE REJECTED BUSINESS ===');
-    console.log('Business ID:', businessId);
-    
     if (!businessId || businessId <= 0) {
       return throwError(() => new Error('ID de negocio inválido'));
     }
@@ -134,9 +128,6 @@ export class NegocioService {
 
   // Método para obtener detalles completos de un negocio específico
   getBusinessDetails(businessId: number): Observable<any> {
-    console.log('=== GETTING BUSINESS DETAILS ===');
-    console.log('Business ID:', businessId);
-    
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken()}`,
       'Content-Type': 'application/json'

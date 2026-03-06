@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
 import { catchError, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Business } from './detalle-privado.service';
 
 @Injectable({
@@ -28,10 +29,15 @@ export class EditarNegocioService {
   updateBusiness(businessId: number, formData: FormData) {
     const headers = this.getAuthHeaders();
     return this.http
-      .put(`${this.businessUrl}/update-rejected/${businessId}`, formData, { headers })
+      .put(`${this.businessUrl}/update-rejected/${businessId}`, formData, {
+        headers,
+        responseType: 'text'
+      })
       .pipe(
+        map(() => true),
         catchError((error) => {
-          return throwError(() => new Error(`Error updating business: ${error.message}`));
+          const message = error?.error?.message || error?.message || 'Error updating business';
+          return throwError(() => new Error(message));
         })
       );
   }
@@ -39,10 +45,15 @@ export class EditarNegocioService {
   updateBusinessAccepted(businessId: number, businessData: Partial<Business>) {
     const headers = this.getAuthHeaders();
     return this.http
-      .put(`${this.businessUrl}/${businessId}`, businessData, { headers })
+      .put(`${this.businessUrl}/${businessId}`, businessData, {
+        headers,
+        responseType: 'text'
+      })
       .pipe(
+        map(() => true),
         catchError((error) => {
-          return throwError(() => new Error(`Error updating business: ${error.message}`));
+          const message = error?.error?.message || error?.message || 'Error updating business';
+          return throwError(() => new Error(message));
         })
       );
   }

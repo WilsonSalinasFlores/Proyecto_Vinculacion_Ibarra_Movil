@@ -51,7 +51,6 @@ export class EditarNegocioPage implements OnInit {
   async ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('id')!;
     this.validationStatus = this.route.snapshot.paramMap.get('validationStatus')!;
-    console.log('ValidationStatus from route:', this.validationStatus);
     this.backUrl = `/detalle-negocio/${this.businessId}`;
     
     // Cargar datos
@@ -167,6 +166,34 @@ export class EditarNegocioPage implements OnInit {
     return cleaned;
   }
 
+  // Método para formatear schedules al mostrar en formulario
+  private formatSchedulesForDisplay(schedules: any): string {
+    if (!schedules) return '';
+    
+    // Convertir todo a string primero
+    let result = '';
+    
+    if (typeof schedules === 'string') {
+      result = schedules;
+    } else if (Array.isArray(schedules)) {
+      result = schedules.length === 1 ? schedules[0] : schedules.join(', ');
+    } else {
+      result = String(schedules);
+    }
+    
+    // Limpiar agresivamente: remover [ ] " ' al inicio y final
+    result = result.trim()
+      .replace(/^\[+/, '')      // Quitar [ del inicio
+      .replace(/\]+$/, '')      // Quitar ] del final
+      .replace(/^"+/, '')       // Quitar " del inicio
+      .replace(/"+$/, '')       // Quitar " del final
+      .replace(/^'+/, '')       // Quitar ' del inicio
+      .replace(/'+$/, '')       // Quitar ' del final
+      .trim();
+    
+    return result;
+  }
+
   // Método para normalizar el estado de validación
   private normalizeValidationStatus(status: string): string {
     if (!status) return 'UNKNOWN';
@@ -211,25 +238,13 @@ export class EditarNegocioPage implements OnInit {
   // Método para verificar si es un negocio rechazado
   isRejectedBusiness(): boolean {
     const status = this.getBusinessStatus(this.validationStatus);
-    const isRejected = status === 'REJECTED';
-    console.log('Is rejected business check:', {
-      originalStatus: this.validationStatus,
-      processedStatus: status,
-      isRejected
-    });
-    return isRejected;
+    return status === 'REJECTED';
   }
 
   // Método para verificar si es un negocio aceptado o pendiente
   isAcceptedOrPendingBusiness(): boolean {
     const status = this.getBusinessStatus(this.validationStatus);
-    const isAcceptedOrPending = ['PENDING', 'APPROVED'].includes(status);
-    console.log('Is accepted/pending business check:', {
-      originalStatus: this.validationStatus,
-      processedStatus: status,
-      isAcceptedOrPending
-    });
-    return isAcceptedOrPending;
+    return ['PENDING', 'APPROVED'].includes(status);
   }
 
   // Método adicional para verificar si está validado/aprobado específicamente
@@ -240,8 +255,6 @@ export class EditarNegocioPage implements OnInit {
 
   // Método mejorado para deshabilitar campos según el estado
   private disableFieldsBasedOnStatus() {
-    console.log('Disabling fields based on status:', this.validationStatus);
-    
     if (this.isAcceptedOrPendingBusiness()) {
       // Para negocios aceptados/pendientes - deshabilitar campos no editables
       const fieldsToDisable = [
@@ -252,24 +265,14 @@ export class EditarNegocioPage implements OnInit {
       
       fieldsToDisable.forEach(field => {
         this.editBusiness.get(field)?.disable();
-        console.log(`Campo ${field} deshabilitado`);
       });
-      
-      console.log('Campos deshabilitados para negocio PENDIENTE/APROBADO');
-    } else {
-      console.log('Negocio RECHAZADO - todos los campos habilitados');
     }
   }
 
   // Método mejorado para verificar si un campo debe mostrarse
   isFieldEditable(fieldName: string): boolean {
-    console.log('Checking if field is editable:', {
-      fieldName,
-      validationStatus: this.validationStatus,
-      isRejected: this.isRejectedBusiness()
-    });
-
-    if (this.isRejectedBusiness()) {
+    const isRejected = this.isRejectedBusiness();
+    if (isRejected) {
       return true; // Todos los campos editables para rechazados
     }
     
@@ -291,10 +294,8 @@ export class EditarNegocioPage implements OnInit {
       'countryCodePhone',
       'countryCode'
     ];
-    
-    const isEditable = editableFields.includes(fieldName);
-    console.log(`Field ${fieldName} is editable:`, isEditable);
-    return isEditable;
+
+    return editableFields.includes(fieldName);
   }
 
   hasError(controlName: string): boolean {
@@ -325,35 +326,25 @@ export class EditarNegocioPage implements OnInit {
   // Método mejorado para cargar detalles del negocio
   async loadBusinessDetails(): Promise<void> {
     try {
-      console.log('Loading business details for ID:', this.businessId);
-      
       const business = await lastValueFrom(
         this.detallePrivadoService.getBusinessDetails(Number(this.businessId))
       );
-      
-      console.log('Business loaded:', business);
+
       this.business = business;
 
       // ACTUALIZAR EL ESTADO DE VALIDACIÓN desde los datos del negocio
       if (business.validationStatus) {
-        console.log('Updating validation status from business data:', business.validationStatus);
         this.validationStatus = business.validationStatus;
       }
 
       // Extraer solo el número de teléfono sin código de país
       const phoneNumberOnly = this.extractPhoneNumber(business.phone || '');
-      console.log('Phone extraction:', {
-        original: business.phone,
-        extracted: phoneNumberOnly
-      });
 
       // Extraer solo el número de WhatsApp sin código de país( restricción 9 dígitos)
       const whatsappNumberOnly = this.extractWhatsAppNumber(business.whatsappNumber || '');
-      console.log('WhatsApp extraction:', {
-        original: business.whatsappNumber,
-        extracted: whatsappNumberOnly
-      });
 
+      // Formatear schedules: si es array, convertir a string limpio
+      const schedulesValue = this.formatSchedulesForDisplay(business.schedules);
       
       this.editBusiness.patchValue({
         categoryId: business.category?.id,
@@ -372,16 +363,10 @@ export class EditarNegocioPage implements OnInit {
         instagram: business.instagram,
         tiktok: business.tiktok,
         address: business.address,
-        schedules: business.schedules,
+        schedules: schedulesValue,
         email: business.email
       });
-      
-      console.log('Form populated with business data - phone fields:', {
-        phone: phoneNumberOnly,
-        whatsapp: whatsappNumberOnly,
-        countryCode: '+593'
-      });
-      
+
       // Deshabilitar campos según el estado después de cargar los datos
       this.disableFieldsBasedOnStatus();
       
@@ -403,8 +388,6 @@ export class EditarNegocioPage implements OnInit {
   }
 
   async onSubmit() {
-    console.log('Submit triggered with validation status:', this.validationStatus);
-    
     if (this.editBusiness.invalid) {
       await this.toastService.show(
         'Por favor complete todos los campos requeridos',
@@ -421,24 +404,19 @@ export class EditarNegocioPage implements OnInit {
       
       // Condición según el estado de validación
       if (businessStatus === 'REJECTED') {
-        console.log('Processing as REJECTED business');
         await this.updateRejectedBusiness(formValue);
       } else if (['APPROVED', 'PENDING'].includes(businessStatus)) {
-        console.log('Processing as APPROVED/PENDING business');
         await this.updateAcceptedBusiness(formValue);
       } else {
-        console.error('Unknown validation status:', this.validationStatus);
         // En lugar de lanzar error, intentar tratar como negocio aprobado por defecto
-        console.log('Treating unknown status as APPROVED business');
         await this.updateAcceptedBusiness(formValue);
       }
       
       await this.toastService.show('Negocio actualizado con éxito', 'success');
-      this.editBusiness.reset();
-      window.location.href = `/detalle-negocio/${this.businessId}`;
+      // Redirigir a la página de detalle del negocio
+      await this.router.navigateByUrl(`/detalle-negocio/${this.businessId}`);
       
     } catch (error: any) {
-      console.error('Error updating business:', error);
       const errorMessage = error?.message || 'Error actualizando el negocio';
       await this.toastService.show(errorMessage, 'danger');
     } finally {
@@ -448,8 +426,6 @@ export class EditarNegocioPage implements OnInit {
 
   // Método para actualizar negocios RECHAZADOS (FormDatatodos los campos)
   private async updateRejectedBusiness(formValue: any) {
-    console.log('Updating REJECTED business');
-    
     const fullWhatsApp = formValue.acceptsWhatsappOrders
       ? `${formValue.countryCode}${formValue.whatsappNumber}`
       : '';
@@ -472,19 +448,20 @@ export class EditarNegocioPage implements OnInit {
     }
     
     if (this.carrouselPhotos && this.carrouselPhotos.length > 0) {
-      this.carrouselPhotos.forEach((file, index) => {
+      this.carrouselPhotos.forEach((file) => {
         formData.append('carouselFiles', file);
-        console.log(`Foto ${index + 1} agregada:`, file.name);
       });
     }
     
-    await lastValueFrom(this.eeditarNegocioService.updateBusiness(Number(this.businessId), formData));
+    try {
+      await lastValueFrom(this.eeditarNegocioService.updateBusiness(Number(this.businessId), formData));
+    } catch (error: any) {
+      throw new Error(`Error al actualizar negocio rechazado: ${error.message}`);
+    }
   }
 
   // Método para actualizar negocios PENDIENTES o APROBADOS (JSON campos limitados)
   private async updateAcceptedBusiness(formValue: any) {
-    console.log('Updating ACCEPTED/PENDING business');
-    
     const fullWhatsApp = formValue.acceptsWhatsappOrders
       ? `${formValue.countryCode}${formValue.whatsappNumber}`
       : '';
@@ -509,9 +486,11 @@ export class EditarNegocioPage implements OnInit {
         : [formValue.schedules] // Convertir a array si es string
     };
     
-    console.log('Datos para negocio aceptado/pendiente:', businessData);
-    
-    await lastValueFrom(this.eeditarNegocioService.updateBusinessAccepted(Number(this.businessId), businessData));
+    try {
+      await lastValueFrom(this.eeditarNegocioService.updateBusinessAccepted(Number(this.businessId), businessData));
+    } catch (error: any) {
+      throw new Error(`Error al actualizar negocio: ${error.message}`);
+    }
   }
 
   //  MÉTODOS DEL MAPA 
@@ -583,7 +562,7 @@ export class EditarNegocioPage implements OnInit {
           this.updateMarkerPosition({ lat, lng });
         },
         (error) => {
-          console.log('Error obteniendo ubicación:', error);
+          console.warn('Error obteniendo ubicación:', error);
         }
       );
     }

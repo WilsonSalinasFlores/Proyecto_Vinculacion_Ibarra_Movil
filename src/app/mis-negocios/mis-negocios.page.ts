@@ -128,7 +128,6 @@ export class MisNegociosPage implements OnInit {
 
   viewBusinessDetails(businessId: string | number) {
     if (businessId) {
-      console.log('Navigating to business details with ID:', businessId);
       this.router.navigate(['/detalle-negocio', businessId]);
     } else {
       console.error('Business ID is null or undefined');
@@ -145,14 +144,9 @@ export class MisNegociosPage implements OnInit {
     window.open(socialUrl, '_blank');
   }
 
-  debugBusiness(business: any) {
-    console.log('Business object:', business);
-    console.log('Business ID:', business?.id);
-    console.log('Business ID type:', typeof business?.id);
-  }
+  debugBusiness(_business: any) {}
 
   openDetails(businessId: string | number) {
-    console.log('Opening details for business ID:', businessId);
     if (!businessId) {
       console.error('Cannot open details: Business ID is missing');
       return;

@@ -135,10 +135,6 @@ export class RegistroAppPage implements OnInit {
       if (this.registroForm.get('username')?.errors) errors.push('Usuario');
       if (this.registroForm.get('password')?.errors) errors.push('Contraseña');
 
-      if (errors.length > 0) {
-        console.log('Campos con errores:', errors);
-      }
-
       return false;
     }
 
@@ -206,9 +202,6 @@ export class RegistroAppPage implements OnInit {
       buttons: [
         {
           text: 'Aceptar',
-          handler: () => {
-            console.log('Usuario confirmó el registro exitoso');
-          },
         },
       ],
     });
@@ -216,9 +209,7 @@ export class RegistroAppPage implements OnInit {
     await alert.present();
   }
 
-  limpiarFormulario() {
-    console.log('Formulario limpiado');
-  }
+  limpiarFormulario() {}
 
   private async showToast(message: string, color: string) {
     const toast = await this.toastController.create({
