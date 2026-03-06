@@ -88,9 +88,6 @@ export class PromocionesService {
 
     const headers = this.getHeaders();
 
-    console.log('Enviando promoción:', promocionDto);
-    console.log('Archivo:', photo.name, photo.type, photo.size);
-
     return this.http.post<ApiResponse>(
       `${this.apiUrl}/promotions/business/create`,
       formData,

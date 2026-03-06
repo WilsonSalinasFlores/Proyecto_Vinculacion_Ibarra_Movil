@@ -243,7 +243,7 @@ private loadParish(type?: string) {
           this.updateMarkerPosition({ lat, lng });
         },
         (error) => {
-          console.log('Error obteniendo ubicación:', error);
+          console.warn('Error obteniendo ubicación:', error);
         }
       );
     }
@@ -597,19 +597,15 @@ private loadParish(type?: string) {
         schedules: fullSchedules
       };
 
-      console.log('Datos a enviar:', JSON.stringify(businessData, null, 2));
-
       const formData = new FormData();
 
       if (this.logoFile) {
         formData.append('logoFile', this.logoFile);
-        console.log('Logo agregado:', this.logoFile.name);
       }
 
       if (this.carrouselPhotos && this.carrouselPhotos.length > 0) {
-        this.carrouselPhotos.forEach((file, index) => {
+        this.carrouselPhotos.forEach((file) => {
           formData.append('carrouselPhotos', file);
-          console.log(`Foto ${index + 1} agregada:`, file.name);
         });
       }
 
@@ -618,20 +614,9 @@ private loadParish(type?: string) {
         new Blob([JSON.stringify(businessData)], { type: 'application/json' })
       );
 
-      console.log('FormData contents:');
-      console.log('- Business data:', JSON.stringify(businessData, null, 2));
-      if (this.logoFile) {
-        console.log('- Logo file:', this.logoFile.name, this.logoFile.size + ' bytes');
-      }
-      if (this.carrouselPhotos?.length) {
-        console.log('- Carousel photos:', this.carrouselPhotos.map(f => f.name + ' (' + f.size + ' bytes)').join(', '));
-      }
+      await lastValueFrom(this.negocioService.createBusiness(formData));
 
-      const result = await lastValueFrom(this.negocioService.createBusiness(formData));
-      console.log('Respuesta del servidor:', result);
-
-      await this.toastService.show('¡Negocio registrado exitosamente!', 'success');
-      this.resetForm();
+      await this.toastService.show('¡Negocio registrado exitosamente!', 'success');      this.resetForm();
       this.router.navigate(['/mis-negocios']);
 
     } catch (error: any) {

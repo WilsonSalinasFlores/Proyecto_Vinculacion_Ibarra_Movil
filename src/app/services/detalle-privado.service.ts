@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface Business {
@@ -69,8 +69,7 @@ export class DetallePrivadoService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('jwt_token');
-    console.log('Auth token exists:', !!token);
-    
+
     if (!token) {
       throw new Error('No authentication token available');
     }
@@ -87,8 +86,6 @@ export class DetallePrivadoService {
    * Obtiene lista de negocios privados del usuario autenticado
    */
   getPrivateBusinesses(category: string = '', page: number = 0, size: number = 10): Observable<ApiResponse> {
-    console.log('Getting private businesses:', { category, page, size });
-    
     const params: any = {
       page: page.toString(),
       size: size.toString()
@@ -102,7 +99,6 @@ export class DetallePrivadoService {
       headers: this.getAuthHeaders(),
       params
     }).pipe(
-      tap(response => console.log('Private businesses response:', response)),
       catchError(this.handleError.bind(this))
     );
   }
@@ -111,16 +107,12 @@ export class DetallePrivadoService {
    * Obtiene detalles de un negocio específico del usuario
    */
   getBusinessDetails(businessId: number): Observable<Business> {
-    console.log('Getting business details for ID:', businessId);
-    
     if (!businessId || businessId <= 0) {
       return throwError(() => new Error('Invalid business ID'));
     }
 
     return this.getPrivateBusinesses('', 0, 100).pipe(
       map(response => {
-        console.log('Private businesses list response:', response);
-        
         if (response.success && response.data && response.data.content && Array.isArray(response.data.content)) {
           const business = response.data.content.find(b => b.id === businessId);
           
@@ -128,8 +120,7 @@ export class DetallePrivadoService {
             console.error('Business not found in private list. Available IDs:', response.data.content.map(b => b.id));
             throw new Error('Negocio no encontrado en tu lista de negocios');
           }
-          
-          console.log('Business found in private list:', business);
+
           return business;
         } else {
           console.error('Invalid response structure:', response);
@@ -142,8 +133,7 @@ export class DetallePrivadoService {
         if (error.message && error.message.includes('no encontrado')) {
           return throwError(() => error);
         }
-        
-        console.log('Trying alternative method...');
+
         return this.getBusinessDetailsAlternative(businessId);
       })
     );
@@ -153,8 +143,6 @@ export class DetallePrivadoService {
    * Método alternativo para obtener detalles del negocio
    */
   getBusinessDetailsAlternative(businessId: number): Observable<Business> {
-    console.log('Using alternative method for business ID:', businessId);
-    
     const url = `${this.apiUrl}/business/public-details`;
     const params = { id: businessId.toString() };
     
@@ -162,9 +150,6 @@ export class DetallePrivadoService {
       headers: this.getAuthHeaders(),
       params
     }).pipe(
-      tap(business => {
-        console.log('Alternative method - Business details response:', business);
-      }),
       catchError((error) => {
         console.error('Alternative method also failed:', error);
         
@@ -187,12 +172,9 @@ export class DetallePrivadoService {
    * Obtiene categorías disponibles (solo lectura)
    */
   getCategories(): Observable<any[]> {
-    console.log('Getting categories');
-    
     return this.http.get<any[]>(`${this.apiUrl}/businessCategories/select`, {
       headers: this.getAuthHeaders()
     }).pipe(
-      tap(categories => console.log('Categories response:', categories)),
       catchError(this.handleError.bind(this))
     );
   }
@@ -203,10 +185,7 @@ export class DetallePrivadoService {
    * Extrae URLs de fotos del negocio
    */
   getPhotoUrls(photos: any[]): string[] {
-    console.log('Processing photos for URLs:', photos);
-    
     if (!photos || !Array.isArray(photos)) {
-      console.log(' No photos available or photos is not an array');
       return [];
     }
     
@@ -214,7 +193,6 @@ export class DetallePrivadoService {
     
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i];
-      console.log(`Processing photo ${i + 1}:`, photo);
       
       let url = '';
       
@@ -245,13 +223,9 @@ export class DetallePrivadoService {
           (url.startsWith('http://') || url.startsWith('https://'))) {
         
         urls.push(url.trim());
-        console.log(` Valid URL found for photo ${i + 1}: ${url.substring(0, 50)}...`);
-      } else {
-        console.log(` No valid URL found for photo ${i + 1}:`, photo);
       }
     }
-    
-    console.log(` Total valid photo URLs extracted: ${urls.length}/${photos.length}`);
+
     return urls;
   }
 
@@ -273,27 +247,19 @@ export class DetallePrivadoService {
    * Procesa coordenadas de Google Maps
    */
   getCoordinatesArray(coordinates: string): number[] {
-    console.log('Processing coordinates:', coordinates);
-    
     if (!coordinates) {
-      console.log('No coordinates provided');
       return [0, 0];
     }
     
     const coords = coordinates.split(',').map(coord => parseFloat(coord.trim()));
-    const result = coords.length === 2 ? coords : [0, 0];
-    console.log('Processed coordinates:', result);
-    return result;
+    return coords.length === 2 ? coords : [0, 0];
   }
 
   /**
    * Formatea horarios de atención
    */
   formatSchedules(schedules: any[]): { day: string, hours: string }[] {
-    console.log('Formatting schedules:', schedules);
-    
     if (!schedules || !Array.isArray(schedules)) {
-      console.log('No schedules available or schedules is not an array');
       return [];
     }
     
@@ -306,12 +272,10 @@ export class DetallePrivadoService {
       const hours = schedule?.isClosed 
         ? 'Cerrado' 
         : `${schedule?.openTime || ''} - ${schedule?.closeTime || ''}`;
-      
-      console.log('Schedule processing:', { schedule, day, hours });
+
       return { day, hours };
     });
-    
-    console.log('Formatted schedules:', formatted);
+
     return formatted;
   }
 

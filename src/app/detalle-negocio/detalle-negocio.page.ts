@@ -31,20 +31,15 @@ export class DetalleNegocioPage implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    console.log('=== DetalleNegocioPage ngOnInit ===');
-    
     if (!this.authService.isAuthenticated()) {
-      console.log('User not authenticated, redirecting to login');
       this.router.navigate(['/login']);
       return;
     }
 
     const routeId = this.route.snapshot.paramMap.get('id');
-    console.log('Route ID from params:', routeId);
-    
+
     if (routeId && !isNaN(parseInt(routeId, 10))) {
       this.businessId = parseInt(routeId, 10);
-      console.log('Business ID set to:', this.businessId);
       this.loadBusinessDetails();
     } else {
       console.error('Invalid business ID, redirecting to mis-negocios');
@@ -59,22 +54,18 @@ export class DetalleNegocioPage implements OnInit {
       return;
     }
 
-    console.log('Loading business details for ID:', this.businessId);
     this.loading = true;
     this.error = '';
 
     this.detallePrivadoService.getBusinessDetails(this.businessId).subscribe({
       next: (business: Business) => {
-        console.log('Business loaded successfully:', business);
         this.business = business;
         
         // Procesar imágenes del carrusel
-        console.log('Processing business photos:', business.photos);
         this.photoUrls = (business && business.photos && Array.isArray(business.photos)) 
           ? this.detallePrivadoService.getBusinessCarouselPhotoUrls(business.photos) 
           : [];
-        
-        console.log(' Final photoUrls array:', this.photoUrls);
+
         
         // Procesar horarios
         this.formattedSchedules = (business && business.schedules && Array.isArray(business.schedules)) 
@@ -85,9 +76,6 @@ export class DetalleNegocioPage implements OnInit {
         this.currentImageIndex = 0;
           
         this.loading = false;
-        console.log('[OK] Business details loaded successfully');
-        console.log(`Photo URLs count: ${this.photoUrls.length}`);
-        console.log(` Business validation status: ${business.validationStatus}`);
       },
       error: (error: any) => {
         console.error('Error loading business details:', error);
@@ -107,7 +95,6 @@ export class DetalleNegocioPage implements OnInit {
   nextImage(): void {
     if (this.photoUrls && Array.isArray(this.photoUrls) && this.photoUrls.length > 0) {
       this.currentImageIndex = (this.currentImageIndex + 1) % this.photoUrls.length;
-      console.log(`Next image: ${this.currentImageIndex + 1}/${this.photoUrls.length}`);
     }
   }
 
@@ -116,7 +103,6 @@ export class DetalleNegocioPage implements OnInit {
       this.currentImageIndex = this.currentImageIndex === 0 
         ? this.photoUrls.length - 1 
         : this.currentImageIndex - 1;
-      console.log(`Previous image: ${this.currentImageIndex + 1}/${this.photoUrls.length}`);
     }
   }
 
@@ -127,7 +113,6 @@ export class DetalleNegocioPage implements OnInit {
         Array.isArray(this.photoUrls) && 
         index < this.photoUrls.length) {
       this.currentImageIndex = index;
-      console.log(`Selected image: ${this.currentImageIndex + 1}/${this.photoUrls.length}`);
     }
   }
 
@@ -144,7 +129,6 @@ export class DetalleNegocioPage implements OnInit {
    * Abre el panel de administración (promociones)
    */
   openAdministrationPanel(): void {
-    console.log('Navigating to promotions with business ID:', this.businessId);
     this.router.navigate(['/promociones', this.businessId]);
   }
 
@@ -152,8 +136,7 @@ export class DetalleNegocioPage implements OnInit {
    * Abre la funcionalidad de solicitar eliminación
    */
   async openDeleteFunctionality(): Promise<void> {
-    console.log('Opening delete functionality modal for business ID:', this.businessId);
-    
+
     try {
       const modal = await this.modalController.create({
         component: (await import('../eliminar-negocio/eliminar-negocio.page')).EliminarNegocioPage,
@@ -185,7 +168,6 @@ export class DetalleNegocioPage implements OnInit {
    * Volver a la lista de negocios
    */
   goBack(): void {
-    console.log('Going back to mis-negocios');
     this.router.navigate(['/mis-negocios']);
   }
 
@@ -430,8 +412,7 @@ export class DetalleNegocioPage implements OnInit {
 
   handleImageError(event: any, imageType: string = 'carousel'): void {
     if (!event || !event.target) return;
-    
-    console.log('Image error for type:', imageType);
+
     if (imageType === 'carousel') {
       event.target.src = 'assets/icon/ibarra.jpg';
     } else if (imageType === 'logo' && this.business) {

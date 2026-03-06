@@ -28,23 +28,16 @@ export class DetallePublicoPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('=== DEBUGGING INICIO ===');
-    
     // Obtener ID desde la ruta URL
     const routeId = this.route.snapshot.paramMap.get('id');
-    console.log('Route ID:', routeId);
-    console.log('Input businessId:', this.businessId);
-    
+
     // Priorizar el ID de la ruta sobre el Input
     const finalBusinessId = routeId ? parseInt(routeId, 10) : this.businessId;
-    console.log('Final business ID:', finalBusinessId);
-    
+
     if (finalBusinessId) {
       this.businessId = finalBusinessId;
-      console.log('Cargando negocio por ID...');
       this.loadBusinessDetails();
     } else {
-      console.log('Cargando lista de negocios...');
       this.loadApprovedBusinesses();
     }
   }
@@ -57,7 +50,6 @@ export class DetallePublicoPage implements OnInit {
     
     this.businessService.getBusinessByIdPublic(this.businessId).subscribe({
       next: (business: Business) => {
-        console.log('Business loaded:', business);
         this.business = business;
         
         // Extraer las URLs de las fotos para el carrusel
@@ -83,8 +75,6 @@ export class DetallePublicoPage implements OnInit {
     
     this.businessService.getApprovedBusinesses(0, 10).subscribe({
       next: (response) => {
-        console.log('API Response:', response);
-        
         if (response.success && response.data.content.length > 0) {
           if (this.businessId) {
             // Buscar el negocio específico por ID
@@ -125,7 +115,6 @@ export class DetallePublicoPage implements OnInit {
   }
 
   saveDetails(): void {
-    console.log('Guardando detalles del negocio:', this.business);
     this.closeModal();
   }
 

@@ -68,15 +68,10 @@ export class DetallePublicoService {
       .set('size', size.toString());
 
     const url = `${this.businessUrl}/public/approved`;
-    console.log('=== CALLING APPROVED BUSINESSES ===');
-    console.log('URL:', url);
-    console.log('Params:', params.toString());
 
     return this.http.get<any>(url, { params })
       .pipe(
         map(response => {
-          console.log('=== RAW API RESPONSE ===');
-          console.log('Response:', response);
           
           // Procesar cada negocio para extraer logos
           const processedContent = (response.data?.content || response.content || []).map((business: any) => ({
@@ -108,21 +103,13 @@ export class DetallePublicoService {
   getBusinessByIdPublic(id: number): Observable<Business> {
     const url = `${this.businessUrl}/public-details`;
     const params = new HttpParams().set('id', id.toString());
-    
-    console.log('=== API CALL ===');
-    console.log('URL:', url);
-    console.log('Business ID:', id);
 
     return this.http.get<any>(url, { params })
       .pipe(
         map(response => {
-          console.log('=== RAW API RESPONSE ===');
-          console.log('Response:', response);
-          
           // Procesar la respuesta para extraer el logo y formatear las fotos
           const processedBusiness = this.processBusinessResponse(response);
-          console.log('Processed business:', processedBusiness);
-          
+
           return processedBusiness;
         }),
         catchError((error) => {

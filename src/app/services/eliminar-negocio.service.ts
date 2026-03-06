@@ -43,10 +43,7 @@ export class NegocioService {
         params
       })
       .pipe(
-        map((response) => {
-          console.log('Deletion request response:', response);
-          return response;
-        }),
+        map((response) => response),
         catchError((error) => {
           console.error('Error requesting deletion:', error);
           if (error.status === 409) {

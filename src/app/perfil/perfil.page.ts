@@ -43,7 +43,6 @@ export class PerfilPage implements OnInit {
   private loadProfile() {
     this.perfilService.getProfile().subscribe({
       next: (data) => {
-        console.log('Datos del perfil:', data);
         this.originalData = { ...data };
         this.profileForm.patchValue(data);
         localStorage.setItem('user_data', JSON.stringify(data));
@@ -90,10 +89,7 @@ export class PerfilPage implements OnInit {
   }
 
   async saveProfile() {
-    console.log('Intentando guardar...');
-    
     if (this.profileForm.invalid) {
-      console.log('Formulario inválido');
       this.markFormGroupTouched();
       const alert = await this.alertCtrl.create({
         header: 'Datos inválidos',
@@ -119,11 +115,8 @@ export class PerfilPage implements OnInit {
       username: formValue.username
     };
 
-    console.log('Datos a enviar:', updateData);
-
     this.perfilService.updateProfile(updateData).subscribe({
-      next: async (response) => {
-        console.log('Perfil actualizado:', response);
+      next: async () => {
         await loading.dismiss();
         
         // Actualizar datos originales
@@ -181,10 +174,5 @@ export class PerfilPage implements OnInit {
   }
 
   // Helper para debugging
-  logFormState() {
-    console.log('Form values:', this.profileForm.value);
-    console.log('Form raw values:', this.profileForm.getRawValue());
-    console.log('Form valid:', this.profileForm.valid);
-    console.log('Form invalid:', this.profileForm.invalid);
-  }
+  logFormState(): void {}
 }

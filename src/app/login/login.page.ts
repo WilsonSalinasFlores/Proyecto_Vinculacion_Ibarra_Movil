@@ -371,6 +371,11 @@ export class LoginPage {
 
         const userIdNumber = parseInt(this.userId);
         if (isNaN(userIdNumber)) {
+          console.error('userId no es un número válido:', this.userId);
+          throw new Error(
+            'ID de usuario inválido. Intente nuevamente desde el inicio.'
+          );
+        }
 
         await lastValueFrom(
           this.authService.resetPassword(

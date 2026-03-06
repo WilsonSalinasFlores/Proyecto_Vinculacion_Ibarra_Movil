@@ -32,23 +32,14 @@ private currentUser = new BehaviorSubject<any>(null);
 
 
   login(email: string, password: string): Observable<any> {
-    console.log('=== INICIANDO LOGIN ===');
-    console.log('URL:', this.loginUrl);
-    console.log('Body:', { username: email, password: password });
-    
     return this.http.post<any>(this.loginUrl, {
       username: email,
       password: password
     }).pipe(
       tap(response => {
-        console.log('=== RESPUESTA LOGIN ===');
-        console.log('Response:', response);
         if (response?.jwt) { 
-          console.log('JWT recibido, guardando datos...');
           this.storeAuthData(response);
-          console.log('Emitiendo authState como true');
           this.authState.next(true);
-          console.log('Estado de autenticación actualizado a:', true);
         }
       }),
       catchError(error => {
@@ -89,25 +80,11 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
   validateOTP(otp: string, uuid: string): Observable<any> {
-    console.log('=== ENVIANDO VALIDACIÓN OTP ===');
-    console.log('OTP:', otp);
-    console.log('UUID:', uuid);
-    console.log('URL:', this.validateOTPUrl);
-    console.log('Body:', { otp, uuid });
-    
     return this.http.post<any>(this.validateOTPUrl, {
       otp: otp,
       uuid: uuid
     }).pipe(
-      tap(response => {
-        console.log('=== RESPUESTA CRUDA DE OTP ===');
-        console.log('Response completo:', response);
-        console.log('Tipo:', typeof response);
-        console.log('Es null/undefined?', response == null);
-        if (response) {
-          console.log('Keys:', Object.keys(response));
-          console.log('Values:', Object.values(response));
-        }
+      tap(() => {
       }),
       catchError(error => {
         console.error('=== ERROR EN VALIDACIÓN OTP ===');
@@ -129,14 +106,10 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
   resetPassword(userId: any, newPassword: string): Observable<any> {
-    console.log('Enviando petición a:', `${this.resetPasswordUrl}/${userId}`);
-    console.log('Con body:', { newPassword });
-    
     return this.http.put<any>(`${this.resetPasswordUrl}/${userId}`, {
       newPassword: newPassword
     }).pipe(
-      tap(response => {
-        console.log('Respuesta del servidor:', response);
+      tap(() => {
       }),
       catchError(error => {
         console.error('Error del servidor:', error);
@@ -156,7 +129,6 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
 private storeAuthData(response: any): void {
-    console.log('=== GUARDANDO AUTH DATA ===');
     localStorage.setItem('jwt_token', response.jwt);
     
     // Extrae datos del usuario de la respuesta
@@ -175,7 +147,6 @@ private storeAuthData(response: any): void {
     
     localStorage.setItem('user_data', JSON.stringify(userData));
     this.currentUser.next(userData);
-    console.log('Usuario guardado:', userData);
   }
 
   private loadUserData(): void {
