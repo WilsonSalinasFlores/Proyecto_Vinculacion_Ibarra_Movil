@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 800" width="100%" height="100%" style="background-color: #fafafa; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.08" />
+    </filter>
+    
+    <clipPath id="card-clip">
+      <rect x="20" y="180" width="360" height="490" rx="12" />
+    </clipPath>
+  </defs>
+
+  <rect x="0" y="0" width="400" height="800" fill="#ffffff" />
+
+  <rect x="0" y="0" width="400" height="65" fill="#ba0c18" />
+  
+  <polyline points="18,22 10,32.5 18,43" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <text x="35" y="30" fill="#ffffff" font-size="16" font-weight="bold">Eventos - GAD de Ibarra</text>
+  <text x="35" y="48" fill="#ffffff" font-size="11" font-weight="500">Gobierno Autónomo Descentralizado</text>
+
+  <text x="35" y="105" fill="#111111" font-size="14">Mes / Año</text>
+  <text x="340" y="105" fill="#111111" font-size="14" text-anchor="end">Todos</text>
+  <path d="M348 100 L353 95 L358 100 M348 104 L353 109 L358 104" fill="none" stroke="#111111" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <text x="35" y="150" fill="#d30000" font-size="15" font-weight="bold">Tienes 1 evento(s) disponible(s)</text>
+
+  <rect x="20" y="180" width="360" height="490" rx="12" fill="#ffffff" filter="url(#card-shadow)" />
+
+  <g clip-path="url(#card-clip)">
+    
+    <rect x="20" y="180" width="360" height="200" fill="#9e6651" />
+    <line x1="20" y1="280" x2="380" y2="280" stroke="#7a4b39" stroke-width="8" />
+    <line x1="20" y1="365" x2="380" y2="365" stroke="#7a4b39" stroke-width="12" />
+    
+    <path d="M 120 276 Q 130 200 140 276 Z" fill="#e23f3f" />
+    <circle cx="130" cy="210" r="12" fill="#2d2d2d" />
+    
+    <path d="M 190 276 Q 200 200 210 276 Z" fill="#00bcd4" />
+    <circle cx="200" cy="210" r="12" fill="#2d2d2d" />
+    
+    <path d="M 260 276 Q 270 200 280 276 Z" fill="#ff9800" />
+    <circle cx="270" cy="210" r="12" fill="#2d2d2d" />
+    
+    <circle cx="100" cy="335" r="22" fill="none" stroke="#ffd54f" stroke-width="8" stroke-dasharray="4, 3" />
+    <circle cx="166" cy="335" r="22" fill="none" stroke="#ff8a65" stroke-width="8" stroke-dasharray="4, 3" />
+    <circle cx="233" cy="335" r="22" fill="none" stroke="#81c784" stroke-width="8" stroke-dasharray="4, 3" />
+    <circle cx="300" cy="335" r="22" fill="none" stroke="#4fc3f7" stroke-width="8" stroke-dasharray="4, 3" />
+
+    <rect x="285" y="195" width="75" height="26" rx="13" fill="#d30000" />
+    <text x="322.5" y="213" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Cultural</text>
+
+    <text x="40" y="415" fill="#1a1a1a" font-size="18" font-weight="bold">Taller: Marketing Digital para Tu</text>
+    <text x="40" y="440" fill="#1a1a1a" font-size="18" font-weight="bold">Negocio</text>
+    
+    <text x="40" y="480" fill="#333333" font-size="13.5">Aprende a vender tus productos en redes sociales.</text>
+    <text x="40" y="500" fill="#333333" font-size="13.5">Taller práctico intensivo para dueños de pequeños</text>
+    <text x="40" y="520" fill="#333333" font-size="13.5">negocios.</text>
+
+    <rect x="40" y="560" width="115" height="30" rx="15" fill="#f2f2f2" />
+    <text x="97.5" y="580" fill="#222222" font-size="12.5" text-anchor="middle">Material Digital</text>
+    
+    <rect x="165" y="560" width="175" height="30" rx="15" fill="#f2f2f2" />
+    <text x="252.5" y="580" fill="#222222" font-size="12.5" text-anchor="middle">Certificado de Asistencia</text>
+    
+    <rect x="40" y="605" width="85" height="30" rx="15" fill="#f2f2f2" />
+    <text x="82.5" y="625" fill="#222222" font-size="12.5" text-anchor="middle">Refrigerio</text>
+
+  </g>
+
+  <line x1="0" y1="740" x2="400" y2="740" stroke="#e0e0e0" stroke-width="1.5" />
+  <rect x="0" y="741" width="400" height="59" fill="#f8f9fa" />
+  
+  <text x="200" y="765" fill="#666666" font-size="12" text-anchor="middle">© 2025 Municipalidad de Ibarra - Todos los derechos</text>
+  <text x="200" y="782" fill="#666666" font-size="12" text-anchor="middle">reservados</text>
+
+</svg>

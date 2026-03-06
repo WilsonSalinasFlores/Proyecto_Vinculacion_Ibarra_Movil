@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1150" width="100%" height="100%" style="background-color: #333333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="15" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <rect x="50" y="30" width="800" height="1070" fill="#ffffff" filter="url(#card-shadow)" />
+
+  <rect x="50" y="30" width="800" height="45" fill="#a01428" />
+  
+  <path d="M 75 45 L 65 52.5 L 75 60" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="85" y="58" fill="#ffffff" font-weight="bold" font-size="16">Back</text>
+  
+  <text x="450" y="58" fill="#ffffff" font-weight="bold" font-size="15" text-anchor="middle">Registro de Persona</text>
+
+  <rect x="50" y="75" width="800" height="145" fill="#be193a" />
+  
+  <circle cx="450" cy="115" r="22" fill="none" stroke="#ffffff" stroke-width="2.5" />
+  <circle cx="450" cy="108" r="8" fill="#ffffff" />
+  <path d="M 434 130 C 434 118, 466 118, 466 130 Z" fill="#ffffff" />
+  
+  <text x="450" y="165" fill="#ffffff" font-size="24" font-weight="bold" text-anchor="middle">Registro de Persona</text>
+  <text x="450" y="185" fill="#ffffff" font-size="13" font-weight="500" text-anchor="middle">Municipio de Ibarra - Sistema Municipal</text>
+
+  <rect x="80" y="245" width="740" height="80" rx="6" fill="#fdf0f1" stroke="#ffcdd2" stroke-width="1.5" />
+  
+  <circle cx="115" cy="270" r="10" fill="none" stroke="#d32f2f" stroke-width="1.5" />
+  <path d="M 115 264 L 115 272 M 115 275 L 115 277" stroke="#d32f2f" stroke-width="2" stroke-linecap="round" />
+  
+  <text x="140" y="275" fill="#d32f2f" font-weight="bold" font-size="15">Información Importante</text>
+  <text x="140" y="295" fill="#882222" font-size="12.5">Complete todos los campos marcados con * (asterisco rojo). Revise que los datos cumplan con los requisitos</text>
+  <text x="140" y="312" fill="#882222" font-size="12.5">especificados.</text>
+
+  <text x="80" y="360" font-size="13" fill="#111111">Tipo de Identificación</text>
+  <text x="80" y="395" font-size="15" fill="#a0a0a0">Seleccionar tipo...</text>
+  <path d="M 420 388 L 425 393 L 430 388" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 420 384 L 425 379 L 430 384" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="80" y1="410" x2="440" y2="410" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="480" y="360" font-size="13" fill="#111111">Identificación <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="480" y="375" width="4" height="25" fill="#d32f2f" />
+  <text x="492" y="395" font-size="15" fill="#a0a0a0">Ej: 1234567890</text>
+  <line x1="480" y1="410" x2="820" y2="410" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="80" y="440" font-size="13" fill="#111111">Nombres <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="80" y="455" width="4" height="25" fill="#d32f2f" />
+  <text x="92" y="475" font-size="15" fill="#a0a0a0">Juan Carlos</text>
+  <line x1="80" y1="490" x2="440" y2="490" stroke="#e0e0e0" stroke-width="1" />
+  <text x="80" y="520" font-size="13" fill="#111111">Apellidos <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="80" y="535" width="4" height="25" fill="#d32f2f" />
+  <text x="92" y="555" font-size="15" fill="#a0a0a0">Pérez González</text>
+  <line x1="80" y1="570" x2="440" y2="570" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="480" y="520" font-size="13" fill="#111111">Correo Electrónico <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="480" y="535" width="4" height="25" fill="#d32f2f" />
+  <text x="492" y="555" font-size="15" fill="#a0a0a0">correo@ejemplo.com</text>
+  <line x1="480" y1="570" x2="820" y2="570" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="80" y="600" font-size="13" fill="#111111">Teléfono <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="80" y="615" width="4" height="25" fill="#d32f2f" />
+  <text x="92" y="635" font-size="15" fill="#a0a0a0">0987654321</text>
+  <line x1="80" y1="650" x2="440" y2="650" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="480" y="600" font-size="13" fill="#111111">Dirección <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="480" y="615" width="4" height="25" fill="#d32f2f" />
+  <text x="492" y="635" font-size="15" fill="#a0a0a0">Av. Principal 123 y Calle Secundaria</text>
+  <line x1="480" y1="650" x2="820" y2="650" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="80" y="680" font-size="13" fill="#111111">Usuario <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="80" y="695" width="4" height="25" fill="#d32f2f" />
+  <text x="92" y="715" font-size="15" fill="#a0a0a0">usuario123 (5-20 caracteres)</text>
+  <line x1="80" y1="730" x2="440" y2="730" stroke="#e0e0e0" stroke-width="1" />
+
+  <text x="480" y="680" font-size="13" fill="#111111">Contraseña <tspan fill="#d32f2f">*</tspan></text>
+  <rect x="480" y="695" width="4" height="25" fill="#d32f2f" />
+  <text x="492" y="715" font-size="15" fill="#a0a0a0">Mínimo 8 caracteres</text>
+  <g transform="translate(790, 703) scale(0.9)">
+    <path d="M12,4.5 C7,4.5 2.73,7.61 1,12 C2.73,16.39 7,19.5 12,19.5 C17,19.5 21.27,16.39 23,12 C21.27,7.61 17,4.5 12,4.5 Z M12,17 C9.24,17 7,14.76 7,12 C7,9.24 9.24,7 12,7 C14.76,7 17,9.24 17,12 C17,14.76 14.76,17 12,17 Z" fill="#666666" />
+    <circle cx="12" cy="12" r="3" fill="#666666" />
+  </g>
+  <line x1="480" y1="730" x2="820" y2="730" stroke="#e0e0e0" stroke-width="1" />
+
+
+  <text x="80" y="775" font-size="14" fill="#333333">Documento de Identidad</text>
+  <text x="80" y="790" font-size="14" fill="#d32f2f">*</text>
+  
+  <rect x="80" y="810" width="220" height="180" rx="8" fill="#fafafa" stroke="#b0bec5" stroke-dasharray="5,5" stroke-width="1.5" />
+  <g transform="translate(175, 830) scale(1.6)">
+    <path d="M2,4 C2,2.895 2.895,2 4,2 L10,2 L12,4 L20,4 C21.105,4 22,4.895 22,6 L22,18 C22,19.105 21.105,20 20,20 L4,20 C2.895,20 2,19.105 2,18 L2,4 Z" fill="#ffca28" />
+  </g>
+  <text x="190" y="890" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">Arrastra tus</text>
+  <text x="190" y="908" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">archivos aquí o haz</text>
+  <text x="190" y="926" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">clic para</text>
+  <text x="190" y="944" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">seleccionar</text>
+  <text x="190" y="962" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">archivos</text>
+  
+  <path d="M 85 1010 L 85 1022 L 95 1022 L 95 1015 L 90 1010 Z M 90 1010 L 90 1015 L 95 1015" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="105" y="1019" font-size="10" fill="#666666">PDF, JPG, PNG</text>
+  
+  <path d="M94.35,1036.04 C93.67,1032.59 90.64,1030 87,1030 C84.11,1030 81.6,1031.64 80.35,1034.04 C77.34,1034.36 75,1036.91 75,1040 C75,1043.31 77.69,1046 81,1046 L94,1046 C96.76,1046 99,1043.76 99,1041 C99,1038.36 96.95,1036.22 94.35,1036.04 Z" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="105" y="1043" font-size="10" fill="#666666">2 MB por archivo</text>
+  
+  <path d="M 80 1060 L 85 1060 M 80 1060 L 80 1065 M 80 1060 L 88 1068 M 95 1072 L 90 1072 M 95 1072 L 95 1067 M 95 1072 L 87 1064" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="105" y="1069" font-size="10" fill="#666666">Mínimo 800x600 px</text>
+
+
+  <text x="320" y="775" font-size="14" fill="#333333">Patente Municipal /</text>
+  <text x="320" y="790" font-size="14" fill="#333333">Certificado Emprendedor <tspan fill="#d32f2f">*</tspan></text>
+  
+  <rect x="320" y="810" width="220" height="180" rx="8" fill="#fafafa" stroke="#b0bec5" stroke-dasharray="5,5" stroke-width="1.5" />
+  <g transform="translate(415, 830) scale(1.6)">
+    <path d="M2,4 C2,2.895 2.895,2 4,2 L10,2 L12,4 L20,4 C21.105,4 22,4.895 22,6 L22,18 C22,19.105 21.105,20 20,20 L4,20 C2.895,20 2,19.105 2,18 L2,4 Z" fill="#ffca28" />
+  </g>
+  <text x="430" y="890" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">Arrastra tus</text>
+  <text x="430" y="908" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">archivos aquí o haz</text>
+  <text x="430" y="926" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">clic para</text>
+  <text x="430" y="944" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">seleccionar</text>
+  <text x="430" y="962" font-size="12" fill="#111111" text-anchor="middle" font-weight="500">archivos</text>
+
+  <path d="M 325 1010 L 325 1022 L 335 1022 L 335 1015 L 330 1010 Z M 330 1010 L 330 1015 L 335 1015" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="345" y="1019" font-size="10" fill="#666666">PDF, JPG, PNG</text>
+  
+  <path d="M334.35,1036.04 C333.67,1032.59 330.64,1030 327,1030 C324.11,1030 321.6,1031.64 320.35,1034.04 C317.34,1034.36 315,1036.91 315,1040 C315,1043.31 317.69,1046 321,1046 L334,1046 C336.76,1046 339,1043.76 339,1041 C339,1038.36 336.95,1036.22 334.35,1036.04 Z" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="345" y="1043" font-size="10" fill="#666666">2 MB por archivo</text>
+  
+  <path d="M 320 1060 L 325 1060 M 320 1060 L 320 1065 M 320 1060 L 328 1068 M 335 1072 L 330 1072 M 335 1072 L 335 1067 M 335 1072 L 327 1064" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="345" y="1069" font-size="10" fill="#666666">Mínimo 800x600 px</text>
+
+
+  <text x="560" y="775" font-size="13" fill="#333333">Plantilla de Acuerdo de Comercializacion</text>
+  
+  <rect x="560" y="790" width="260" height="165" rx="8" fill="#fffafa" stroke="#d32f2f" stroke-dasharray="6,4" stroke-width="1.5" />
+  
+  <g transform="translate(675, 805)">
+    <path d="M 10 10 L 5 10 C 2 10, 0 12, 0 15 L 0 35 C 0 38, 2 40, 5 40 L 25 40 C 28 40, 30 38, 30 35 L 30 15" fill="none" stroke="#d32f2f" stroke-width="2.5" />
+    <path d="M 15 5 L 15 25 C 15 28, 18 30, 20 30 C 23 30, 25 28, 25 25 L 25 10 C 25 8, 23 6, 21 6 C 19 6, 17 8, 17 10 L 17 23" fill="none" stroke="#d32f2f" stroke-width="2.5" stroke-linecap="round" />
+  </g>
+
+  <text x="690" y="870" font-size="11.5" fill="#444444" text-anchor="middle">Descargue la plantilla del acuerdo de comercialización</text>
+  
+  <rect x="580" y="890" width="220" height="42" rx="10" fill="#fdf0f1" stroke="#d32f2f" stroke-width="1" />
+  <path d="M 645 905 L 645 913 L 642 910 M 645 913 L 648 910 M 640 917 L 650 917" fill="none" stroke="#d32f2f" stroke-width="1.5" />
+  <text x="695" y="915" fill="#d32f2f" font-size="13" font-weight="bold" text-anchor="middle">Descargar Plantilla</text>
+  
+  <path d="M 565 985 L 565 997 L 575 997 L 575 990 L 570 985 Z M 570 985 L 570 990 L 575 990" fill="none" stroke="#666" stroke-width="1.2" />
+  <text x="582" y="995" font-size="10" fill="#666666">Formato PDF</text>
+  
+  <circle cx="682" cy="991" r="5" fill="none" stroke="#666" stroke-width="1" />
+  <line x1="682" y1="989" x2="682" y2="994" stroke="#666" stroke-width="1" />
+  <text x="692" y="995" font-size="10" fill="#666666">Complete y firme este documento</text>
+
+</svg>

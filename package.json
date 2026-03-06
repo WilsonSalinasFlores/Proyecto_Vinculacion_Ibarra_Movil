@@ -1,8 +1,8 @@
 {
-  "name": "ibarraApp",
+  "name": "ibarra-app",
   "version": "0.0.7",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "Uniandes",
+  "homepage": "https://www.uniandes.edu.ec/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
