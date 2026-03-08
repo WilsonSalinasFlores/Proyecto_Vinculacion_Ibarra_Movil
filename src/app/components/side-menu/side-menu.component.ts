@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import {
   IonMenu,
   IonHeader,
@@ -35,12 +37,31 @@ import { AlertController } from '@ionic/angular';
     IonMenuToggle,
   ],
 })
-export class SideMenuComponent {
+export class SideMenuComponent implements OnInit, OnDestroy {
+  isAuthenticated = false;
+  private destroy$ = new Subject<void>();
+
   constructor(
     public authService: AuthService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit() {
+    // Suscribirse al estado de autenticación
+    this.authService.isAuthenticated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAuth) => {
+        this.isAuthenticated = isAuth;
+        this.cdr.markForCheck();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
