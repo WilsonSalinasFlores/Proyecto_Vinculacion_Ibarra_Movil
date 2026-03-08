@@ -1,10 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
+      <ion-button (click)="toggleMenu()" fill="clear" class="menu-btn">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title class="app-title">
-      <div class="title-content" (click)="$event.stopPropagation(); openMenu()" role="button" tabindex="0">
+      <div class="title-content" role="button" tabindex="0">
         <img
           src="assets/icon/EscudoIbarra2.png"
           alt="Logo GAD Ibarra"

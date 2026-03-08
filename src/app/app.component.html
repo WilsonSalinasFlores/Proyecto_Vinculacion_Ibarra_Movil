@@ -1,6 +1,55 @@
 <ion-app>
   <!-- Menú lateral -->
-  <app-side-menu></app-side-menu>
+  <ion-menu contentId="main-content" side="start" menuId="sidebar" type="overlay" swipeGesture="true">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-menu-toggle auto-hide="false">
+          <!-- Inicio - siempre visible -->
+          <ion-item button (click)="navigateTo('/home')">
+            <ion-icon name="home" slot="start"></ion-icon>
+            <ion-label>Inicio</ion-label>
+          </ion-item>
+
+          <!-- Solo visible si está autenticado -->
+          <ng-container *ngIf="isAuthenticated$ | async as isAuth">
+            <ng-container *ngIf="isAuth">
+              <ion-item button (click)="navigateTo('/registro-emprendimiento')">
+                <ion-icon name="business" slot="start"></ion-icon>
+                <ion-label>Registrar Emprendimiento</ion-label>
+              </ion-item>
+              <ion-item button (click)="navigateTo('/mis-negocios')">
+                <ion-icon name="document" slot="start"></ion-icon>
+                <ion-label>Mis Negocios</ion-label>
+              </ion-item>
+              <ion-item button (click)="navigateTo('/perfil')">
+                <ion-icon name="person" slot="start"></ion-icon>
+                <ion-label>Perfil</ion-label>
+              </ion-item>
+              <ion-item button (click)="navigateTo('/mis-documentos')">
+                <ion-icon name="document" slot="start"></ion-icon>
+                <ion-label>Mis Documentos</ion-label>
+              </ion-item>
+              <ion-item button (click)="navigateTo('/soporte')">
+                <ion-icon name="help-circle" slot="start" color="medium"></ion-icon>
+                <ion-label>Soporte</ion-label>
+              </ion-item>
+            </ng-container>
+          </ng-container>
+        </ion-menu-toggle>
+
+        <!-- Cerrar sesión - solo si está autenticado -->
+        <ion-item button (click)="logout()" lines="none" *ngIf="isAuthenticated$ | async">
+          <ion-icon name="log-out" slot="start" color="danger"></ion-icon>
+          <ion-label color="danger">Cerrar sesión</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
   
   <!-- Contenido principal -->
   <ion-router-outlet id="main-content"></ion-router-outlet>

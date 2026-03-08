@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { SideMenuComponent } from './components/side-menu/side-menu.component';
+import { IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, IonMenuToggle, MenuController } from '@ionic/angular/standalone';
 import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   home,
@@ -69,9 +70,11 @@ import {
   arrowBack, 
   closeCircle,
   searchOutline,
-  create, trash, logIn, helpBuoy,helpCircle
-
-
+  create,
+  trash,
+  logIn,
+  helpBuoy,
+  helpCircle
 } from 'ionicons/icons';
 
 @Component({
@@ -79,15 +82,33 @@ import {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [CommonModule, 
+  imports: [
+    CommonModule, 
     IonApp, 
-    IonRouterOutlet, 
-    SideMenuComponent
+    IonRouterOutlet,
+    IonMenu,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonIcon,
+    IonLabel,
+    IonMenuToggle
   ],
 })
-export class AppComponent {
-  
-  constructor(public authService: AuthService) {
+export class AppComponent implements AfterViewInit {
+  isAuthenticated$ = this.authService.isAuthenticated$;
+
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    private alertController: AlertController,
+    private menuController: MenuController
+  ) {
+    console.log('AppComponent inicializado');
+    console.log('MenuController disponible');
     addIcons({
       home,
       business,
@@ -144,14 +165,72 @@ export class AppComponent {
       chevronDownOutline,
       locateOutline,
       checkmarkOutline,
-     closeCircleOutline,
+      closeCircleOutline,
       closeOutline,
       saveOutline,
       settingsOutline,
       imagesOutline,
       checkmarkCircleOutline,
-      arrowBack, closeCircle, searchOutline, create, trash, logIn, helpBuoy,helpCircle
- 
+      arrowBack,
+      closeCircle,
+      searchOutline,
+      create,
+      trash,
+      logIn,
+      helpBuoy,
+      helpCircle
     });
+  }
+
+  async ngAfterViewInit() {
+    // Esperar a que el componente ion-menu esté completamente renderizado
+    setTimeout(async () => {
+      try {
+        console.log('Intentando habilitar el menú en AfterViewInit...');
+        await this.menuController.enable(true, 'sidebar');
+        const isEnabled = await this.menuController.isEnabled('sidebar');
+        console.log('Menú habilitado en AfterViewInit:', isEnabled);
+        
+        // Forzar la detección de cambios
+        if (!isEnabled) {
+          console.warn('Reintentando habilitar menú...');
+          await this.menuController.enable(true);
+          const retry = await this.menuController.isEnabled('sidebar');
+          console.log('Menú habilitado después del reintento:', retry);
+        }
+      } catch (error) {
+        console.error('Error habilitando el menú en AfterViewInit:', error);
+      }
+    }, 2000); // Aumentado a 2 segundos
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Cerrar Sesión',
+      message: '¿Estás seguro de que quieres cerrar sesión?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Cerrar Sesión',
+          handler: () => {
+            this.confirmLogout();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  private confirmLogout() {
+    this.authService.logout();
+    this.router.navigate(['/home']);
   }
 }
