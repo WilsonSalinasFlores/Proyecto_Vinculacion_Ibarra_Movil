@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -43,7 +43,9 @@ export class EditarNegocioPage implements OnInit {
     private detallePrivadoService: DetallePrivadoService,
     private negociosService: NegociosService,
     private eeditarNegocioService: EditarNegocioService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     this.initializeForm();
   }
@@ -396,7 +398,9 @@ export class EditarNegocioPage implements OnInit {
       return;
     }
     
-    this.isLoading = true;
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
     
     try {
       const formValue = this.editBusiness.value;
@@ -408,19 +412,27 @@ export class EditarNegocioPage implements OnInit {
       } else if (['APPROVED', 'PENDING'].includes(businessStatus)) {
         await this.updateAcceptedBusiness(formValue);
       } else {
-        // En lugar de lanzar error, intentar tratar como negocio aprobado por defecto
         await this.updateAcceptedBusiness(formValue);
       }
       
-      await this.toastService.show('Negocio actualizado con éxito', 'success');
-      // Redirigir a la página de detalle del negocio
-      await this.router.navigateByUrl(`/detalle-negocio/${this.businessId}`);
+      // Liberar isLoading ANTES de cualquier otra cosa
+      this.ngZone.run(() => {
+        this.isLoading = false;
+      });
+      
+      // Navegar inmediatamente con queryParams para mostrar mensaje de éxito
+      await this.router.navigate([`/detalle-negocio/${this.businessId}`], {
+        queryParams: { updated: 'true' }
+      });
       
     } catch (error: any) {
+      // Liberar isLoading en caso de error
+      this.ngZone.run(() => {
+        this.isLoading = false;
+      });
+      
       const errorMessage = error?.message || 'Error actualizando el negocio';
       await this.toastService.show(errorMessage, 'danger');
-    } finally {
-      this.isLoading = false;
     }
   }
 
@@ -453,11 +465,7 @@ export class EditarNegocioPage implements OnInit {
       });
     }
     
-    try {
-      await lastValueFrom(this.eeditarNegocioService.updateBusiness(Number(this.businessId), formData));
-    } catch (error: any) {
-      throw new Error(`Error al actualizar negocio rechazado: ${error.message}`);
-    }
+    await lastValueFrom(this.eeditarNegocioService.updateBusiness(Number(this.businessId), formData));
   }
 
   // Método para actualizar negocios PENDIENTES o APROBADOS (JSON campos limitados)
@@ -486,11 +494,7 @@ export class EditarNegocioPage implements OnInit {
         : [formValue.schedules] // Convertir a array si es string
     };
     
-    try {
-      await lastValueFrom(this.eeditarNegocioService.updateBusinessAccepted(Number(this.businessId), businessData));
-    } catch (error: any) {
-      throw new Error(`Error al actualizar negocio: ${error.message}`);
-    }
+    await lastValueFrom(this.eeditarNegocioService.updateBusinessAccepted(Number(this.businessId), businessData));
   }
 
   //  MÉTODOS DEL MAPA 

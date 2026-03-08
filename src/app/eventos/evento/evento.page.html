@@ -1,6 +1,6 @@
 <ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
-    <div class="header-left">
+    <div class="header-left" style="padding-top: 2ex;">
       <div class="brand">GAD de Ibarra</div>
       <div class="subtitle">Gobierno Autónomo Descentralizado</div>
     </div>
@@ -97,9 +97,13 @@
         </div>
 
         <div class="action-access" *ngIf="e.link">
-          <ion-button class="acceder-btn" fill="solid" expand="block" (click)="accederEvento(e.link)">
+          <ion-button class="primary" fill="solid" expand="block" (click)="accederEvento(e.link)">
             Acceder al Evento
           </ion-button>
+        </div>
+        <div  >
+          <br>
+          <br>
         </div>
       </div>
     </div>

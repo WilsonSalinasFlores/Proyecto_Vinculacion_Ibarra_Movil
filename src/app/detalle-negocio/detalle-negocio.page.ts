@@ -4,6 +4,7 @@ import { IonicModule, ToastController, ModalController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DetallePrivadoService, Business } from '../services/detalle-privado.service';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-detalle-negocio',
@@ -27,7 +28,8 @@ export class DetalleNegocioPage implements OnInit {
     private detallePrivadoService: DetallePrivadoService,
     private authService: AuthService,
     private toastController: ToastController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private toastService: ToastService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -40,6 +42,22 @@ export class DetalleNegocioPage implements OnInit {
 
     if (routeId && !isNaN(parseInt(routeId, 10))) {
       this.businessId = parseInt(routeId, 10);
+      
+      // Verificar si viene de una actualización exitosa
+      const updated = this.route.snapshot.queryParamMap.get('updated');
+      if (updated === 'true') {
+        // Mostrar toast de éxito después de un pequeño delay para asegurar que la página está cargada
+        setTimeout(async () => {
+          await this.toastService.show('Negocio actualizado con éxito', 'success');
+        }, 300);
+        
+        // Limpiar el queryParam de la URL
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {},
+          replaceUrl: true
+        });
+      }
       this.loadBusinessDetails();
     } else {
       console.error('Invalid business ID, redirecting to mis-negocios');
