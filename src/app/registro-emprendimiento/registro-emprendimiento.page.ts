@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonToggle, IonTextarea, IonIcon, IonModal, IonButtons, IonSpinner, IonChip, IonMenuButton } from '@ionic/angular/standalone';
 import { ToastService } from '../services/toast.service';
 import { NegocioService } from '../services/negocio.service';
 import { lastValueFrom } from 'rxjs';
@@ -20,7 +20,7 @@ declare var L: any;
   templateUrl: './registro-emprendimiento.page.html',
   styleUrls: ['./registro-emprendimiento.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonToggle, IonTextarea, IonIcon, IonModal, IonButtons, IonSpinner, IonChip, IonMenuButton],
 })
 export class RegistroEmprendimientoPage implements OnInit, AfterViewInit {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
@@ -55,7 +55,8 @@ export class RegistroEmprendimientoPage implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private toastService: ToastService,
     private negocioService: NegocioService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.initializeForm();
   }
@@ -578,7 +579,9 @@ private loadParish(type?: string) {
       return;
     }
 
-    this.isLoading = true;
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
 
     try {
       const formValue = this.sanitizeFormData(this.registerBusiness.value);
@@ -614,37 +617,57 @@ private loadParish(type?: string) {
         new Blob([JSON.stringify(businessData)], { type: 'application/json' })
       );
 
-      await lastValueFrom(this.negocioService.createBusiness(formData));
+      // Crear una Promise con timeout adicional de seguridad (140 segundos)
+      const createBusinessPromise = Promise.race([
+        lastValueFrom(this.negocioService.createBusiness(formData)),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('La solicitud tardó demasiado. Por favor intenta nuevamente.')), 140000)
+        )
+      ]);
 
-      await this.toastService.show('¡Negocio registrado exitosamente!', 'success');      this.resetForm();
-      this.router.navigate(['/mis-negocios']);
+      await createBusinessPromise;
+
+      // Liberar isLoading ANTES de cualquier otra cosa
+      this.ngZone.run(() => {
+        this.isLoading = false;
+      });
+
+      // Resetear formulario
+      this.resetForm();
+
+      // Mostrar toast de éxito (sin await, para que no bloquee)
+      this.toastService.show('¡Negocio registrado exitosamente!', 'success');
+
+      // Navegar inmediatamente
+      await this.router.navigate(['/mis-negocios']);
 
     } catch (error: any) {
-      console.error('Error completo:', error);
-      console.error('Status:', error.status);
-      console.error('Response:', error.error);
+      console.error('Error en onSubmit:', error);
+
+      // Liberar isLoading en caso de error
+      this.ngZone.run(() => {
+        this.isLoading = false;
+      });
 
       let errorMessage = 'Error al registrar el negocio';
 
-      if (error.status === 400) {
-        if (error.error?.message) {
-          errorMessage = error.error.message;
-        } else {
-          errorMessage = 'Datos inválidos. Verifique todos los campos.';
-        }
-      } else if (error.status === 413) {
-        errorMessage = 'Los archivos son demasiado grandes.';
-      } else if (error.status === 422) {
-        errorMessage = 'Error de validación en el servidor.';
-      } else if (error.status === 500) {
-        errorMessage = 'Error del servidor. Intente más tarde.';
-      } else if (error.message) {
+      // Manejo mejorado de diferentes tipos de errores
+      if (error?.message) {
         errorMessage = error.message;
+      } else if (error?.status === 400) {
+        errorMessage = error?.message || 'Datos inválidos. Verifica todos los campos.';
+      } else if (error?.status === 413) {
+        errorMessage = 'Los archivos son demasiado grandes. Reduce el tamaño.';
+      } else if (error?.status === 422) {
+        errorMessage = 'Error de validación en el servidor.';
+      } else if (error?.status === 500) {
+        errorMessage = 'Error del servidor. Intenta más tarde.';
+      } else if (error?.status === 0) {
+        errorMessage = 'No hay conexión con el servidor. Verifica tu conexión e intenta nuevamente.';
       }
 
+      // Mostrar error con await para que se quede en la página
       await this.toastService.show(errorMessage, 'danger');
-    } finally {
-      this.isLoading = false;
     }
   }
 

@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, NgZone } from '@angular/core';
 import { ModalController, AlertController, ToastController } from '@ionic/angular';
 import { NegocioService } from '../services/negocio.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { lastValueFrom } from 'rxjs';
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
   IonContent, IonItem, IonInput, IonRadioGroup, IonRadio, IonTextarea, 
@@ -48,7 +49,8 @@ export class EliminarNegocioPage {
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private negocioService: NegocioService
+    private negocioService: NegocioService,
+    private ngZone: NgZone
   ) {}
 
   get isFormValid(): boolean {
@@ -71,25 +73,42 @@ export class EliminarNegocioPage {
       message: `¿Enviar solicitud de eliminación para "${this.businessName}"?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Confirmar', handler: () => this.sendDeletionRequest() }
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            await this.sendDeletionRequest(alert);
+            return false;
+          }
+        }
       ]
     });
     await alert.present();
   }
 
-  private async sendDeletionRequest() {
-    this.loading = true;
-    try {
-      const response = await this.negocioService.requestBusinessDeletion(
-        this.businessId, this.motivo, this.justificacion
-      ).toPromise();
+  private async sendDeletionRequest(alert: HTMLIonAlertElement) {
+    this.ngZone.run(() => {
+      this.loading = true;
+    });
 
-      await this.showToast('Solicitud enviada correctamente', 'success');
-      this.modalCtrl.dismiss(true);
+    try {
+      await lastValueFrom(this.negocioService.requestBusinessDeletion(
+        this.businessId, this.motivo, this.justificacion
+      ));
+
+      await alert.dismiss();
+
+      this.showToast('Solicitud enviada correctamente', 'success');
+
+      await this.ngZone.run(async () => {
+        await this.modalCtrl.dismiss(true);
+      });
     } catch (error: any) {
+      await alert.dismiss();
       await this.showToast(error.message || 'Error al enviar solicitud', 'danger');
     } finally {
-      this.loading = false;
+      this.ngZone.run(() => {
+        this.loading = false;
+      });
     }
   }
 

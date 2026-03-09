@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError, of, timeout } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
@@ -30,11 +30,13 @@ export class NegocioService {
     return this.http
       .post(`${this.businessUrl}/create`, formData, { headers })
       .pipe(
+        timeout(120000), // 120 segundos de timeout para subida de archivos
         catchError((error) => {
           if (error.status === 401) {
             this.authService.logout();
           }
-          return throwError(() => new Error(this.getErrorMessage(error)));
+          const errorMessage = this.getErrorMessage(error);
+          return throwError(() => ({ status: error.status || 0, message: errorMessage, error }));
         })
       );
   }
@@ -339,13 +341,24 @@ export class NegocioService {
   };
 
   private getErrorMessage(error: any): string {
+    // Timeout error
+    if (error.name === 'TimeoutError') {
+      return 'La solicitud tardó demasiado. Verifica tu conexión de internet e intenta nuevamente.';
+    }
+    
     if (error.status === 401) {
       return 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.';
+    } else if (error.status === 400) {
+      return error.error?.message || 'Datos inválidos. Verifica todos los campos.';
     } else if (error.status === 404) {
       return 'No se encontraron negocios.';
+    } else if (error.status === 413) {
+      return 'Los archivos son demasiado grandes. Reduce el tamaño.';
+    } else if (error.status === 500) {
+      return 'Error del servidor. Intenta más tarde.';
     } else if (error.status === 0) {
-      return 'No hay conexión con el servidor.';
+      return 'No hay conexión con el servidor. Verifica tu conexión e intenta nuevamente.';
     }
-    return 'Ocurrió un error al procesar la solicitud.';
+    return error.message || 'Ocurrió un error al procesar la solicitud.';
   }
 }

@@ -5,17 +5,19 @@
     </ion-buttons>
     <ion-title>Mi Perfil</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="goBack()" *ngIf="!isEditing" fill="clear">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
-      </ion-button>
       <ion-button (click)="toggleEdit()" *ngIf="!isEditing">
         <ion-icon name="create-outline"></ion-icon>
         Editar
       </ion-button>
+
       <ion-button (click)="toggleEdit()" *ngIf="isEditing" color="medium">
         <ion-icon name="close-outline"></ion-icon>
         Cancelar  
       </ion-button>
+      <ion-button (click)="goBack()" *ngIf="!isEditing" fill="clear">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
