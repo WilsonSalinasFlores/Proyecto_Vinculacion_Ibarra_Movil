@@ -107,8 +107,6 @@ export class AppComponent implements AfterViewInit {
     private alertController: AlertController,
     private menuController: MenuController
   ) {
-    console.log('AppComponent inicializado');
-    console.log('MenuController disponible');
     addIcons({
       home,
       business,
@@ -186,20 +184,15 @@ export class AppComponent implements AfterViewInit {
     // Esperar a que el componente ion-menu esté completamente renderizado
     setTimeout(async () => {
       try {
-        console.log('Intentando habilitar el menú en AfterViewInit...');
         await this.menuController.enable(true, 'sidebar');
         const isEnabled = await this.menuController.isEnabled('sidebar');
-        console.log('Menú habilitado en AfterViewInit:', isEnabled);
         
         // Forzar la detección de cambios
         if (!isEnabled) {
-          console.warn('Reintentando habilitar menú...');
           await this.menuController.enable(true);
           const retry = await this.menuController.isEnabled('sidebar');
-          console.log('Menú habilitado después del reintento:', retry);
         }
       } catch (error) {
-        console.error('Error habilitando el menú en AfterViewInit:', error);
       }
     }, 2000); // Aumentado a 2 segundos
   }

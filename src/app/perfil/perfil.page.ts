@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 import { PerfilService, UpdateUserDto } from '../services/perfil.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
@@ -20,7 +21,8 @@ export class PerfilPage implements OnInit {
     private fb: FormBuilder,
     private perfilService: PerfilService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -175,4 +177,8 @@ export class PerfilPage implements OnInit {
 
   // Helper para debugging
   logFormState(): void {}
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 }

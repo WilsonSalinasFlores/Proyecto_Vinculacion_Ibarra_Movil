@@ -647,4 +647,8 @@ private loadParish(type?: string) {
       this.isLoading = false;
     }
   }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 }

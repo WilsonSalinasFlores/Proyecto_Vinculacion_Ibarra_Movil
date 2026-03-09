@@ -174,4 +174,15 @@ export class MisNegociosPage implements OnInit {
 
     return statusTextMap[status?.toUpperCase()] || status || 'DESCONOCIDO';
   }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
+
+  onBusinessImageError(event: Event) {
+    const target = event.target as HTMLImageElement | null;
+    if (target) {
+      target.src = 'assets/icon/ibarra.jpg';
+    }
+  }
 }

@@ -175,19 +175,13 @@ export class HomePage implements OnInit {
 
   async toggleMenu() {
     try {
-      console.log('=== Intentando toggle del menú ===');
       // Obtener referencia al elemento del menú
       const menuElement = document.querySelector('ion-menu');
       if (menuElement) {
         const isOpen = await (menuElement as any).isOpen();
-        console.log('Menú actualmente abierto:', isOpen);
         await (menuElement as any).setOpen(!isOpen);
-        console.log('=== Menú toggled exitosamente ===');
-      } else {
-        console.error('No se encontró el elemento ion-menu');
       }
     } catch (error) {
-      console.error('Error al abrir menú:', error);
     }
   }
 

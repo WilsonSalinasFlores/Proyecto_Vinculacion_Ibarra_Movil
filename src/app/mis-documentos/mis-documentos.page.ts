@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule} from '@ionic/angular';
 import { DocumentosService } from '../services/documentos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mis-documentos',
@@ -14,7 +15,7 @@ import { DocumentosService } from '../services/documentos.service';
 export class MisDocumentosPage implements OnInit {
   loading = false;
 
-  constructor(private documentosService: DocumentosService) {}
+  constructor(private documentosService: DocumentosService, private router: Router) {}
 
   ngOnInit() {}
 
@@ -59,6 +60,10 @@ verComprobante() {
     },
   });
 }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 
 
 

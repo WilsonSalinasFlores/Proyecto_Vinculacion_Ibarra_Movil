@@ -22,6 +22,7 @@ import {
   IonButtons,
   IonBadge,
   IonChip,
+  IonMenuButton,
   IonRefresher,
   IonRefresherContent,
 } from '@ionic/angular/standalone';
@@ -58,6 +59,7 @@ import { EditarPromocionPage } from '../editar-promocion/editar-promocion.page';
     IonButtons,
     IonBadge,
     IonChip,
+    IonMenuButton,
     IonRefresher,
     IonRefresherContent,
   ],
