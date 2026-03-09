@@ -1,12 +1,24 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
       <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Soporte</ion-title>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img
+          src="assets/icon/EscudoIbarra2.png"
+          alt="Logo GAD Ibarra"
+          class="header-logo"
+        />
+        <div class="title-text">
+          <div class="subtitle">Gobierno Autónomo<br>Descentralizado Municipal</div>
+          <div class="brand">San Miguel de Ibarra</div>
+        </div>
+      </div>
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goBack()" fill="clear">
-        <ion-icon slot="icon-only" name="close"></ion-icon>
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -715,4 +715,8 @@ export class EditarNegocioPage implements OnInit {
     this.carrouselPhotos.splice(index, 1);
     this.toastService.show('Foto eliminada', 'success');
   }
+
+  goBack() {
+    this.router.navigate(['/detalle-negocio', this.businessId]);
+  }
 }

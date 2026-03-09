@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { Promocion, PromocionesService } from '../services/promociones.service';
 import { NegociosService } from '../services/negocios.service';
 
@@ -44,7 +45,8 @@ export class PromocionesPublicasPage implements OnInit {
 
   constructor(
     private promocionesService: PromocionesService,
-    private negociosService: NegociosService
+    private negociosService: NegociosService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -81,5 +83,9 @@ export class PromocionesPublicasPage implements OnInit {
     } catch (error) {
       console.error('Error loading categories:', error);
     }
+  }
+
+  goBack() {
+    this.router.navigate(['/home']);
   }
 }

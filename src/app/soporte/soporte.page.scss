@@ -1,3 +1,70 @@
+/* Header Styles */
+.home-header-toolbar {
+  --min-height: 72px;
+  padding: 10px 8px;
+  padding-top: 20px;
+
+  ion-buttons[slot='start'],
+  ion-buttons[slot='end'] {
+    align-self: center;
+  }
+
+  ion-title {
+    position: static;
+    text-align: left;
+    padding-inline-start: 8px;
+    padding-inline-end: 8px;
+  }
+}
+
+.app-title {
+  text-align: left;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+
+  .title-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 0;
+    width: 100%;
+
+    .header-logo {
+      height: 40px;
+      width: auto;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .title-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+
+      .brand {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--ion-color-primary-contrast, #ffffff);
+      }
+
+      .subtitle {
+        margin-top: 2px;
+        font-size: 0.78rem;
+        line-height: 1.1;
+        color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.92);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
 /* HEADER */
 ion-header {
   ion-toolbar {

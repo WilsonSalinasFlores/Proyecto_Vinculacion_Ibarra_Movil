@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -52,7 +52,8 @@ export class RegistroAppPage implements OnInit {
     private alertController: AlertController,
     private router: Router,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private ngZone: NgZone
   ) {
     this.initializeForm();
   }
@@ -151,7 +152,9 @@ export class RegistroAppPage implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
 
     const dataJson = this.registroForm.value;
 
@@ -167,19 +170,28 @@ export class RegistroAppPage implements OnInit {
 
     this.registroService.post(formData).subscribe({
       next: async () => {
-        this.isLoading = false;
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+        
         await this.showSuccessAlert(
           'Registro exitoso',
           '¡Su cuenta ha sido creada correctamente!'
         );
+        
         this.registroForm.reset();
         this.identityDocumentFile = undefined as any;
         this.certificateFile = undefined as any;
         this.signedDocumentFile = undefined as any;
+        this.paymentReceiptFile = undefined as any;
+        
         this.router.navigate(['/login']);
       },
       error: async (err: HttpErrorResponse) => {
-        this.isLoading = false;
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+        
         let message = 'Error en el servidor';
         if (
           err.status === 413 ||
@@ -189,6 +201,7 @@ export class RegistroAppPage implements OnInit {
         } else if (err.error?.message) {
           message = err.error.message;
         }
+        
         await this.showToast(message, 'danger');
         console.error('Error en el registro:', err);
       },
