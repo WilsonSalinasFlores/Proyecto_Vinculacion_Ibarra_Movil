@@ -1,13 +1,13 @@
 import { Component, Input, AfterViewInit, ViewChildren, QueryList, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule, NgForOf, NgIf } from '@angular/common';
-import { IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, ModalController, IonTitle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon, ModalController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-gallery-modal',
   templateUrl: './gallery-modal.component.html',
   styleUrls: ['./gallery-modal.component.scss'],
   standalone: true,
-  imports: [IonTitle, CommonModule, NgForOf, NgIf, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon]
+  imports: [CommonModule, NgForOf, NgIf, IonContent, IonHeader, IonToolbar, IonButtons, IonButton, IonIcon]
 })
 export class GalleryModalComponent {
   @Input() images: string[] = [];

@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { lastValueFrom } from 'rxjs';
 import {
-  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+  IonHeader, IonToolbar, IonButtons, IonButton, IonIcon,
   IonContent, IonItem, IonInput, IonRadioGroup, IonRadio, IonTextarea, 
   IonSpinner
 } from '@ionic/angular/standalone';
@@ -16,7 +16,7 @@ import {
   styleUrls: ['./eliminar-negocio.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonButtons,
+    CommonModule, FormsModule, IonHeader, IonToolbar, IonButtons,
     IonButton, IonIcon, IonContent, IonItem, IonInput, IonRadioGroup, 
     IonRadio, IonTextarea, IonSpinner
   ]
