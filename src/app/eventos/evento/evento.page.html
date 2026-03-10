@@ -1,8 +1,11 @@
 <ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
-    <div class="header-left">
-      <div class="brand">GAD de Ibarra</div>
-      <div class="subtitle">Gobierno Autónomo Descentralizado</div>
+    <div class="header-left" style="padding-top: 2ex;">
+      <img src="assets/icon/EscudoIbarra2.png" alt="Logo GAD Ibarra" class="header-logo" />
+      <div class="header-text">
+        <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+        <div class="brand">Evento</div>
+      </div>
     </div>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="dismiss()" aria-label="Cerrar">
@@ -97,9 +100,13 @@
         </div>
 
         <div class="action-access" *ngIf="e.link">
-          <ion-button class="acceder-btn" fill="solid" expand="block" (click)="accederEvento(e.link)">
+          <ion-button class="primary" fill="solid" expand="block" (click)="accederEvento(e.link)">
             Acceder al Evento
           </ion-button>
+        </div>
+        <div  >
+          <br>
+          <br>
         </div>
       </div>
     </div>

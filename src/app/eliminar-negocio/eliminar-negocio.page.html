@@ -1,14 +1,15 @@
-<ion-header [translucent]="true">
+<ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      <div class="header-title">
-        <ion-icon name="document-text-outline"></ion-icon>
-        <span>Solicitud Eliminación</span>
+    <div class="header-left" style="padding-top: 2ex;">
+      <img src="assets/icon/EscudoIbarra2.png" alt="Logo GAD Ibarra" class="header-logo" />
+      <div class="header-text">
+        <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+        <div class="brand">Eliminación de Negocio</div>
       </div>
-    </ion-title>
+    </div>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="closeModal()">
-        <ion-icon name="close" color="light"></ion-icon>
+        <ion-icon slot="icon-only" name="close" class="close-icon"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

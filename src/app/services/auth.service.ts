@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
@@ -30,12 +30,21 @@ private currentUser = new BehaviorSubject<any>(null);
     this.loadUserData();
   }
 
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+  }
 
   login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(this.loginUrl, {
+    const payload = {
       username: email,
       password: password
-    }).pipe(
+    };
+    const headers = this.getHeaders();
+    
+    return this.http.post<any>(this.loginUrl, payload, { headers }).pipe(
       tap(response => {
         if (response?.jwt) { 
           this.storeAuthData(response);
@@ -43,10 +52,7 @@ private currentUser = new BehaviorSubject<any>(null);
         }
       }),
       catchError(error => {
-        console.error('=== ERROR LOGIN ===');
-        console.error('Error completo:', error);
-        console.error('Status:', error.status);
-        console.error('Body:', error.error);
+        console.error('Error en login:', error);
         
         let errorMsg = 'Error desconocido';
         if (error.status === 401) {
@@ -62,10 +68,16 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
   validateEmail(email: string): Observable<any> {
-    return this.http.post<any>(this.validateEmailUrl, {
-      email: email
-    }).pipe(
+    const payload = { email: email };
+    const headers = this.getHeaders();
+    
+    return this.http.post<any>(this.validateEmailUrl, payload, { headers }).pipe(
+      tap((response) => {
+        // Email validado correctamente
+      }),
       catchError(error => {
+        console.error('Error al validar email:', error);
+        
         let errorMsg = 'Error al validar el correo';
         if (error.status === 404) {
           errorMsg = 'El correo electrónico no está registrado en nuestro sistema';
@@ -80,21 +92,23 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
   validateOTP(otp: string, uuid: string): Observable<any> {
-    return this.http.post<any>(this.validateOTPUrl, {
+    const payload = {
       otp: otp,
       uuid: uuid
-    }).pipe(
-      tap(() => {
+    };
+    const headers = this.getHeaders();
+    
+    return this.http.post<any>(this.validateOTPUrl, payload, { headers }).pipe(
+      tap((response) => {
+        // OTP validado correctamente
       }),
       catchError(error => {
-        console.error('=== ERROR EN VALIDACIÓN OTP ===');
-        console.error('Error completo:', error);
-        console.error('Status:', error.status);
-        console.error('Body:', error.error);
+        console.error('Error al validar OTP:', error);
         
         let errorMsg = 'Error al validar el código';
         if (error.status === 400) {
-          errorMsg = 'Código inválido o expirado';
+          const backendMsg = error.error?.message || error.error?.error;
+          errorMsg = backendMsg || 'Código inválido o expirado';
         } else if (error.status === 404) {
           errorMsg = 'Código no encontrado';
         } else if (error.status === 0) {
@@ -106,13 +120,17 @@ private currentUser = new BehaviorSubject<any>(null);
   }
 
   resetPassword(userId: any, newPassword: string): Observable<any> {
-    return this.http.put<any>(`${this.resetPasswordUrl}/${userId}`, {
+    const payload = {
       newPassword: newPassword
-    }).pipe(
+    };
+    const headers = this.getHeaders();
+    
+    return this.http.put<any>(`${this.resetPasswordUrl}/${userId}`, payload, { headers }).pipe(
       tap(() => {
+        // Contraseña actualizada correctamente
       }),
       catchError(error => {
-        console.error('Error del servidor:', error);
+        console.error('Error al cambiar contraseña:', error);
         let errorMsg = 'Error al cambiar la contraseña';
         if (error.status === 400) {
           errorMsg = 'La contraseña no cumple con los requisitos mínimos';

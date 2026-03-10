@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-soporte',
@@ -12,6 +13,8 @@ import { IonicModule } from '@ionic/angular';
 })
 export class SoportePage {
 
+  constructor(private router: Router) {}
+
   enviarCorreo(problema: string) {
     const destinatario = "soporte@tusistema.com"; // Debe ser cambiado por el gmail a usar el Municipio 
     const asunto = `Soporte - ${problema}`;
@@ -19,5 +22,9 @@ export class SoportePage {
 
     const mailto = `mailto:${destinatario}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
     window.location.href = mailto;
+  }
+
+  goBack() {
+    this.router.navigate(['/home']);
   }
 }

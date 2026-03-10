@@ -1,16 +1,26 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="danger" class="header-red">
+<ion-header>
+  <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text="" aria-label="Volver"></ion-back-button>
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <div class="header-left">
-      <div class="brand">Eventos - GAD de Ibarra</div>
-      <div class="subtitle">Gobierno Autónomo Descentralizado</div>
-    </div>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img src="assets/icon/EscudoIbarra2.png" alt="Logo GAD Ibarra" class="header-logo"/>
+        <div class="title-text">
+          <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+          <div class="brand">Eventos</div>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" fill="clear">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="mostrarAnteriores($event)">
     <ion-refresher-content pullingText="Deslizar para ver eventos anteriores" refreshingText="Cargando...">
     </ion-refresher-content>

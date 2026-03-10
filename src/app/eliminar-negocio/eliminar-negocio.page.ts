@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, NgZone } from '@angular/core';
 import { ModalController, AlertController, ToastController } from '@ionic/angular';
 import { NegocioService } from '../services/negocio.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { lastValueFrom } from 'rxjs';
 import {
-  IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon,
+  IonHeader, IonToolbar, IonButtons, IonButton, IonIcon,
   IonContent, IonItem, IonInput, IonRadioGroup, IonRadio, IonTextarea, 
   IonSpinner
 } from '@ionic/angular/standalone';
@@ -15,7 +16,7 @@ import {
   styleUrls: ['./eliminar-negocio.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonButtons,
+    CommonModule, FormsModule, IonHeader, IonToolbar, IonButtons,
     IonButton, IonIcon, IonContent, IonItem, IonInput, IonRadioGroup, 
     IonRadio, IonTextarea, IonSpinner
   ]
@@ -48,7 +49,8 @@ export class EliminarNegocioPage {
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private negocioService: NegocioService
+    private negocioService: NegocioService,
+    private ngZone: NgZone
   ) {}
 
   get isFormValid(): boolean {
@@ -71,25 +73,54 @@ export class EliminarNegocioPage {
       message: `¿Enviar solicitud de eliminación para "${this.businessName}"?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Confirmar', handler: () => this.sendDeletionRequest() }
+        {
+          text: 'Confirmar',
+          handler: async () => {
+            await this.sendDeletionRequest(alert);
+            return false;
+          }
+        }
       ]
     });
     await alert.present();
   }
 
-  private async sendDeletionRequest() {
-    this.loading = true;
-    try {
-      const response = await this.negocioService.requestBusinessDeletion(
-        this.businessId, this.motivo, this.justificacion
-      ).toPromise();
+  private async sendDeletionRequest(alert: HTMLIonAlertElement) {
+    this.ngZone.run(() => {
+      this.loading = true;
+    });
 
-      await this.showToast('Solicitud enviada correctamente', 'success');
-      this.modalCtrl.dismiss(true);
+    try {
+      await lastValueFrom(this.negocioService.requestBusinessDeletion(
+        this.businessId, this.motivo, this.justificacion
+      ));
+
+      await alert.dismiss();
+
+      this.showToast('Solicitud enviada correctamente', 'success');
+
+      await this.ngZone.run(async () => {
+        await this.modalCtrl.dismiss(true);
+      });
     } catch (error: any) {
-      await this.showToast(error.message || 'Error al enviar solicitud', 'danger');
+      await alert.dismiss();
+      
+      let message = 'Error al enviar solicitud';
+      
+      // Manejar error 409 - Conflicto (solicitud ya existe)
+      if (error.status === 409) {
+        message = error.error?.message || 'Ya existe una solicitud pendiente para este negocio';
+      } else if (error.error?.message) {
+        message = error.error.message;
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      await this.showToast(message, 'warning');
     } finally {
-      this.loading = false;
+      this.ngZone.run(() => {
+        this.loading = false;
+      });
     }
   }
 

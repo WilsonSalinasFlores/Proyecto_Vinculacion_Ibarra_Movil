@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -52,7 +52,8 @@ export class RegistroAppPage implements OnInit {
     private alertController: AlertController,
     private router: Router,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private ngZone: NgZone
   ) {
     this.initializeForm();
   }
@@ -151,7 +152,9 @@ export class RegistroAppPage implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
 
     const dataJson = this.registroForm.value;
 
@@ -160,37 +163,55 @@ export class RegistroAppPage implements OnInit {
     formData.append('certificate', this.certificateFile);
     formData.append('signedDocument', this.signedDocumentFile);
     formData.append('paymentReceipt', this.paymentReceiptFile);
-    formData.append(
-      'data',
-      new Blob([JSON.stringify(dataJson)], { type: 'application/json' })
-    );
+
+    const dataBlob = new Blob([JSON.stringify(dataJson)], {
+      type: 'application/json',
+    });
+    formData.append('data', dataBlob, 'data.json');
 
     this.registroService.post(formData).subscribe({
       next: async () => {
-        this.isLoading = false;
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+        
         await this.showSuccessAlert(
           'Registro exitoso',
           '¡Su cuenta ha sido creada correctamente!'
         );
+        
         this.registroForm.reset();
         this.identityDocumentFile = undefined as any;
         this.certificateFile = undefined as any;
         this.signedDocumentFile = undefined as any;
+        this.paymentReceiptFile = undefined as any;
+        
         this.router.navigate(['/login']);
       },
       error: async (err: HttpErrorResponse) => {
-        this.isLoading = false;
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+        
         let message = 'Error en el servidor';
         if (
           err.status === 413 ||
           err.error?.message?.includes('tamaño máximo')
         ) {
           message = 'El archivo supera el tamaño máximo permitido de 2 MB';
+        } else if (
+          err.status === 400 &&
+          typeof err.error?.message === 'string' &&
+          err.error.message.toLowerCase().includes('identificación ya se encuentra registrada')
+        ) {
+          message = 'La identificación ya se encuentra registrada';
+          this.registroForm.get('identification')?.setErrors({ duplicated: true });
+          this.registroForm.get('identification')?.markAsTouched();
         } else if (err.error?.message) {
           message = err.error.message;
         }
+        
         await this.showToast(message, 'danger');
-        console.error('Error en el registro:', err);
       },
     });
   }
@@ -238,6 +259,9 @@ export class RegistroAppPage implements OnInit {
     if (field?.errors && field.touched) {
       if (field.errors['required']) {
         return `${this.getFieldLabel(fieldName)} es requerido`;
+      }
+      if (field.errors['duplicated']) {
+        return `${this.getFieldLabel(fieldName)} ya se encuentra registrada`;
       }
       if (field.errors['email']) {
         return 'Ingrese un email válido';

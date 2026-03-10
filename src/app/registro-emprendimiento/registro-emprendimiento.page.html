@@ -1,9 +1,26 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Nuevo Negocio</ion-title>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img
+          src="assets/icon/EscudoIbarra2.png"
+          alt="Logo GAD Ibarra"
+          class="header-logo"
+        />
+        <div class="title-text">
+          <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+          <div class="brand">Nuevo Emprendimiento</div>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" fill="clear">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -382,4 +399,7 @@
       </ng-container>
     </ion-button>
   </form>
+  <br>
+  <br>
+  <br>
 </ion-content>

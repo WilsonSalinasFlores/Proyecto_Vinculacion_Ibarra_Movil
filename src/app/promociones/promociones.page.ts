@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -22,11 +22,12 @@ import {
   IonButtons,
   IonBadge,
   IonChip,
+  IonMenuButton,
   IonRefresher,
   IonRefresherContent,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, calendar, ticket, time, pricetag } from 'ionicons/icons';
+import { add, calendar, ticket, time, pricetag, refresh, close, create, trash } from 'ionicons/icons';
 import { PromocionesService, Promocion } from '../services/promociones.service';
 import { CrearPromocionPage } from '../crear-promocion/crear-promocion.page';
 import { AuthService } from '../services/auth.service';
@@ -58,6 +59,7 @@ import { EditarPromocionPage } from '../editar-promocion/editar-promocion.page';
     IonButtons,
     IonBadge,
     IonChip,
+    IonMenuButton,
     IonRefresher,
     IonRefresherContent,
   ],
@@ -73,9 +75,10 @@ export class PromocionesPage implements OnInit {
     private modalCtrl: ModalController,
     private alertController: AlertController,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
-    addIcons({ add, calendar, ticket, time, pricetag });
+    addIcons({refresh,close,add,ticket,create,trash,calendar,pricetag,time});
   }
 
   ngOnInit() {
@@ -159,8 +162,16 @@ export class PromocionesPage implements OnInit {
       return;
     }
 
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
+
     this.promocionesService.crearPromocion(promocion, archivo).subscribe({
       next: (response) => {
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+
         if (response.success) {
           this.mostrarAlerta('Éxito', 'Promoción creada correctamente');
           this.cargarPromociones();
@@ -172,6 +183,10 @@ export class PromocionesPage implements OnInit {
         }
       },
       error: (error) => {
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+
         console.error('Error completo:', error);
 
         if (error.status === 401) {
@@ -254,10 +269,18 @@ export class PromocionesPage implements OnInit {
       return;
     }
 
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
+
     this.promocionesService
       .editarPromocion(id, promocion, archivo || undefined)
       .subscribe({
         next: (response) => {
+          this.ngZone.run(() => {
+            this.isLoading = false;
+          });
+
           if (response.success) {
             this.mostrarAlerta('Éxito', 'Promoción actualizada correctamente');
             this.cargarPromociones();
@@ -269,6 +292,10 @@ export class PromocionesPage implements OnInit {
           }
         },
         error: (error) => {
+          this.ngZone.run(() => {
+            this.isLoading = false;
+          });
+
           console.error('Error al editar promoción:', error);
           this.mostrarAlerta(
             'Error',
@@ -301,8 +328,16 @@ export class PromocionesPage implements OnInit {
   }
 
   eliminarPromocion(id: number) {
+    this.ngZone.run(() => {
+      this.isLoading = true;
+    });
+
     this.promocionesService.eliminarPromocion(id).subscribe({
       next: (response) => {
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+
         if (response.success) {
           this.mostrarAlerta('Éxito', 'Promoción eliminada correctamente');
           this.cargarPromociones();
@@ -314,6 +349,10 @@ export class PromocionesPage implements OnInit {
         }
       },
       error: (error) => {
+        this.ngZone.run(() => {
+          this.isLoading = false;
+        });
+
         console.error('Error al eliminar promoción:', error);
         this.mostrarAlerta(
           'Error',

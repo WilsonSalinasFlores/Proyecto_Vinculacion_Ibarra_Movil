@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, InfiniteScrollCustomEvent } from '@ionic/angular';
 import { NegocioService } from '../services/negocio.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-mis-negocios',
   templateUrl: './mis-negocios.page.html',
   styleUrls: ['./mis-negocios.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule],
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule],
 })
 export class MisNegociosPage implements OnInit {
   businesses: any[] = [];
@@ -173,5 +173,16 @@ export class MisNegociosPage implements OnInit {
     };
 
     return statusTextMap[status?.toUpperCase()] || status || 'DESCONOCIDO';
+  }
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
+
+  onBusinessImageError(event: Event) {
+    const target = event.target as HTMLImageElement | null;
+    if (target) {
+      target.src = 'assets/icon/ibarra.jpg';
+    }
   }
 }

@@ -30,6 +30,7 @@ import {
   buildOutline,
   ellipsisHorizontalOutline,
   helpOutline,
+  menu,
 } from 'ionicons/icons';
 import { LoginPage } from '../login/login.page';
 import { Router } from '@angular/router';
@@ -103,7 +104,7 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private busquedaService: BusquedaService,
     private eventosService: EventosService,
-    private menuController: MenuController
+    public menuController: MenuController
   ) {
     addIcons({
       locationOutline,
@@ -125,6 +126,7 @@ export class HomePage implements OnInit {
       buildOutline,
       ellipsisHorizontalOutline,
       helpOutline,
+      menu,
     });
   }
 
@@ -169,8 +171,22 @@ export class HomePage implements OnInit {
     this.loadPromotions(this.selectedPromotionType, this.selectedCategoryId);
   }
 
+  private menuOpen = false;
+
+  async toggleMenu() {
+    try {
+      // Obtener referencia al elemento del menú
+      const menuElement = document.querySelector('ion-menu');
+      if (menuElement) {
+        const isOpen = await (menuElement as any).isOpen();
+        await (menuElement as any).setOpen(!isOpen);
+      }
+    } catch (error) {
+    }
+  }
+
   openMenu() {
-    this.menuController.open('sidebar');
+    this.toggleMenu();
   }
 
   private setupAuthSubscription() {

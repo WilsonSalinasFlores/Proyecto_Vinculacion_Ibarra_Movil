@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
   IonInput,
@@ -17,12 +16,16 @@ import {
   IonText,
   IonNote,
   IonSpinner,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
   ModalController,
   AlertController,
   IonIcon,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { close, camera } from 'ionicons/icons';
+import { close, camera, createOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-editar-promocion',
@@ -34,7 +37,6 @@ import { close, camera } from 'ionicons/icons';
     FormsModule,
     IonHeader,
     IonToolbar,
-    IonTitle,
     IonContent,
     IonButton,
     IonInput,
@@ -48,6 +50,10 @@ import { close, camera } from 'ionicons/icons';
     IonNote,
     IonSpinner,
     IonIcon,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
   ],
 })
 export class EditarPromocionPage {
@@ -71,7 +77,7 @@ export class EditarPromocionPage {
     private modalCtrl: ModalController,
     private alertController: AlertController
   ) {
-    addIcons({ close, camera });
+    addIcons({createOutline,close,camera});
   }
 
   private parseDateForDisplay(dateString: string): string {

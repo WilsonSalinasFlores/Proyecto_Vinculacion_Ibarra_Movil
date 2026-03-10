@@ -1,19 +1,25 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-menu-button autoHide="false" menu="start"></ion-menu-button>
+      <ion-button (click)="toggleMenu()" fill="clear" class="menu-btn">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title class="app-title">
-      <div class="title-content" (click)="$event.stopPropagation(); openMenu()" role="button" tabindex="0">
+      <div class="title-content" role="button" tabindex="0">
         <img
-          src="assets/icon/EscudoIbarra.png"
+          src="assets/icon/EscudoIbarra2.png"
           alt="Logo GAD Ibarra"
           class="header-logo"
         />
-        <span>Municipalidad de Ibarra</span>
+        <div class="title-text">
+          <div class="subtitle">Gobierno Autónomo<br>Descentralizado Municipal</div>
+          <div class="brand">San Miguel de Ibarra</div>
+        </div>
       </div>
+      
     </ion-title>
-
+    
     <ion-buttons slot="end">
       <ion-button
         *ngIf="!isAuthenticated"

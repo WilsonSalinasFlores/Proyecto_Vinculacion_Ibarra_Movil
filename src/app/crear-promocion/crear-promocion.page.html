@@ -1,6 +1,12 @@
-<ion-header>
+<ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
-    <ion-title>Nueva Promoción</ion-title>
+    <div class="header-left" style="padding-top: 2ex;">
+      <img src="assets/icon/EscudoIbarra2.png" alt="Logo GAD Ibarra" class="header-logo" />
+      <div class="header-text">
+        <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+        <div class="brand">Nueva Promoción</div>
+      </div>
+    </div>
     <ion-buttons slot="end">
       <ion-button (click)="cancel()">Cerrar</ion-button>
     </ion-buttons>
@@ -111,4 +117,7 @@
       </ion-button>
     </div>
   </form>
+  <br>
+  <br>
+  <br>
 </ion-content>

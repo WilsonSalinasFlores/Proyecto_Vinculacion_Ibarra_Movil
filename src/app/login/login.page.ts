@@ -182,10 +182,11 @@ export class LoginPage {
 
   async onSubmit() {
     if (this.loginForm.valid) {
+      const email = this.loginForm.value.email;
+      const password = this.loginForm.value.password;
 
       let loading: any;
       try {
-        // Crear el loading SIN await
         const loadingPromise = this.loadingController.create({
           message: 'Iniciando sesión...',
           spinner: 'crescent',
@@ -194,17 +195,15 @@ export class LoginPage {
         loadingPromise.then(l => {
           loading = l;
           loading.present();
-        }).catch(err => console.error('Error crear loading:', err));
+        }).catch(err => {
+          // Error al crear loading
+        });
         
-        const loginObservable = this.authService.login(
-          this.loginForm.value.email,
-          this.loginForm.value.password
-        );
-        
+        const loginObservable = this.authService.login(email, password);
         const response = await lastValueFrom(loginObservable);
+        
         this.handleSuccessfulLogin();
       } catch (error: any) {
-        console.error('Error en onSubmit:', error);
         let errorMessage = 'Error en el login';
 
         if (error.message) {
@@ -212,7 +211,7 @@ export class LoginPage {
         } else if (error.error?.message) {
           errorMessage = error.error.message;
         }
-
+        
         await this.showError(errorMessage);
       } finally {
         if (loading) {
@@ -235,27 +234,23 @@ export class LoginPage {
   }
   private handleSuccessfulLogin() {
     try {
-      // Obtener datos del usuario del AuthService
       const userData = this.authService.getCurrentUser();
 
       if (this.isModal) {
-        // Cerrar el modal inmediatamente después de login exitoso
         this.closeModal(true, userData);
       } else {
         const pendingRoute = localStorage.getItem('pending_route');
+        
         if (pendingRoute) {
           localStorage.removeItem('pending_route');
           this.router.navigate([pendingRoute]);
         } else {
-          // Navegar al home y mostrar alerta
           this.router.navigate(['/home']).then(() => {
             this.showWelcomeAlert(userData);
           });
         }
       }
     } catch (error) {
-      console.error('Error:', error);
-      console.error('Error handling successful login:', error);
       this.showError('Error al procesar el inicio de sesión');
     }
   }
@@ -275,35 +270,79 @@ export class LoginPage {
 
   async onForgotPasswordSubmit() {
     if (this.forgotPasswordForm.valid) {
-      const loading = await this.showLoading('Validando correo electrónico...');
-      this.userEmail = this.forgotPasswordForm.value.email;
-
+      let loading: any;
+      
       try {
+        const loadingPromise = this.loadingController.create({
+          message: 'Validando correo electrónico...',
+          spinner: 'crescent',
+        });
+        
+        loadingPromise.then(l => {
+          loading = l;
+          loading.present();
+        }).catch(err => {
+          // Error al crear loading
+        });
+        
+        this.userEmail = this.forgotPasswordForm.value.email;
+        
         const response = await lastValueFrom(
           this.authService.validateEmail(this.userEmail)
         );
 
-        this.recoveryUuid = response.uuid;
+        if (!response || !response.uuid) {
+          throw new Error('No se recibió UUID del servidor');
+        }
 
+        this.recoveryUuid = response.uuid;
         this.currentView = 'enter-otp';
       } catch (error) {
-        console.error('Error en validación de email:', error);
         const errorMessage =
           error && typeof error === 'object' && 'message' in error
             ? (error as any).message
             : 'Error al validar el correo electrónico';
         await this.showError(errorMessage);
       } finally {
-        loading.dismiss();
+        if (loading) {
+          loading.dismiss();
+        }
       }
     }
   }
 
   async onOTPSubmit() {
     if (this.otpForm.valid) {
-      const loading = await this.showLoading('Validando código...');
+      let loading: any;
 
-      const otpCode = Object.values(this.otpForm.value).join('');
+      const loadingPromise = this.loadingController.create({
+        message: 'Validando código...',
+        spinner: 'crescent',
+      });
+      
+      loadingPromise.then(l => {
+        loading = l;
+        loading.present();
+      }).catch(err => {
+        // Error al crear loading
+      });
+
+      const otpCode = Object.values(this.otpForm.value)
+        .map(val => String(val).trim())
+        .join('');
+
+      if (otpCode.length !== 6 || !/^\d{6}$/.test(otpCode)) {
+        if (loading) loading.dismiss();
+        await this.showError('Por favor ingresa un código válido de 6 dígitos');
+        return;
+      }
+
+      if (!this.recoveryUuid || this.recoveryUuid.trim() === '') {
+        if (loading) loading.dismiss();
+        await this.showError('Error: No se encontró la sesión de recuperación. Por favor intenta de nuevo.');
+        this.currentView = 'forgot-password';
+        return;
+      }
 
       try {
         const response = await lastValueFrom(
@@ -313,7 +352,7 @@ export class LoginPage {
         if (!response) {
           throw new Error('No se recibió respuesta del servidor');
         }
-
+        
         let foundUserId = null;
         const possibleKeys = [
           'idUsuario',
@@ -339,8 +378,8 @@ export class LoginPage {
           this.validatedId = this.recoveryUuid;
           this.currentView = 'new-password';
         }
+        
       } catch (error) {
-        console.error('Error en validación OTP:', error);
         const errorMessage =
           error && typeof error === 'object' && 'message' in error
             ? (error as any).message
@@ -349,16 +388,30 @@ export class LoginPage {
 
         this.otpForm.reset();
       } finally {
-        loading.dismiss();
+        if (loading) {
+          loading.dismiss();
+        }
       }
     }
   }
 
   async onNewPasswordSubmit() {
     if (this.newPasswordForm.valid) {
-      const loading = await this.showLoading('Actualizando contraseña...');
+        let loading: any;
 
-      try {
+        try {
+          const loadingPromise = this.loadingController.create({
+            message: 'Actualizando contraseña...',
+            spinner: 'crescent',
+          });
+        
+          loadingPromise.then(l => {
+            loading = l;
+            loading.present();
+          }).catch(err => {
+            // Error al crear loading
+          });
+
         if (
           !this.validatedId ||
           this.validatedId === 'undefined' ||
@@ -371,7 +424,6 @@ export class LoginPage {
 
         const userIdNumber = parseInt(this.userId);
         if (isNaN(userIdNumber)) {
-          console.error('userId no es un número válido:', this.userId);
           throw new Error(
             'ID de usuario inválido. Intente nuevamente desde el inicio.'
           );
@@ -386,15 +438,18 @@ export class LoginPage {
 
         this.currentView = 'success';
       } catch (error) {
-        console.error('Error completo:', error);
         const errorMessage =
           error && typeof error === 'object' && 'message' in error
             ? (error as any).message
             : 'Error al actualizar la contraseña. Verifique su conexión e intente nuevamente.';
         await this.showError(errorMessage);
       } finally {
-        loading.dismiss();
+          if (loading) {
+            loading.dismiss();
+          }
       }
+    } else {
+      this.markFormGroupTouched(this.newPasswordForm);
     }
   }
 
@@ -439,6 +494,7 @@ export class LoginPage {
 
   forgotPassword() {
     this.currentView = 'forgot-password';
+    
     if (this.loginForm.value.email) {
       this.forgotPasswordForm.patchValue({ email: this.loginForm.value.email });
     }
@@ -486,7 +542,8 @@ export class LoginPage {
     const alert = await this.alertController.create({
       header: 'Error',
       message: message,
-      buttons: ['OK'],
+      buttons: ['Aceptar'],
+      cssClass: 'error-alert'
     });
     await alert.present();
   }

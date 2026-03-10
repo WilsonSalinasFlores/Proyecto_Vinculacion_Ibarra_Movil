@@ -1,13 +1,30 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Mis Negocios</ion-title>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img
+          src="assets/icon/EscudoIbarra2.png"
+          alt="Logo GAD Ibarra"
+          class="header-logo"
+        />
+        <div class="title-text">
+          <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+          <div class="brand">Mis Negocios</div>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" fill="clear">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="no-padding">
+<ion-content class="no-padding">
   <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="loadBusinesses(true, $event)">
     <ion-refresher-content></ion-refresher-content>
@@ -44,7 +61,7 @@
             [src]="biz.logoUrl || 'assets/icon/ibarra.jpg'"
             alt="{{ biz.commercialName }}"
             class="business-image"
-            (error)="$event.target.src = 'assets/icon/ibarra.jpg'"
+            (error)="onBusinessImageError($event)"
           />
           <!-- Estados desde API -->
           <ion-badge [color]="getStatusColor(biz.validationStatus)">
@@ -146,13 +163,12 @@
           <!-- Botones de acción - CORREGIDO -->
           <div class="action-buttons">
             <ion-button
+              class="primary"
               expand="block"
               fill="solid"
-              size="small"
               (click)="viewBusinessDetails(biz.id)"
               [disabled]="!biz.id"
             >
-              <ion-icon slot="start" name="settings-outline"></ion-icon>
               Ver Detalles
             </ion-button>
           </div>

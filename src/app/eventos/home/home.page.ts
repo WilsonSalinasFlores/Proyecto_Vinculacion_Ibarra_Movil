@@ -22,10 +22,11 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  ModalController, IonLabel, IonButtons, IonBackButton, IonFooter } from '@ionic/angular/standalone';
+  ModalController, IonLabel, IonButtons, IonFooter, IonMenuButton, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { EventosService } from '../eventos.service';
 import { environment } from '../../../environments/environment';
 import { Evento } from '../evento.model';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -33,7 +34,7 @@ import { Evento } from '../evento.model';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonFooter, IonBackButton, IonButtons, 
+  imports: [IonFooter, IonButtons, IonMenuButton, IonButton, IonIcon,
     IonContent,
     IonHeader,
     IonTitle,
@@ -76,7 +77,7 @@ export class HomePage implements OnInit {
   eventosEnMes = 0;
   mesesConEventos: { key: string; label: string; count: number }[] = [];
 
-  constructor(private eventosSrv: EventosService, private modalCtrl: ModalController) { }
+  constructor(private eventosSrv: EventosService, private modalCtrl: ModalController, private router: Router) { }
 
   ngOnInit() {
     this.cargarInicial();
@@ -292,6 +293,10 @@ export class HomePage implements OnInit {
     this.mesesConEventos = Object.values(mesesMap).sort((a,b)=> a.key.localeCompare(b.key));
     // añadir opción 'todos' al inicio
     this.mesesConEventos.unshift({ key: 'todos', label: 'Todos', count: this.eventos.length });
+  }
+
+  goBack() {
+    this.router.navigate(['/home']);
   }
 
 

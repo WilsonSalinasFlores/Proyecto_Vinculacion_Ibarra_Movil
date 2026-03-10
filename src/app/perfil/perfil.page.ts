@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 import { PerfilService, UpdateUserDto } from '../services/perfil.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
@@ -20,7 +21,8 @@ export class PerfilPage implements OnInit {
     private fb: FormBuilder,
     private perfilService: PerfilService,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -77,6 +79,12 @@ export class PerfilPage implements OnInit {
       this.profileForm.get('phone')?.enable();
       this.profileForm.get('address')?.enable();
       this.profileForm.get('username')?.disable();
+      
+      // Log temporal para diagnóstico
+      console.log('Modo edición activado');
+      console.log('Form valid:', this.profileForm.valid);
+      console.log('Form status:', this.profileForm.status);
+      console.log('Email errors:', this.profileForm.get('email')?.errors);
     } else {
       // Cancelar edición - restaurar valores originales
       this.profileForm.patchValue(this.originalData);
@@ -89,6 +97,9 @@ export class PerfilPage implements OnInit {
   }
 
   async saveProfile() {
+    console.log('=== GUARDANDO PERFIL ===');
+    console.log('Form valid:', this.profileForm.valid);
+    
     if (this.profileForm.invalid) {
       this.markFormGroupTouched();
       const alert = await this.alertCtrl.create({
@@ -100,24 +111,25 @@ export class PerfilPage implements OnInit {
       return;
     }
 
-    const loading = await this.loadingCtrl.create({
-      message: 'Guardando cambios...',
-      spinner: 'crescent'
-    });
-    await loading.present();
+    console.log('Después de validación');
 
     // Usar getRawValue() para obtener todos los valores incluyendo disabled
     const formValue = this.profileForm.getRawValue();
+    console.log('Form value obtenido:', formValue);
+    
     const updateData: UpdateUserDto = {
       email: formValue.email,
       phone: formValue.phone || '',
       address: formValue.address || '',
       username: formValue.username
     };
+    
+    console.log('Datos a enviar:', updateData);
+    console.log('Llamando al servicio...');
 
     this.perfilService.updateProfile(updateData).subscribe({
       next: async () => {
-        await loading.dismiss();
+        console.log('Respuesta exitosa del servidor');
         
         // Actualizar datos originales
         this.originalData = { ...this.originalData, ...updateData };
@@ -133,8 +145,10 @@ export class PerfilPage implements OnInit {
         await this.showSuccessAlert('Perfil actualizado correctamente');
       },
       error: async (error) => {
-        console.error('Error actualizando:', error);
-        await loading.dismiss();
+        console.error('=== ERROR AL ACTUALIZAR ===');
+        console.error('Error completo:', error);
+        console.error('Status:', error.status);
+        console.error('Message:', error.message);
         
         let errorMessage = 'Error al guardar los cambios';
         if (error.status === 400) errorMessage = 'Datos inválidos';
@@ -144,6 +158,8 @@ export class PerfilPage implements OnInit {
         await this.showErrorAlert('Error', errorMessage);
       }
     });
+    
+    console.log('Subscribe configurado');
   }
 
   private markFormGroupTouched() {
@@ -175,4 +191,8 @@ export class PerfilPage implements OnInit {
 
   // Helper para debugging
   logFormState(): void {}
+
+  goBack() {
+    this.router.navigate(['/home']);
+  }
 }

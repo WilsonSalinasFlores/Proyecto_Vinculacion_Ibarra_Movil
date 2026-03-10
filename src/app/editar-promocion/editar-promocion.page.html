@@ -1,9 +1,15 @@
-<ion-header>
+<ion-header class="evento-header header-red" [translucent]="true">
   <ion-toolbar>
-    <ion-title>Editar Promoción</ion-title>
+    <div class="header-left" style="padding-top: 2ex;">
+      <img src="assets/icon/EscudoIbarra2.png" alt="Logo GAD Ibarra" class="header-logo" />
+      <div class="header-text">
+        <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+        <div class="brand">Editar Promoción</div>
+      </div>
+    </div>
     <ion-buttons slot="end">
-      <ion-button (click)="cancel()">
-        <ion-icon name="close" slot="icon-only"></ion-icon>
+      <ion-button fill="clear" (click)="cancel()" aria-label="Cerrar">
+        <ion-icon slot="icon-only" name="close" class="close-icon"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -12,12 +18,14 @@
 <ion-content class="ion-padding">
   <form (ngSubmit)="confirm()" #promoForm="ngForm">
     <!-- Vista previa de la imagen -->
-    <div class="image-preview" *ngIf="currentImageUrl">
-      <img [src]="currentImageUrl" alt="Vista previa" class="preview-image" />
-      <ion-text color="medium">
-        <small>Imagen actual de la promoción</small>
-      </ion-text>
-    </div>
+    <ion-card class="preview-card" *ngIf="currentImageUrl">
+      <ion-card-header>
+        <ion-card-title class="preview-title">Imagen Actual</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <img [src]="currentImageUrl" alt="Vista previa" class="preview-image" />
+      </ion-card-content>
+    </ion-card>
 
     <ion-item>
       <ion-label position="stacked">Tipo de Promoción</ion-label>
@@ -122,4 +130,7 @@
       </ion-button>
     </div>
   </form>
+  <br>
+  <br>
+  <br>
 </ion-content>
