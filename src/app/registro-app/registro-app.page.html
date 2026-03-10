@@ -1,8 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="danger">
     <ion-title>Registro de Persona</ion-title>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+    <ion-buttons slot="end">
+      <ion-button (click)="goHome()" fill="clear">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -504,5 +506,8 @@
         </ion-button>
       </div>
     </form>
+    <br>
+    <br>
+    <br>
   </div>
 </ion-content>

@@ -163,10 +163,11 @@ export class RegistroAppPage implements OnInit {
     formData.append('certificate', this.certificateFile);
     formData.append('signedDocument', this.signedDocumentFile);
     formData.append('paymentReceipt', this.paymentReceiptFile);
-    formData.append(
-      'data',
-      new Blob([JSON.stringify(dataJson)], { type: 'application/json' })
-    );
+
+    const dataBlob = new Blob([JSON.stringify(dataJson)], {
+      type: 'application/json',
+    });
+    formData.append('data', dataBlob, 'data.json');
 
     this.registroService.post(formData).subscribe({
       next: async () => {
@@ -192,18 +193,33 @@ export class RegistroAppPage implements OnInit {
           this.isLoading = false;
         });
         
+        // Logs temporales para diagnóstico
+        console.log('=== ERROR REGISTRO ===');
+        console.log('Status:', err.status);
+        console.log('Error completo:', err.error);
+        console.log('Mensaje:', err.error?.message);
+        console.log('Error type:', typeof err.error);
+        console.log('===================');
+        
         let message = 'Error en el servidor';
         if (
           err.status === 413 ||
           err.error?.message?.includes('tamaño máximo')
         ) {
           message = 'El archivo supera el tamaño máximo permitido de 2 MB';
+        } else if (
+          err.status === 400 &&
+          typeof err.error?.message === 'string' &&
+          err.error.message.toLowerCase().includes('identificación ya se encuentra registrada')
+        ) {
+          message = 'La identificación ya se encuentra registrada';
+          this.registroForm.get('identification')?.setErrors({ duplicated: true });
+          this.registroForm.get('identification')?.markAsTouched();
         } else if (err.error?.message) {
           message = err.error.message;
         }
         
         await this.showToast(message, 'danger');
-        console.error('Error en el registro:', err);
       },
     });
   }
@@ -251,6 +267,9 @@ export class RegistroAppPage implements OnInit {
     if (field?.errors && field.touched) {
       if (field.errors['required']) {
         return `${this.getFieldLabel(fieldName)} es requerido`;
+      }
+      if (field.errors['duplicated']) {
+        return `${this.getFieldLabel(fieldName)} ya se encuentra registrada`;
       }
       if (field.errors['email']) {
         return 'Ingrese un email válido';
