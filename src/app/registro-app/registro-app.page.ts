@@ -193,14 +193,6 @@ export class RegistroAppPage implements OnInit {
           this.isLoading = false;
         });
         
-        // Logs temporales para diagnóstico
-        console.log('=== ERROR REGISTRO ===');
-        console.log('Status:', err.status);
-        console.log('Error completo:', err.error);
-        console.log('Mensaje:', err.error?.message);
-        console.log('Error type:', typeof err.error);
-        console.log('===================');
-        
         let message = 'Error en el servidor';
         if (
           err.status === 413 ||
