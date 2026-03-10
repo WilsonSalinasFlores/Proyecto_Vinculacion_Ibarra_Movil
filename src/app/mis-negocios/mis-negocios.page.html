@@ -24,7 +24,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="no-padding">
+<ion-content class="no-padding">
   <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="loadBusinesses(true, $event)">
     <ion-refresher-content></ion-refresher-content>
@@ -32,11 +32,6 @@
 
   <!-- Filtro de categorías -->
   <div class="filter-container">
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
     <ion-item lines="none">
       <ion-icon slot="start" name="filter-outline"></ion-icon>
       <ion-select
@@ -179,9 +174,6 @@
           </div>
         </ion-card-content>
       </ion-card>
-      <br>
-      <br>
-      <br>
     </ng-container>
 
     <ng-template #noBusinesses>
@@ -205,7 +197,4 @@
   >
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  <br>
-  <br>
-  <br>
 </ion-content>

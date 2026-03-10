@@ -76,8 +76,12 @@
 
 /* Contenedor del filtro */
 .filter-container {
-  padding: 8px 12px;
+  padding: 16px 12px;
   background: var(--ion-color-light);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Estilos para las tarjetas de negocios */

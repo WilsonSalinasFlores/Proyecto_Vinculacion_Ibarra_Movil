@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, InfiniteScrollCustomEvent } from '@ionic/angular';
 import { NegocioService } from '../services/negocio.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-mis-negocios',
   templateUrl: './mis-negocios.page.html',
   styleUrls: ['./mis-negocios.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule],
+  imports: [CommonModule, IonicModule, FormsModule, RouterModule],
 })
 export class MisNegociosPage implements OnInit {
   businesses: any[] = [];
