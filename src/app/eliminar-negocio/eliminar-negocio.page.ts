@@ -104,7 +104,19 @@ export class EliminarNegocioPage {
       });
     } catch (error: any) {
       await alert.dismiss();
-      await this.showToast(error.message || 'Error al enviar solicitud', 'danger');
+      
+      let message = 'Error al enviar solicitud';
+      
+      // Manejar error 409 - Conflicto (solicitud ya existe)
+      if (error.status === 409) {
+        message = error.error?.message || 'Ya existe una solicitud pendiente para este negocio';
+      } else if (error.error?.message) {
+        message = error.error.message;
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      await this.showToast(message, 'warning');
     } finally {
       this.ngZone.run(() => {
         this.loading = false;
