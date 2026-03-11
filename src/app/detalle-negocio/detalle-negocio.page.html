@@ -24,7 +24,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="mobile-safe-content">
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-container">
     <div class="loading-spinner"></div>
@@ -325,7 +325,4 @@
     </div>
 
   </div>
-  <br>
-  <br>
-  <br>
 </ion-content>

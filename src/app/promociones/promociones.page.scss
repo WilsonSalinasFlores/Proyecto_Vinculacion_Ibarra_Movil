@@ -70,6 +70,12 @@
   padding: 16px;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 56px);
+  }
+}
+
 :host {
   color: #6e6e6e; /* color plomo */
 }
