@@ -63,7 +63,7 @@ export class HomePage implements OnInit {
 
   onPromotionTypeSelect(value: string) {
     this.selectedPromotionType = value;
-    this.loadPromotions(value, this.selectedCategoryId);
+    this.loadPromotions(value, this.selectedCategoryId ?? undefined);
   }
   tipoPromocionMap: { [key: string]: string } = {
     COMBO: 'Combo especial',
@@ -72,7 +72,7 @@ export class HomePage implements OnInit {
     DESCUENTO_PORCENTAJE: 'Descuento %',
   };
 
-  selectedCategoryId: number | undefined = undefined;
+  selectedCategoryId: number | null = null;
 
   //Sección de Eventos
   mostrarEventos = true;
@@ -137,11 +137,11 @@ export class HomePage implements OnInit {
     this.setupAuthSubscription();
     this.loadPromotions();
   }
-  private async loadEvents() {
+  private async loadEvents(forceReload: boolean = false) {
     try {
       let eventos = this.eventosService.listarEventos() || [];
-      // Si no hay datos locales, intenta cargar desde la API
-      if (!eventos.length) {
+      // Si se fuerza recarga o no hay datos locales, intenta cargar desde la API
+      if (forceReload || !eventos.length) {
         const fromApi = await this.eventosService.cargarDesdeApiUrl();
         if (Array.isArray(fromApi) && fromApi.length) {
           eventos = fromApi;
@@ -155,11 +155,21 @@ export class HomePage implements OnInit {
         description: ev.description,
         banner: ev.banner || ev.mainBanner,
         image: ev.banner || ev.mainBanner || (ev.images && ev.images[0]?.url),
+        dateEnd: ev.dateEnd,
         date: ev.dateStart || ev.dateEnd,
         services: ev.services || [],
         type: ev.type,
         raw: ev,
       }));
+
+      this.upcomingEvents.sort((a: any, b: any) => {
+        const finA = this.parseDateSafe(a?.dateEnd || a?.raw?.dateEnd);
+        const finB = this.parseDateSafe(b?.dateEnd || b?.raw?.dateEnd);
+        if (finA !== finB) return finA - finB;
+        const inicioA = this.parseDateSafe(a?.date || a?.raw?.dateStart);
+        const inicioB = this.parseDateSafe(b?.date || b?.raw?.dateStart);
+        return inicioA - inicioB;
+      });
     } catch (err) {
       console.error('Error cargando eventos desde EventosService', err);
       this.upcomingEvents = [];
@@ -167,8 +177,9 @@ export class HomePage implements OnInit {
   }
 
   onCategorySelect(event: any) {
-    this.selectedCategoryId = event.detail.value;
-    this.loadPromotions(this.selectedPromotionType, this.selectedCategoryId);
+    const rawValue = event.detail.value;
+    this.selectedCategoryId = rawValue === null || rawValue === '' ? null : Number(rawValue);
+    this.loadPromotions(this.selectedPromotionType, this.selectedCategoryId ?? undefined);
   }
 
   private menuOpen = false;
@@ -208,6 +219,14 @@ export class HomePage implements OnInit {
   }
 
   private loadPromotions(promotionType?: string, categoryId?: number) {
+    void this.loadPromotionsAsync(promotionType, categoryId);
+  }
+
+  private loadPromotionsAsync(
+    promotionType?: string,
+    categoryId?: number
+  ): Promise<void> {
+    return new Promise((resolve) => {
     this.promocionesService
       .getPromotionPublic(promotionType, categoryId)
       .subscribe({
@@ -217,19 +236,24 @@ export class HomePage implements OnInit {
           } else {
             console.error('Error loading promotions:', response.message);
           }
+          resolve();
         },
         error: (error) => {
           console.error('Error loading promotions:', error);
+          resolve();
         },
       });
+    });
   }
 
   onPromotionTypeChange() {
     this.loadPromotions(this.selectedPromotionType);
   }
 
-  private async loadCategories() {
-    this.showLoading();
+  private async loadCategories(showLoadingSpinner: boolean = true) {
+    if (showLoadingSpinner) {
+      this.showLoading();
+    }
     try {
       const categories = await this.negociosService.getCategorias().toPromise();
       this.categories = (categories || []).map((category) => ({
@@ -241,7 +265,36 @@ export class HomePage implements OnInit {
       console.error('Error loading categories:', error);
       this.showErrorAlert();
     } finally {
-      this.hideLoading();
+      if (showLoadingSpinner) {
+        this.hideLoading();
+      }
+    }
+  }
+
+  async doRefresh(event: any) {
+    try {
+      this.checkAuthStatus();
+
+      await Promise.all([
+        this.loadCategories(false).catch((error) => {
+          console.error('Error refreshing categories:', error);
+        }),
+        this.loadEvents(true).catch((error) => {
+          console.error('Error refreshing events:', error);
+        }),
+        this.loadPromotionsAsync(
+          this.selectedPromotionType,
+          this.selectedCategoryId ?? undefined
+        ).catch((error) => {
+          console.error('Error refreshing promotions:', error);
+        }),
+      ]);
+
+      if (this.searchTerm?.trim()) {
+        await this.searchItems({ target: { value: this.searchTerm } });
+      }
+    } finally {
+      event.target.complete();
     }
   }
 
@@ -283,6 +336,11 @@ export class HomePage implements OnInit {
       spinner: 'crescent',
     });
     await this.loading.present();
+  }
+
+  private parseDateSafe(dateValue?: string): number {
+    const ms = dateValue ? new Date(dateValue).getTime() : Number.NaN;
+    return Number.isFinite(ms) ? ms : Number.MAX_SAFE_INTEGER;
   }
 
   private async hideLoading() {

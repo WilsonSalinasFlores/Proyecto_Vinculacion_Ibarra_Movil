@@ -41,6 +41,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="home-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- Banner superior -->
   <div class="hero-banner">
     <div class="banner-overlay"></div>
@@ -130,123 +134,139 @@
     <p>Buscando "{{searchTerm}}"...</p>
   </div>
 
-  <div *ngIf="!hasSearchResults && !searchTerm">
-    <!-- Sección de categorías con scroll horizontal -->
-    <div class="section-header">
-      <h2>Categorías</h2>
-    </div>
+  <div *ngIf="!hasSearchResults && !searchTerm" class="home-sections">
+    <section class="content-section categories-section">
+      <div class="section-header">
+        <div class="section-heading">
+          <span class="section-kicker">Explora</span>
+          <h2>Categorías</h2>
+          <p>Encuentra rápidamente el tipo de negocio que te interesa.</p>
+        </div>
+      </div>
 
-    <div class="scroll-container">
-      <ion-grid class="scroll-grid">
-        <ion-row class="ion-nowrap">
-          <ion-col
-            *ngFor="let category of categories; let i = index"
-            size="auto"
-          >
-            <div class="category-item" (click)="openCategory(category)">
-              <div
-                class="category-icon"
-                [style.background-color]="category.color"
-              >
-                <ion-icon [name]="category.icon"></ion-icon>
+      <div class="scroll-container">
+        <ion-grid class="scroll-grid">
+          <ion-row class="ion-nowrap">
+            <ion-col
+              *ngFor="let category of categories; let i = index"
+              size="auto"
+            >
+              <div class="category-item" (click)="openCategory(category)">
+                <div
+                  class="category-icon"
+                  [style.background-color]="category.color"
+                >
+                  <ion-icon [name]="category.icon"></ion-icon>
+                </div>
+                <span>{{category.name}}</span>
               </div>
-              <span>{{category.name}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
-  </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </section>
 
-  <!-- Promociones con scroll horizontal -->
-  <div class="section-header">
-    <h2>Promociones</h2>
-    <ion-button
-      fill="clear"
-      size="small"
-      (click)="navigateTo('promociones-publicas')"
-    >
-      Ver todos
-      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-    </ion-button>
-  </div>
+    <section class="content-section promotions-section">
+      <div class="section-header">
+        <div class="section-heading">
+          <span class="section-kicker">Destacados</span>
+          <h2>Promociones</h2>
+          <p>Ofertas activas para descubrir algo nuevo cerca de ti.</p>
+        </div>
+        <ion-button
+          fill="clear"
+          size="small"
+          (click)="navigateTo('promociones-publicas')"
+        >
+          Ver todos
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
 
-  <ion-select
-    class="category-select" style="color: black;"
-    placeholder="Selecciona una categoría"
-    (ionChange)="onCategorySelect($event)"
-    interface="popover"
-  >
-    <ion-select-option
-      *ngFor="let category of categories"
-      [value]="category.id"
-    >
-      {{ category.name }}
-    </ion-select-option>
-  </ion-select>
-
-  <div class="chip-filter">
-    <ion-chip
-      *ngFor="let tipo of promotionTypes"
-      [outline]="selectedPromotionType !== tipo.value"
-      color="primary"
-      (click)="onPromotionTypeSelect(tipo.value)"
-    >
-      {{ tipo.label }}
-    </ion-chip>
-  </div>
-
-  <div class="scroll-container">
-    <ion-grid class="scroll-grid">
-      <ion-row class="ion-nowrap">
-        <ion-col *ngFor="let promocion of promociones" size="auto">
-          <ion-card
-            class="business-card"
-            (click)="openBusinessById(promocion.businessId)"
+      <div class="section-filters">
+        <ion-select
+          class="category-select" style="color: black;"
+          [(ngModel)]="selectedCategoryId"
+          placeholder="Selecciona una categoría"
+          (ionChange)="onCategorySelect($event)"
+          interface="popover"
+        >
+          <ion-select-option [value]="null">Todas</ion-select-option>
+          <ion-select-option
+            *ngFor="let category of categories"
+            [value]="category.id"
           >
-            <div class="promotion-badge">
-              {{ getTipoPromocionLabel(promocion.tipoPromocion) }}
-            </div>
-            <img
-              [src]="promocion.businessImageUrl"
-              [alt]="promocion.businessName"
-              class="promo-img"
-            />
-            <ion-card-header>
-              <ion-label>
-                <ion-icon name="calendar-outline"></ion-icon>
-                Válido hasta: {{ promocion.fechaPromoFin | date:'dd/MM/yyyy' }}
-              </ion-label>
-              <ion-card-title>{{promocion.tituloPromocion }}</ion-card-title>
-              <ion-card-subtitle>
-                {{promocion.businessName}}
-              </ion-card-subtitle>
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
-  <div >
-    <!-- Próximos eventos -->
-    <div class="section-header">
-      <h2>Eventos</h2>
-      <ion-button fill="clear" size="small" (click)="navigateTo('eventos/home')">
-        Ver todos
-        <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-      </ion-button>
-    </div>
+            {{ category.name }}
+          </ion-select-option>
+        </ion-select>
 
-  <div class="scroll-container">
-    <ion-grid class="scroll-grid">
-      <ion-row class="ion-nowrap">
+        <div class="chip-filter">
+          <ion-chip
+            *ngFor="let tipo of promotionTypes"
+            [outline]="selectedPromotionType !== tipo.value"
+            color="primary"
+            (click)="onPromotionTypeSelect(tipo.value)"
+          >
+            {{ tipo.label }}
+          </ion-chip>
+        </div>
+      </div>
+
+      <div class="scroll-container">
+        <ion-grid class="scroll-grid">
+          <ion-row class="ion-nowrap">
+            <ion-col *ngFor="let promocion of promociones" size="auto">
+              <ion-card
+                class="business-card"
+                (click)="openBusinessById(promocion.businessId)"
+              >
+                <div class="promotion-badge">
+                  {{ getTipoPromocionLabel(promocion.tipoPromocion) }}
+                </div>
+                <img
+                  [src]="promocion.businessImageUrl"
+                  [alt]="promocion.businessName"
+                  class="promo-img"
+                />
+                <ion-card-header>
+                  <ion-label>
+                    <ion-icon name="calendar-outline"></ion-icon>
+                    Válido hasta: {{ promocion.fechaPromoFin | date:'dd/MM/yyyy' }}
+                  </ion-label>
+                  <ion-card-title>{{promocion.tituloPromocion }}</ion-card-title>
+                  <ion-card-subtitle>
+                    {{promocion.businessName}}
+                  </ion-card-subtitle>
+                </ion-card-header>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </section>
+
+    <section class="content-section events-section">
+      <div class="section-header">
+        <div class="section-heading">
+          <span class="section-kicker">Agenda</span>
+          <h2>Eventos</h2>
+          <p>Próximas actividades y experiencias para visitar en la ciudad.</p>
+        </div>
+        <ion-button fill="clear" size="small" (click)="navigateTo('eventos/home')">
+          Ver todos
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="scroll-container">
+        <ion-grid class="scroll-grid">
+          <ion-row class="ion-nowrap">
             <ion-col *ngFor="let event of upcomingEvents | slice:0:3" size="auto">
               <ion-card class="business-card" tappable (click)="openEventDetails(event)">
                 <div class="promotion-badge" *ngIf="event.type">{{ event.type }}</div>
                 <img class="promo-img" [src]="event.banner || event.mainBanner || event.image" [alt]="event.name || event.title" />
                 <ion-card-header>
-                  
-                    <ion-card-title>{{ ((event.name || event.title) | slice:0:25) + '...' }}</ion-card-title>
+                  <ion-card-title>{{ ((event.name || event.title) | slice:0:25) + '...' }}</ion-card-title>
                   <ion-card-subtitle *ngIf="event.location">{{ event.location }}</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
@@ -257,7 +277,7 @@
           </ion-row>
         </ion-grid>
       </div>
-  
+    </section>
   </div>
   
 </ion-content>

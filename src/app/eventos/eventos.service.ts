@@ -21,6 +21,7 @@ export class EventosService {
     // Asumimos que la estructura ya coincide con `Evento` (nombres del API)
     this.eventos = json.data.slice();
     this.eventos.forEach(ev => extractMediaFromImages(ev));
+    this.ordenarPorExpiracionProxima(this.eventos);
   }
 
   /**
@@ -35,6 +36,7 @@ export class EventosService {
       if (res && Array.isArray(res.data)) {
         this.eventos = res.data.slice();
         this.eventos.forEach(ev => extractMediaFromImages(ev));
+        this.ordenarPorExpiracionProxima(this.eventos);
         return this.eventos;
       }
       console.warn('Respuesta inválida al cargar eventos desde API', res);
@@ -120,7 +122,31 @@ export class EventosService {
   }
 
   listarEventos(): Evento[] {
-    return this.eventos.slice();
+    const lista = this.eventos.slice();
+    this.ordenarPorExpiracionProxima(lista);
+    return lista;
+  }
+
+  private ordenarPorExpiracionProxima(arr: Evento[]) {
+    arr.sort((a, b) => this.compararPorExpiracionProxima(a, b));
+  }
+
+  private compararPorExpiracionProxima(a: Evento, b: Evento): number {
+    const finA = this.parseFecha(a?.dateEnd);
+    const finB = this.parseFecha(b?.dateEnd);
+
+    if (finA !== finB) {
+      return finA - finB;
+    }
+
+    const inicioA = this.parseFecha(a?.dateStart);
+    const inicioB = this.parseFecha(b?.dateStart);
+    return inicioA - inicioB;
+  }
+
+  private parseFecha(fecha?: string): number {
+    const ms = fecha ? new Date(fecha).getTime() : Number.NaN;
+    return Number.isFinite(ms) ? ms : Number.MAX_SAFE_INTEGER;
   }
 
 }
