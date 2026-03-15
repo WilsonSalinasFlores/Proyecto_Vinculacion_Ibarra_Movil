@@ -39,6 +39,7 @@ export class RegistroAppPage implements OnInit {
   registroForm!: FormGroup;
   showPassword = false;
   isLoading = false;
+  generatedUid = '';
   identityDocumentFile!: File;
   certificateFile!: File;
   signedDocumentFile!: File;
@@ -58,7 +59,9 @@ export class RegistroAppPage implements OnInit {
     this.initializeForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.generatedUid = this.generateUid(15);
+  }
 
   private initializeForm() {
     this.registroForm = this.fb.group({
@@ -90,14 +93,6 @@ export class RegistroAppPage implements OnInit {
       ],
       phone: ['', [Validators.required, Validators.minLength(1)]],
       address: ['', [Validators.required, Validators.minLength(1)]],
-      username: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(5),
-          Validators.maxLength(20),
-        ],
-      ],
       password: [
         '',
         [
@@ -133,7 +128,6 @@ export class RegistroAppPage implements OnInit {
         errors.push('Identificación');
       if (this.registroForm.get('phone')?.errors) errors.push('Teléfono');
       if (this.registroForm.get('address')?.errors) errors.push('Dirección');
-      if (this.registroForm.get('username')?.errors) errors.push('Usuario');
       if (this.registroForm.get('password')?.errors) errors.push('Contraseña');
 
       return false;
@@ -156,7 +150,12 @@ export class RegistroAppPage implements OnInit {
       this.isLoading = true;
     });
 
-    const dataJson = this.registroForm.value;
+    const dataJson = {
+      ...this.registroForm.value,
+      uid: this.generatedUid,
+      // Compatibilidad con backend si aún usa username
+      username: this.generatedUid,
+    };
 
     const formData = new FormData();
     formData.append('identityDocument', this.identityDocumentFile);
@@ -181,6 +180,7 @@ export class RegistroAppPage implements OnInit {
         );
         
         this.registroForm.reset();
+        this.generatedUid = this.generateUid(15);
         this.identityDocumentFile = undefined as any;
         this.certificateFile = undefined as any;
         this.signedDocumentFile = undefined as any;
@@ -289,7 +289,6 @@ export class RegistroAppPage implements OnInit {
       name: 'Nombres',
       lastname: 'Apellidos',
       address: 'Dirección',
-      username: 'Usuario',
       password: 'Contraseña',
       email: 'Correo Electrónico',
       phone: 'Teléfono',
@@ -421,6 +420,16 @@ export class RegistroAppPage implements OnInit {
     } else {
       this.signedDocumentFile = undefined as any;
     }
+  }
+
+  private generateUid(length: number): string {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let uid = '';
+    for (let index = 0; index < length; index++) {
+      const randomIndex = Math.floor(Math.random() * alphabet.length);
+      uid += alphabet[randomIndex];
+    }
+    return uid;
   }
 
   async downloadTemplate() {

@@ -35,7 +35,6 @@ export class PerfilPage implements OnInit {
       email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
       phone: [{ value: '', disabled: true }],
       address: [{ value: '', disabled: true }],
-      username: [{ value: '', disabled: true }, Validators.required],
       name: [{ value: '', disabled: true }],
       lastname: [{ value: '', disabled: true }],
       business: [{ value: '', disabled: true }]
@@ -78,7 +77,6 @@ export class PerfilPage implements OnInit {
       this.profileForm.get('email')?.enable();
       this.profileForm.get('phone')?.enable();
       this.profileForm.get('address')?.enable();
-      this.profileForm.get('username')?.disable();
       
       // Log temporal para diagnóstico
       console.log('Modo edición activado');
@@ -92,7 +90,6 @@ export class PerfilPage implements OnInit {
       this.profileForm.get('email')?.disable();
       this.profileForm.get('phone')?.disable();
       this.profileForm.get('address')?.disable();
-      this.profileForm.get('username')?.disable();
     }
   }
 
@@ -120,8 +117,7 @@ export class PerfilPage implements OnInit {
     const updateData: UpdateUserDto = {
       email: formValue.email,
       phone: formValue.phone || '',
-      address: formValue.address || '',
-      username: formValue.username
+      address: formValue.address || ''
     };
     
     console.log('Datos a enviar:', updateData);
@@ -140,7 +136,6 @@ export class PerfilPage implements OnInit {
         this.profileForm.get('email')?.disable();
         this.profileForm.get('phone')?.disable();
         this.profileForm.get('address')?.disable();
-        this.profileForm.get('username')?.disable();
         
         await this.showSuccessAlert('Perfil actualizado correctamente');
       },

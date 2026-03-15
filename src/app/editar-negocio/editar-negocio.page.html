@@ -90,6 +90,20 @@
       </div>
     </div>
 
+    <!-- Productos/Servicios - Siempre editable -->
+    <div class="form-field-wrapper">
+      <ion-item class="form-field" fill="outline" [class.error-field]="hasError('productsServices')">
+        <ion-label position="stacked">Productos/Servicios <span class="required">*</span></ion-label>
+        <ion-input formControlName="productsServices" type="text" maxlength="50"
+          placeholder="Ej: Comida, Ropa, Servicios..."></ion-input>
+        <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('productsServices')"></ion-icon>
+      </ion-item>
+      <div class="error-message" *ngIf="hasError('productsServices')"><ion-icon name="alert-circle-outline"
+          aria-hidden="true"></ion-icon>
+        {{ getErrorMessage('productsServices') }}
+      </div>
+    </div>
+
     <!-- Descripción - Siempre editable -->
     <div class="form-field-wrapper">
       <ion-item class="form-field" fill="outline" [class.error-field]="hasError('description')">

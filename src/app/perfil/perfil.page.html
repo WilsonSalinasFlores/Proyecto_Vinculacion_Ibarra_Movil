@@ -74,15 +74,6 @@
           <ion-input formControlName="address"></ion-input>
         </ion-item>
 
-        <ion-item lines="full">
-          <ion-icon slot="start" name="person-circle"></ion-icon>
-          <ion-label position="stacked">Usuario *</ion-label>
-          <ion-input formControlName="username"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" color="danger">
-          Usuario requerido
-        </ion-note>
-
       </form>
     </ion-card-content>
   </ion-card>
