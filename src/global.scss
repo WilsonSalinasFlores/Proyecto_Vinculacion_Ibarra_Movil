@@ -37,7 +37,9 @@
 /* dark.system palette disabled to force light theme globally */
 /* Shared variables for evento header so other pages can match the same style */
 :root {
-  --header-bg: #1e60ff;
+  --header-bg: #3f3f3f;
+  --title-bar-bg: #3f3f3f;
+  --title-bar-text: #ffffff;
   --evento-header-text: #fff;
   --evento-header-text-rgb: 255,255,255;
   --mobile-safe-bottom-space: 104px;
@@ -182,6 +184,61 @@ ion-header ion-toolbar,
 ion-toolbar.header-theme {
   background: var(--header-bg);
   color: var(--evento-header-text);
+}
+
+/* Forzar color único para TODAS las barras de título (incluye menú y modales) */
+ion-toolbar,
+ion-header ion-toolbar,
+ion-menu ion-toolbar,
+ion-modal ion-toolbar {
+  --background: var(--title-bar-bg) !important;
+  background: var(--title-bar-bg) !important;
+  --color: var(--title-bar-text) !important;
+  color: var(--title-bar-text) !important;
+}
+
+ion-modal .evento-header ion-toolbar,
+ion-modal ion-header ion-toolbar,
+ion-modal ion-toolbar {
+  --background: var(--title-bar-bg) !important;
+  background: var(--title-bar-bg) !important;
+  --color: var(--title-bar-text) !important;
+  color: var(--title-bar-text) !important;
+  box-shadow: none !important;
+}
+
+ion-toolbar ion-title,
+ion-toolbar ion-icon,
+ion-toolbar ion-button,
+ion-toolbar ion-label,
+ion-toolbar .brand,
+ion-toolbar .subtitle,
+ion-toolbar .app-title,
+ion-toolbar .title-content {
+  color: var(--title-bar-text) !important;
+}
+
+ion-toolbar ion-menu-button,
+ion-toolbar ion-back-button {
+  --color: var(--title-bar-text) !important;
+  color: var(--title-bar-text) !important;
+}
+
+ion-toolbar ion-button {
+  --color: var(--title-bar-text) !important;
+  color: var(--title-bar-text) !important;
+}
+
+ion-toolbar ion-button ion-icon,
+ion-toolbar ion-button::part(native) {
+  color: var(--title-bar-text) !important;
+}
+
+ion-toolbar ion-menu-button ion-icon,
+ion-toolbar ion-back-button ion-icon,
+ion-toolbar ion-menu-button::part(icon),
+ion-toolbar ion-back-button::part(icon) {
+  color: var(--title-bar-text) !important;
 }
 
 @media (max-width: 768px) {

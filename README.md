@@ -2,10 +2,10 @@
 
 ## Versión actual
 
-- Versión de la app: `1.0.1`
-- `package.json`: `"version": "1.0.1"`
-- Android: `android/app/build.gradle` → `versionName "1.0.1"`
-- Cordova/Capacitor Android: `android/app/src/main/res/xml/config.xml` → `version="1.0.1"`
+- Versión de la app: `1.1.0`
+- `package.json`: `"version": "1.1.0"`
+- Android: `android/app/build.gradle` → `versionName "1.1.0"`
+- Cordova/Capacitor Android: `android/app/src/main/res/xml/config.xml` → `version="1.1.0"`
 
 Esta sección documenta la funcionalidad de "Eventos" incluida en la aplicación móvil (GAD Ibarra). Contiene descripción, archivos relevantes, cómo consumir el servicio de eventos y notas de integración para desarrolladores.
 
@@ -179,9 +179,9 @@ npx cap open android
 Ejemplo:
 
 ```text
-package.json -> "version": "1.0.1"
+package.json -> "version": "1.1.0"
 android/app/build.gradle -> versionCode 4
-						 versionName "1.0.1"
+						 versionName "1.1.0"
 ```
 
 Después de actualizar versiones:
@@ -195,6 +195,7 @@ npx cap open android
 ## Theming y detalles de UI
 - En este proyecto se aplicó un ajuste para forzar el tema claro: se comentó la importación de la paleta oscura en `src/global.scss`.
 - Si deseas restaurar modo oscuro o implementar selector de tema, revisa `src/global.scss` y las variables CSS de Ionic.
+- El fondo de todas las barras de título (`ion-toolbar`, incluyendo menú y modales) se define de forma global en `src/global.scss` mediante variables (`--title-bar-bg` y `--title-bar-text`); evita definir `color="..."` en toolbars individuales para mantener consistencia.
 - Evitar reglas globales muy agresivas para overlays (`ion-popover`, `ion-alert`, `ion-action-sheet`) ya que pueden romper la interacción; en su lugar usar `cssClass` en los componentes y reglas mínimas y específicas por clase.
 
 Archivos relevantes:
