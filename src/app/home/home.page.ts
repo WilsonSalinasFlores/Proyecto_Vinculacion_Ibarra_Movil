@@ -232,7 +232,16 @@ export class HomePage implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.promociones = response.data;
+            const promociones = Array.isArray(response.data) ? response.data : [];
+            this.promociones = promociones.sort((a: Promocion, b: Promocion) => {
+              const finA = this.parseDateSafe(a?.fechaPromoFin);
+              const finB = this.parseDateSafe(b?.fechaPromoFin);
+              if (finA !== finB) return finA - finB;
+
+              const inicioA = this.parseDateSafe(a?.fechaPromoInicio);
+              const inicioB = this.parseDateSafe(b?.fechaPromoInicio);
+              return inicioA - inicioB;
+            });
           } else {
             console.error('Error loading promotions:', response.message);
           }
@@ -382,6 +391,13 @@ export class HomePage implements OnInit {
 
   openBusinessById(businessId: number) {
     this.router.navigate(['/detalle-publico', businessId]);
+  }
+
+  openPromotionDetail(promocion: Promocion): void {
+    const promotionId = Number(promocion?.idBusinessPromo || 0);
+    this.router.navigate(['/detalle-promocion', promotionId], {
+      state: { promocion },
+    });
   }
 
   async openEventDetails(event: any) {

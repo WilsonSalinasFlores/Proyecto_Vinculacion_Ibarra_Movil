@@ -1,16 +1,16 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
     </ion-buttons>
     <ion-title>Mi Perfil</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="toggleEdit()" *ngIf="!isEditing">
+      <ion-button (click)="toggleEdit()" *ngIf="!isEditing" color="light">
         <ion-icon name="create-outline"></ion-icon>
         Editar
       </ion-button>
 
-      <ion-button (click)="toggleEdit()" *ngIf="isEditing" color="medium">
+      <ion-button (click)="toggleEdit()" *ngIf="isEditing" color="light">
         <ion-icon name="close-outline"></ion-icon>
         Cancelar  
       </ion-button>

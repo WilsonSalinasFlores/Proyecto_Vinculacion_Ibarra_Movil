@@ -104,6 +104,10 @@
 
 /* Header */
 .home-header-toolbar {
+  --background: var(--title-bar-bg, #3f3f3f) !important;
+  background: var(--title-bar-bg, #3f3f3f) !important;
+  --color: var(--title-bar-text, #ffffff) !important;
+  color: var(--title-bar-text, #ffffff) !important;
   --min-height: 72px;
   padding: 10px 8px;
   padding-top: 20px;
@@ -119,6 +123,14 @@
     padding-inline-start: 8px;
     padding-inline-end: 8px;
   }
+}
+
+.home-header-toolbar ion-title,
+.home-header-toolbar ion-icon,
+.home-header-toolbar ion-button,
+.home-header-toolbar .brand,
+.home-header-toolbar .subtitle {
+  color: var(--title-bar-text, #ffffff) !important;
 }
 
 /* Botón del menú */

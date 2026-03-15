@@ -23,6 +23,7 @@ declare var L: any;
   imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonToggle, IonTextarea, IonIcon, IonModal, IonButtons, IonSpinner, IonChip, IonMenuButton],
 })
 export class RegistroEmprendimientoPage implements OnInit, AfterViewInit {
+  private readonly SCHEDULE_PATTERN = /^(([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s+a\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d)|([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*(?:-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d|CLOSED|Cerrado|cerrado)))$/;
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   registerBusiness!: FormGroup;
@@ -155,7 +156,7 @@ private loadParish(type?: string) {
       instagram: ['', [Validators.maxLength(100)]],
       tiktok: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(100)]],
-      schedules: ['', [Validators.required, Validators.maxLength(100)]],
+      schedules: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(this.SCHEDULE_PATTERN)]],
       productsServices: ['', [Validators.required, Validators.maxLength(50)]],
     });
 
@@ -327,7 +328,8 @@ private loadParish(type?: string) {
       },
       'schedules': {
         'required': 'El horario es obligatorio',
-        'maxlength': 'Máximo 100 caracteres'
+        'maxlength': 'Máximo 200 caracteres',
+        'pattern': 'Formato inválido. Usa: Lun a Dom - 08:00-20:00 o Dom CLOSED'
       },
     };
 

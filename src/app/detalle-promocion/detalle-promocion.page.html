@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar class="home-header-toolbar">
+    <ion-buttons slot="start"></ion-buttons>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img
+          src="assets/icon/EscudoIbarra2.png"
+          alt="Logo GAD Ibarra"
+          class="header-logo"
+        />
+        <div class="title-text">
+          <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+          <div class="brand">Detalle de Promoción</div>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" fill="clear">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding promotion-detail-content">
+  <div *ngIf="loading" class="state-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando detalle de promoción...</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="state-container error-state">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <ion-card *ngIf="!loading && !error && promocion" class="promotion-detail-card">
+    <div class="promotion-badge">{{ tipoPromocionLabel }}</div>
+
+    <img
+      [src]="promocion.businessImageUrl || 'assets/icon/ibarra.jpg'"
+      [alt]="promocion.businessName || promocion.tituloPromocion"
+      class="promo-img"
+    />
+
+    <ion-card-header>
+      <ion-card-title>{{ promocion.tituloPromocion }}</ion-card-title>
+      <ion-card-subtitle>{{ promocion.businessName || 'Negocio' }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <div class="detail-row">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Inicio: {{ promocion.fechaPromoInicio | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="detail-row">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Fin: {{ promocion.fechaPromoFin | date:'dd/MM/yyyy' }}</span>
+      </div>
+
+      <div class="detail-section">
+        <h4>Condiciones</h4>
+        <p>{{ promocion.condiciones || 'Sin condiciones registradas' }}</p>
+      </div>
+
+      <ion-button expand="block" (click)="openBusiness()">
+        Ver negocio
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

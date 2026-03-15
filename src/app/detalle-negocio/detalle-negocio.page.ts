@@ -387,17 +387,6 @@ export class DetalleNegocioPage implements OnInit {
     return this.business.deliveryService === 'SI' ? 'Servicio de delivery disponible' : 'Sin servicio de delivery';
   }
 
-  get salePlaceText(): string {
-    if (!this.business || !this.business.salePlace) return 'No especificado';
-    
-    const places: { [key: string]: string } = {
-      'LOCAL_FIJO': 'Local físico',
-      'DELIVERY': 'Solo delivery',
-      'AMBOS': 'Local físico y delivery'
-    };
-    return places[this.business.salePlace] || this.business.salePlace;
-  }
-
   get businessName(): string {
     return this.business?.commercialName || '';
   }

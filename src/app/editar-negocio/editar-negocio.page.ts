@@ -19,6 +19,7 @@ declare var L: any;
   imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule],
 })
 export class EditarNegocioPage implements OnInit {
+  private readonly SCHEDULE_PATTERN = /^(([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s+a\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d)|([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*(?:-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d|CLOSED|Cerrado|cerrado)))$/;
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   editBusiness!: FormGroup;
@@ -100,7 +101,7 @@ export class EditarNegocioPage implements OnInit {
       tiktok: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(100)]],
       productsServices: ['', [Validators.required, Validators.maxLength(50)]],
-      schedules: ['', [Validators.required, Validators.maxLength(200)]],
+      schedules: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(this.SCHEDULE_PATTERN)]],
       email: ['', [Validators.email, Validators.maxLength(100)]]
     });
 
@@ -310,6 +311,10 @@ export class EditarNegocioPage implements OnInit {
   getErrorMessage(controlName: string): string {
     const control = this.editBusiness.get(controlName);
     if (!control || !control.errors) return '';
+
+    if (controlName === 'schedules' && control.errors['pattern']) {
+      return 'Formato inválido. Usa: Lun a Dom - 08:00-20:00 o Dom CLOSED';
+    }
 
     const genericMessages: Record<string, string> = {
       required: 'Este campo es obligatorio',

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary" class="home-header-toolbar">
+  <ion-toolbar class="home-header-toolbar">
     <ion-buttons slot="start">
       <ion-menu-button menu="sidebar" autoHide="false"></ion-menu-button>
     </ion-buttons>
@@ -275,10 +275,13 @@
     <div class="form-field-wrapper">
       <ion-item class="form-field" fill="outline" [class.error-field]="hasError('schedules')">
         <ion-label position="stacked">Horarios <span class="required">*</span></ion-label>
-        <ion-textarea formControlName="schedules" placeholder="Escribe aquí..." autoGrow="true"
+        <ion-textarea formControlName="schedules" placeholder="Ej: Lun a Dom - 08:00-20:00" autoGrow="true"
           maxlength="200"></ion-textarea>
         <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('schedules')"></ion-icon>
       </ion-item>
+      <div style="display:block; margin-top:6px; color:#6b7280; font-size:12px;">
+        Formato: Lun a Dom - 08:00-20:00 o Dom CLOSED
+      </div>
       <div class="error-message" *ngIf="hasError('schedules')">
         {{ getErrorMessage('schedules') }}
       </div>
