@@ -1,5 +1,12 @@
 # Funcionalidad: Eventos
 
+## Versión actual
+
+- Versión de la app: `1.0.1`
+- `package.json`: `"version": "1.0.1"`
+- Android: `android/app/build.gradle` → `versionName "1.0.1"`
+- Cordova/Capacitor Android: `android/app/src/main/res/xml/config.xml` → `version="1.0.1"`
+
 Esta sección documenta la funcionalidad de "Eventos" incluida en la aplicación móvil (GAD Ibarra). Contiene descripción, archivos relevantes, cómo consumir el servicio de eventos y notas de integración para desarrolladores.
 
 ## Resumen
@@ -172,9 +179,9 @@ npx cap open android
 Ejemplo:
 
 ```text
-package.json -> "version": "0.0.8"
-android/app/build.gradle -> versionCode 7
-						 versionName "0.0.7"
+package.json -> "version": "1.0.1"
+android/app/build.gradle -> versionCode 4
+						 versionName "1.0.1"
 ```
 
 Después de actualizar versiones:
@@ -244,4 +251,15 @@ Proyecto_Vinculacion_Ibarra_Movil/
 ```
 
 Si quieres, genero un `docs/` más completo con capturas por página y ejemplos de payloads, o puedo añadir mini-tutoriales paso a paso para ciertas funcionalidades (registro, gestión de eventos, mapas). ¿Qué prefieres que haga ahora?
+
+---
+
+## Cambios de versión 1.0.1
+
+- Eventos: orden por fecha de expiración más próxima (`dateEnd` ascendente) en listados principales.
+- Home: pull-to-refresh forzando recarga de eventos desde API.
+- Menú lateral: nueva opción `Cerrar App` para salida nativa en dispositivo.
+- Registro de usuario: se elimina campo `usuario` visible y se genera `UID` automático de 15 caracteres para registro.
+- Perfil: se elimina edición/visualización del campo `usuario`.
+- Formularios de negocio: ajustes de orden de campos (incluyendo `Productos/Servicios` y `Descripción`) y validaciones relacionadas.
 

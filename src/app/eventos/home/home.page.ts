@@ -98,8 +98,8 @@ export class HomePage implements OnInit {
     this.eventos = desdeApi || this.eventosSrv.listarEventos();
     // obtener eventos cuya promoción está activa ahora
     this.eventosFiltradosPromocion = this.obtenerEventosPromocionActiva();
-    // ordenar por prioridad (desc) y luego por fechaInicio (asc)
-    this.ordenarPorPrioridadYFecha(this.eventosFiltradosPromocion);
+    // ordenar por fecha de expiración próxima (dateEnd asc)
+    this.ordenarPorExpiracionProxima(this.eventosFiltradosPromocion);
     this.fuenteCount = this.eventosFiltradosPromocion.length;
     // mostrar los primeros N eventos (inicial)
     this.mostrados = this.eventosFiltradosPromocion.slice(0, this.INICIAL_COUNT);
@@ -154,8 +154,8 @@ export class HomePage implements OnInit {
     const nuevos = fuente.slice(desde, hasta);
     if (nuevos && nuevos.length) {
       this.mostrados = this.mostrados.concat(nuevos);
-      // mantener orden: prioridad desc, fechaInicio asc
-      this.ordenarPorPrioridadYFecha(this.mostrados);
+      // mantener orden: expiración próxima primero
+      this.ordenarPorExpiracionProxima(this.mostrados);
       this.paginaIndex = this.mostrados.length;
     }
     if (event && event.target) event.target.complete();
@@ -175,7 +175,7 @@ export class HomePage implements OnInit {
       const inicio = new Date(ev.dateStart).setHours(0,0,0,0);
       return inicio === fechaSel;
     });
-    this.ordenarPorPrioridadYFecha(this.mostrados);
+    this.ordenarPorExpiracionProxima(this.mostrados);
     this.paginaIndex = this.mostrados.length;
     this.fuenteCount = this.mostrados.length;
   }
@@ -185,11 +185,11 @@ export class HomePage implements OnInit {
     this.eventosEnMes = 0;
     if (!this.mesSeleccionado || this.mesSeleccionado === 'todos') {
       // mostrar todos (cuando el usuario elige 'Todos' mostramos todos los eventos
-      // ordenados por prioridad y fecha)
+      // ordenados por expiración próxima)
       this.tieneEventosMes = this.eventos.length > 0;
       this.eventosEnMes = this.eventos.length;
       const fuente = [...this.eventos];
-      this.ordenarPorPrioridadYFecha(fuente);
+      this.ordenarPorExpiracionProxima(fuente);
       this.fuenteCount = fuente.length;
       this.mostrados = fuente.slice(0, this.INICIAL_COUNT);
       this.paginaIndex = this.mostrados.length;
@@ -216,7 +216,7 @@ export class HomePage implements OnInit {
       const finEv = new Date(ev.dateEnd).getTime();
       return finEv >= mesInicio && inicioEv <= mesFin;
     });
-    this.ordenarPorPrioridadYFecha(this.mostrados);
+    this.ordenarPorExpiracionProxima(this.mostrados);
     this.paginaIndex = this.mostrados.length;
   }
 
@@ -229,18 +229,27 @@ export class HomePage implements OnInit {
     });
   }
 
-  private ordenarPorPrioridadYFecha(arr: Evento[]) {
+  private ordenarPorExpiracionProxima(arr: Evento[]) {
     if (!arr) return;
-    arr.sort((a, b) => this.compararFechaLuegoPrioridad(a, b));
+    arr.sort((a, b) => this.compararPorExpiracionProxima(a, b));
   }
 
-  private compararFechaLuegoPrioridad(a: Evento, b: Evento): number {
-    const da = new Date(a.dateStart).getTime();
-    const db = new Date(b.dateStart).getTime();
-    if (da !== db) return da - db; // fechaInicio ascendente
-    const pa = a.prioridad ?? 0;
-    const pb = b.prioridad ?? 0;
-    return pb - pa; // prioridad descendente (mayor prioridad primero)
+  private compararPorExpiracionProxima(a: Evento, b: Evento): number {
+    const finA = this.parseFecha(a?.dateEnd);
+    const finB = this.parseFecha(b?.dateEnd);
+
+    if (finA !== finB) {
+      return finA - finB;
+    }
+
+    const inicioA = this.parseFecha(a?.dateStart);
+    const inicioB = this.parseFecha(b?.dateStart);
+    return inicioA - inicioB;
+  }
+
+  private parseFecha(fecha?: string): number {
+    const ms = fecha ? new Date(fecha).getTime() : Number.NaN;
+    return Number.isFinite(ms) ? ms : Number.MAX_SAFE_INTEGER;
   }
 
   private obtenerFuenteActual(): Evento[] {
@@ -248,7 +257,7 @@ export class HomePage implements OnInit {
     if (this.filtroFecha) {
       const fechaSel = new Date(this.filtroFecha).setHours(0,0,0,0);
       const arr = this.eventos.filter(ev => new Date(ev.dateStart).setHours(0,0,0,0) === fechaSel);
-      this.ordenarPorPrioridadYFecha(arr);
+      this.ordenarPorExpiracionProxima(arr);
       this.fuenteCount = arr.length;
       return arr;
     }
@@ -264,7 +273,7 @@ export class HomePage implements OnInit {
         const finEv = new Date(ev.dateEnd).getTime();
         return finEv >= mesInicio && inicioEv <= mesFin;
       });
-      this.ordenarPorPrioridadYFecha(arr);
+      this.ordenarPorExpiracionProxima(arr);
       this.fuenteCount = arr.length;
       return arr;
     }

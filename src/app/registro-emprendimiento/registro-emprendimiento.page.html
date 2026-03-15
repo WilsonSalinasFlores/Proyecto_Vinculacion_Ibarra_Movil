@@ -24,7 +24,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding registro-emprendimiento-page">
+<ion-content [fullscreen]="true" class="ion-padding registro-emprendimiento-page mobile-safe-content">
   <div class="header-container">
     <div class="header-content">
       <h2>Registro de Negocio</h2>
@@ -88,6 +88,19 @@
       </div>
     </div>
 
+    <!-- Descripción -->
+    <div class="form-field-wrapper">
+      <ion-item class="form-field" fill="outline" [class.error-field]="hasError('description')">
+        <ion-label position="stacked">Descripción <span class="required">*</span></ion-label>
+        <ion-textarea formControlName="description" placeholder="Escribe aquí..." autoGrow="true"
+          maxlength="200"></ion-textarea>
+        <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('description')"></ion-icon>
+      </ion-item>
+      <div class="error-message" *ngIf="hasError('description')"><ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        {{ getErrorMessage('description') }}
+      </div>
+    </div>
+
     <!-- Teléfono -->
     <div class="form-field-wrapper">
       <ion-item class="form-field" fill="outline" [class.error-field]="hasError('phone')">
@@ -131,19 +144,6 @@
       </ion-item>
       <div class="error-message" *ngIf="hasError('parishId')"><ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
         {{ getErrorMessage('parishId') }}
-      </div>
-    </div>
-
-    <!-- Descripción -->
-    <div class="form-field-wrapper">
-      <ion-item class="form-field" fill="outline" [class.error-field]="hasError('description')">
-        <ion-label position="stacked">Descripción <span class="required">*</span></ion-label>
-        <ion-textarea formControlName="description" placeholder="Escribe aquí..." autoGrow="true"
-          maxlength="200"></ion-textarea>
-        <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('description')"></ion-icon>
-      </ion-item>
-      <div class="error-message" *ngIf="hasError('description')"><ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-        {{ getErrorMessage('description') }}
       </div>
     </div>
 
@@ -399,7 +399,4 @@
       </ng-container>
     </ion-button>
   </form>
-  <br>
-  <br>
-  <br>
 </ion-content>

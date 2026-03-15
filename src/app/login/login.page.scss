@@ -216,12 +216,16 @@
 
 .forgot-password,
 .resend-otp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   margin: 15px 0;
 
   ion-button {
     --color: var(--ion-color-medium);
     font-size: 0.9rem;
+    margin-inline: auto;
   }
 }
 

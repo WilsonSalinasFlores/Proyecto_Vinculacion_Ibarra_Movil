@@ -36,7 +36,11 @@ export class EditarNegocioService {
       .pipe(
         map(() => true),
         catchError((error) => {
-          const message = error?.error?.message || error?.message || 'Error updating business';
+          const message =
+            error?.error?.message ||
+            (typeof error?.error === 'string' ? error.error : null) ||
+            error?.message ||
+            'Error updating business';
           return throwError(() => new Error(message));
         })
       );
@@ -52,7 +56,11 @@ export class EditarNegocioService {
       .pipe(
         map(() => true),
         catchError((error) => {
-          const message = error?.error?.message || error?.message || 'Error updating business';
+          const message =
+            error?.error?.message ||
+            (typeof error?.error === 'string' ? error.error : null) ||
+            error?.message ||
+            'Error updating business';
           return throwError(() => new Error(message));
         })
       );

@@ -99,7 +99,8 @@ export class EditarNegocioPage implements OnInit {
       instagram: ['', [Validators.maxLength(100)]],
       tiktok: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(100)]],
-      schedules: ['', [Validators.required, Validators.maxLength(100)]],
+      productsServices: ['', [Validators.required, Validators.maxLength(50)]],
+      schedules: ['', [Validators.required, Validators.maxLength(200)]],
       email: ['', [Validators.email, Validators.maxLength(100)]]
     });
 
@@ -292,6 +293,7 @@ export class EditarNegocioPage implements OnInit {
       'whatsappNumber',
       'address',
       'googleMapsCoordinates',
+      'productsServices',
       'schedules',
       'countryCodePhone',
       'countryCode'
@@ -365,12 +367,16 @@ export class EditarNegocioPage implements OnInit {
         instagram: business.instagram,
         tiktok: business.tiktok,
         address: business.address,
+        productsServices: business.productsServices,
         schedules: schedulesValue,
         email: business.email
       });
 
       // Deshabilitar campos según el estado después de cargar los datos
       this.disableFieldsBasedOnStatus();
+
+      // Recalcular estado de validez para habilitar/deshabilitar correctamente el botón de actualización
+      this.editBusiness.updateValueAndValidity({ emitEvent: false });
       
     } catch (error) {
       console.error('Error loading business details:', error);
@@ -440,13 +446,37 @@ export class EditarNegocioPage implements OnInit {
   private async updateRejectedBusiness(formValue: any) {
     const fullWhatsApp = formValue.acceptsWhatsappOrders
       ? `${formValue.countryCode}${formValue.whatsappNumber}`
-      : '';
+      : null;
     const fullPhone = `${formValue.countryCodePhone}${formValue.phone}`;
+
+    const schedulesValue = Array.isArray(formValue.schedules)
+      ? formValue.schedules
+      : [String(formValue.schedules ?? '').trim()].filter(Boolean);
     
     const businessData = {
-      ...formValue,
+      categoryId: formValue.categoryId,
+      commercialName: formValue.commercialName,
       phone: fullPhone,
+      website: formValue.website || '',
+      description: formValue.description,
+      acceptsWhatsappOrders: !!formValue.acceptsWhatsappOrders,
       whatsappNumber: fullWhatsApp,
+      googleMapsCoordinates: formValue.googleMapsCoordinates,
+      deliveryService: formValue.deliveryService,
+      salePlace: formValue.salePlace,
+      facebook: formValue.facebook || '',
+      instagram: formValue.instagram || '',
+      tiktok: formValue.tiktok || '',
+      address: formValue.address,
+      schedules: schedulesValue,
+      email: formValue.email || '',
+      // Campos que no se editan en este formulario, pero pueden ser requeridos en backend
+      parishId: this.business?.parish?.id,
+      parishCommunitySector: this.business?.parishCommunitySector,
+      productsServices: formValue.productsServices ?? this.business?.productsServices,
+      receivedUdelSupport: this.business?.receivedUdelSupport ?? false,
+      udelSupportDetails: this.business?.udelSupportDetails || '',
+      registrationDate: this.business?.registrationDate,
     };
     
     const formData = new FormData();
@@ -461,6 +491,7 @@ export class EditarNegocioPage implements OnInit {
     
     if (this.carrouselPhotos && this.carrouselPhotos.length > 0) {
       this.carrouselPhotos.forEach((file) => {
+        formData.append('carrouselPhotos', file);
         formData.append('carouselFiles', file);
       });
     }

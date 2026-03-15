@@ -74,6 +74,16 @@
   --padding-bottom: 0;
 }
 
+@media (max-width: 768px) {
+  ion-content.no-padding.mobile-safe-content {
+    --padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-safe-bottom-space));
+  }
+
+  ion-content.no-padding.mobile-safe-content::part(scroll) {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-safe-bottom-space));
+  }
+}
+
 /* Contenedor del filtro */
 .filter-container {
   padding: 16px 12px;

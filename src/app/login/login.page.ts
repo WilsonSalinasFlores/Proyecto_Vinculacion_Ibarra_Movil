@@ -38,6 +38,8 @@ import { lastValueFrom } from 'rxjs';
   imports: [IonicModule, FormsModule, CommonModule, ReactiveFormsModule],
 })
 export class LoginPage {
+  private readonly rememberLoginKey = 'remembered_login_credentials';
+
   loginForm!: FormGroup;
   forgotPasswordForm!: FormGroup;
   otpForm!: FormGroup;
@@ -81,6 +83,8 @@ export class LoginPage {
     });
 
     this.initializeForms();
+    this.loadRememberedCredentials();
+    this.setupRememberToggleWatcher();
 
     const navigation = this.router.getCurrentNavigation();
     this.isModal = this.navParams?.get('isModal') || false;
@@ -201,6 +205,8 @@ export class LoginPage {
         
         const loginObservable = this.authService.login(email, password);
         const response = await lastValueFrom(loginObservable);
+
+        this.persistRememberPreference();
         
         this.handleSuccessfulLogin();
       } catch (error: any) {
@@ -221,6 +227,52 @@ export class LoginPage {
     } else {
       this.markFormGroupTouched(this.loginForm);
     }
+  }
+
+  private loadRememberedCredentials() {
+    try {
+      const raw = localStorage.getItem(this.rememberLoginKey);
+      if (!raw) {
+        return;
+      }
+
+      const remembered = JSON.parse(raw);
+      const email = remembered?.email || '';
+      const password = remembered?.password || '';
+
+      if (email && password) {
+        this.loginForm.patchValue({
+          email,
+          password,
+          remember: true,
+        });
+      }
+    } catch (error) {
+      localStorage.removeItem(this.rememberLoginKey);
+    }
+  }
+
+  private setupRememberToggleWatcher() {
+    this.loginForm.get('remember')?.valueChanges.subscribe((remember) => {
+      if (!remember) {
+        localStorage.removeItem(this.rememberLoginKey);
+      }
+    });
+  }
+
+  private persistRememberPreference() {
+    const remember = this.loginForm.get('remember')?.value;
+    if (!remember) {
+      localStorage.removeItem(this.rememberLoginKey);
+      return;
+    }
+
+    const payload = {
+      email: this.loginForm.get('email')?.value || '',
+      password: this.loginForm.get('password')?.value || '',
+    };
+
+    localStorage.setItem(this.rememberLoginKey, JSON.stringify(payload));
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {

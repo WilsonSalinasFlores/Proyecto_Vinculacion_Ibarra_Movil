@@ -22,7 +22,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="mobile-safe-content">
   <div class="profile-header">
     <ion-icon name="person-circle-outline" class="profile-photo" size="large"></ion-icon>
     <h2 class="profile-name">
@@ -73,15 +73,6 @@
           <ion-label position="stacked">Dirección</ion-label>
           <ion-input formControlName="address"></ion-input>
         </ion-item>
-
-        <ion-item lines="full">
-          <ion-icon slot="start" name="person-circle"></ion-icon>
-          <ion-label position="stacked">Usuario *</ion-label>
-          <ion-input formControlName="username"></ion-input>
-        </ion-item>
-        <ion-note *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" color="danger">
-          Usuario requerido
-        </ion-note>
 
       </form>
     </ion-card-content>

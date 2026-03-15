@@ -582,7 +582,7 @@
 /* Footer */
 .modal-footer {
   background: #f9fafb;
-  padding: 20px 30px;
+  padding: 20px 30px calc(20px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid #e5e7eb;
   border-radius: 0 0 20px 20px;
   display: flex;
@@ -672,7 +672,7 @@
   
   .modal-footer {
     flex-direction: column;
-    padding: 15px 20px;
+    padding: 15px 20px calc(15px + env(safe-area-inset-bottom, 0px));
   }
   
   .carousel-button {

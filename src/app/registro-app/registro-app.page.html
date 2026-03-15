@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="mobile-safe-content">
   <div class="header-container">
     <div class="header-content">
       <ion-icon name="person-circle-outline" class="header-icon"></ion-icon>
@@ -188,31 +188,8 @@
         </div>
       </div>
 
-      <!-- Fila 4: Usuario y Contraseña -->
+      <!-- Fila 4: Contraseña -->
       <div class="form-row">
-        <div class="form-field-wrapper">
-          <ion-item
-            class="form-field"
-            fill="outline"
-            [class.error-field]="hasError('username')"
-          >
-            <ion-label position="stacked"
-              >Usuario <span class="required">*</span></ion-label
-            >
-            <ion-input
-              formControlName="username"
-              placeholder="usuario123 (5-20 caracteres)"
-              type="text"
-              maxlength="20"
-            >
-            </ion-input>
-            <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('username')"></ion-icon>
-          </ion-item>
-          <div class="error-message" *ngIf="hasError('username')">
-            {{ getErrorMessage('username') }}
-          </div>
-        </div>
-
         <div class="form-field-wrapper">
           <ion-item
             class="form-field"
@@ -506,8 +483,5 @@
         </ion-button>
       </div>
     </form>
-    <br>
-    <br>
-    <br>
   </div>
 </ion-content>

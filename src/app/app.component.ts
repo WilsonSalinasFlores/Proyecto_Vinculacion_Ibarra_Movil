@@ -4,6 +4,8 @@ import { IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonC
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import { addIcons } from 'ionicons';
 import {
   home,
@@ -74,8 +76,7 @@ import {
   trash,
   logIn,
   helpBuoy,
-  helpCircle
-} from 'ionicons/icons';
+  helpCircle, powerOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -107,77 +108,7 @@ export class AppComponent implements AfterViewInit {
     private alertController: AlertController,
     private menuController: MenuController
   ) {
-    addIcons({
-      home,
-      business,
-      card,
-      document,
-      logOut,
-      person,
-      personCircleOutline,
-      personOutline,
-      mailOutline,
-      callOutline,
-      briefcaseOutline,
-      createOutline,
-      personCircle,
-      peopleOutline,
-      locationOutline,
-      ribbon,
-      informationCircleOutline,
-      folderOpen,
-      documentTextOutline,
-      cloudUploadOutline,
-      resizeOutline,
-      refresh,
-      close,
-      personAdd,
-      eye,
-      eyeOff,
-      documentOutline,
-      documentAttachOutline,
-      download,
-      businessOutline,
-      imageOutline,
-      trashOutline,
-      handLeftOutline,
-      colorPaletteOutline,
-      ellipsisHorizontalOutline,
-      timeOutline,
-      starOutline,
-      storefrontOutline,
-      filterOutline,
-      pricetagOutline,
-      calendarOutline,
-      statsChartOutline,
-      eyeOutline,
-      logoFacebook,
-      logoInstagram,
-      logoWhatsapp,
-      logoYoutube,
-      logoLinkedin,
-      logoTwitter,
-      logoTiktok,
-      chevronBackOutline,
-      chevronForwardOutline,
-      chevronDownOutline,
-      locateOutline,
-      checkmarkOutline,
-      closeCircleOutline,
-      closeOutline,
-      saveOutline,
-      settingsOutline,
-      imagesOutline,
-      checkmarkCircleOutline,
-      arrowBack,
-      closeCircle,
-      searchOutline,
-      create,
-      trash,
-      logIn,
-      helpBuoy,
-      helpCircle
-    });
+    addIcons({home,business,document,person,helpCircle,logOut,powerOutline,card,personCircleOutline,personOutline,mailOutline,callOutline,briefcaseOutline,createOutline,personCircle,peopleOutline,locationOutline,ribbon,informationCircleOutline,folderOpen,documentTextOutline,cloudUploadOutline,resizeOutline,refresh,close,personAdd,eye,eyeOff,documentOutline,documentAttachOutline,download,businessOutline,imageOutline,trashOutline,handLeftOutline,colorPaletteOutline,ellipsisHorizontalOutline,timeOutline,starOutline,storefrontOutline,filterOutline,pricetagOutline,calendarOutline,statsChartOutline,eyeOutline,logoFacebook,logoInstagram,logoWhatsapp,logoYoutube,logoLinkedin,logoTwitter,logoTiktok,chevronBackOutline,chevronForwardOutline,chevronDownOutline,locateOutline,checkmarkOutline,closeCircleOutline,closeOutline,saveOutline,settingsOutline,imagesOutline,checkmarkCircleOutline,arrowBack,closeCircle,searchOutline,create,trash,logIn,helpBuoy});
   }
 
   async ngAfterViewInit() {
@@ -225,5 +156,29 @@ export class AppComponent implements AfterViewInit {
   private confirmLogout() {
     this.authService.logout();
     this.router.navigate(['/home']);
+  }
+
+  async closeApp() {
+    const alert = await this.alertController.create({
+      header: 'Cerrar aplicación',
+      message: '¿Estás seguro de que deseas cerrar la app?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Cerrar',
+          role: 'destructive',
+          handler: async () => {
+            if (Capacitor.isNativePlatform()) {
+              await App.exitApp();
+            }
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }

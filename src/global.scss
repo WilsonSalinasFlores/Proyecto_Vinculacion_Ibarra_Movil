@@ -40,6 +40,7 @@
   --header-bg: #1e60ff;
   --evento-header-text: #fff;
   --evento-header-text-rgb: 255,255,255;
+  --mobile-safe-bottom-space: 104px;
 }
 
   /* Utility card to reduce duplicated component styles */
@@ -182,6 +183,17 @@ ion-toolbar.header-theme {
   background: var(--header-bg);
   color: var(--evento-header-text);
 }
+
+@media (max-width: 768px) {
+  ion-content.mobile-safe-content {
+    --padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-safe-bottom-space));
+  }
+
+  ion-content.mobile-safe-content::part(scroll) {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--mobile-safe-bottom-space));
+  }
+}
+
 /* Estilos generales */
 .header-logo {
   height: 28px;

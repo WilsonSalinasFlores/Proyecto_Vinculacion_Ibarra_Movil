@@ -7,7 +7,7 @@ export interface UpdateUserDto {
   phone?: string;
   email?: string;
   address?: string;
-  username?: string;
+  uid?: string;
 }
 
 @Injectable({
