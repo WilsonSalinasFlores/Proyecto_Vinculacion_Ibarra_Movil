@@ -262,21 +262,121 @@ export class DetallePrivadoService {
     if (!schedules || !Array.isArray(schedules)) {
       return [];
     }
-    
-    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    
-    const formatted = schedules.map(schedule => {
-      const day = (schedule?.dayOfWeek !== undefined && dayNames[schedule.dayOfWeek]) 
-        ? dayNames[schedule.dayOfWeek] 
-        : 'Día desconocido';
-      const hours = schedule?.isClosed 
-        ? 'Cerrado' 
-        : `${schedule?.openTime || ''} - ${schedule?.closeTime || ''}`;
 
-      return { day, hours };
-    });
+    return schedules
+      .map((schedule: any) => this.normalizeSchedule(schedule))
+      .filter((item): item is { day: string; hours: string } => !!item);
+  }
 
-    return formatted;
+  private normalizeSchedule(schedule: any): { day: string; hours: string } | null {
+    if (typeof schedule === 'string') {
+      return this.parseStringSchedule(schedule);
+    }
+
+    if (!schedule || typeof schedule !== 'object') {
+      return null;
+    }
+
+    const dayValue = schedule.dayOfWeek ?? schedule.day ?? schedule.dayName;
+    const day = this.resolveDayLabel(dayValue);
+
+    const isClosed = this.toBoolean(schedule.isClosed ?? schedule.closed);
+    const openTime = this.normalizeTime(schedule.openTime ?? schedule.startTime ?? schedule.openingTime);
+    const closeTime = this.normalizeTime(schedule.closeTime ?? schedule.endTime ?? schedule.closingTime);
+
+    const hours = isClosed
+      ? 'Cerrado'
+      : (openTime && closeTime ? `${openTime} - ${closeTime}` : (schedule.hours ? String(schedule.hours) : 'No definido'));
+
+    return { day, hours };
+  }
+
+  private parseStringSchedule(rawSchedule: string): { day: string; hours: string } | null {
+    const value = String(rawSchedule || '').trim();
+    if (!value) return null;
+
+    const dayRangeMatch = value.match(/^([A-Za-zÁÉÍÓÚáéíóúÑñ.]+)\s+a\s+([A-Za-zÁÉÍÓÚáéíóúÑñ.]+)\s*-\s*(.+)$/i);
+    if (dayRangeMatch) {
+      const fromDay = this.resolveDayLabel(dayRangeMatch[1]);
+      const toDay = this.resolveDayLabel(dayRangeMatch[2]);
+      const hoursValue = this.formatHours(dayRangeMatch[3]) || 'No definido';
+      return { day: `${fromDay} a ${toDay}`, hours: hoursValue };
+    }
+
+    const parts = value.split(/\s+/);
+    const dayRaw = parts[0] || '';
+    const rest = parts.slice(1).join(' ').trim();
+
+    const day = this.resolveDayLabel(dayRaw);
+    const upperRest = rest.toUpperCase();
+    const isClosed = upperRest === 'CLOSED' || upperRest === 'CERRADO';
+    const hours = isClosed ? 'Cerrado' : (this.formatHours(rest) || 'No definido');
+
+    return { day, hours };
+  }
+
+  private resolveDayLabel(dayValue: any): string {
+    if (typeof dayValue === 'number' && Number.isFinite(dayValue)) {
+      const sundayFirst = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const mondayFirst = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+      if (dayValue >= 0 && dayValue <= 6) return sundayFirst[dayValue];
+      if (dayValue >= 1 && dayValue <= 7) return mondayFirst[dayValue - 1];
+    }
+
+    const normalized = this.normalizeDayKey(String(dayValue || ''));
+    const map: { [key: string]: string } = {
+      MONDAY: 'Lunes', LUNES: 'Lunes',
+      MON: 'Lunes', LUN: 'Lunes',
+      TUESDAY: 'Martes', MARTES: 'Martes',
+      TUE: 'Martes', MAR: 'Martes',
+      WEDNESDAY: 'Miércoles', MIERCOLES: 'Miércoles',
+      WED: 'Miércoles', MIE: 'Miércoles',
+      THURSDAY: 'Jueves', JUEVES: 'Jueves',
+      THU: 'Jueves', JUE: 'Jueves',
+      FRIDAY: 'Viernes', VIERNES: 'Viernes',
+      FRI: 'Viernes', VIE: 'Viernes',
+      SATURDAY: 'Sábado', SABADO: 'Sábado',
+      SAT: 'Sábado', SAB: 'Sábado',
+      SUNDAY: 'Domingo', DOMINGO: 'Domingo'
+      ,SUN: 'Domingo', DOM: 'Domingo'
+    };
+
+    return map[normalized] || 'Día desconocido';
+  }
+
+  private normalizeDayKey(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .trim();
+  }
+
+  private normalizeTime(value: any): string {
+    if (value === null || value === undefined) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+    return text.length >= 5 ? text.slice(0, 5) : text;
+  }
+
+  private formatHours(value: string): string {
+    const text = String(value || '').trim();
+    if (!text) return '';
+
+    if (text.includes('-')) {
+      const [start, end] = text.split('-');
+      return `${this.normalizeTime(start)} - ${this.normalizeTime(end)}`;
+    }
+
+    return text;
+  }
+
+  private toBoolean(value: any): boolean {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return ['true', '1', 'si', 'sí', 'yes'].includes(value.toLowerCase());
+    if (typeof value === 'number') return value === 1;
+    return false;
   }
 
   /**

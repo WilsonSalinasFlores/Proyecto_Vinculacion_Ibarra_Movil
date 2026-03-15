@@ -34,7 +34,7 @@ export interface Business {
   googleMapsCoordinates: string;
   logoUrl: string | null;
   photos: BussinessPhoto[];
-  schedules: string[];
+  schedules: any[];
   acceptsWhatsappOrders: boolean;
   deliveryService: string;
   salePlace: string;
@@ -176,42 +176,138 @@ export class DetallePublicoService {
   }
 
   // Método para formatear horarios
-  formatSchedules(schedules: string[]): { day: string, hours: string }[] {
-    if (!schedules || schedules.length === 0) {
+  formatSchedules(schedules: any[]): { day: string, hours: string }[] {
+    if (!schedules || !Array.isArray(schedules) || schedules.length === 0) {
       return [];
     }
-    
-    return schedules.map(schedule => {
-      const parts = schedule.split(' ');
-      const day = parts[0];
-      const hours = parts.length > 1 ? parts[1] : 'CLOSED';
-      
-      return {
-        day: this.translateDay(day),
-        hours: hours === 'CLOSED' ? 'Cerrado' : this.formatHours(hours)
-      };
-    });
+
+    return schedules
+      .map((schedule: any) => this.normalizeSchedule(schedule))
+      .filter((item): item is { day: string; hours: string } => !!item);
+  }
+
+  private normalizeSchedule(schedule: any): { day: string; hours: string } | null {
+    if (typeof schedule === 'string') {
+      return this.parseStringSchedule(schedule);
+    }
+
+    if (!schedule || typeof schedule !== 'object') {
+      return null;
+    }
+
+    const day = this.translateDay(String(schedule.dayOfWeek ?? schedule.day ?? schedule.dayName ?? ''));
+    const isClosed = this.toBoolean(schedule.isClosed ?? schedule.closed);
+    const openTime = this.normalizeTime(schedule.openTime ?? schedule.startTime ?? schedule.openingTime);
+    const closeTime = this.normalizeTime(schedule.closeTime ?? schedule.endTime ?? schedule.closingTime);
+
+    const hours = isClosed
+      ? 'Cerrado'
+      : (openTime && closeTime ? `${openTime} - ${closeTime}` : (schedule.hours ? String(schedule.hours) : 'No definido'));
+
+    return {
+      day,
+      hours: hours === 'CLOSED' ? 'Cerrado' : hours
+    };
+  }
+
+  private parseStringSchedule(rawSchedule: string): { day: string; hours: string } | null {
+    const value = String(rawSchedule || '').trim();
+    if (!value) return null;
+
+    const dayRangeMatch = value.match(/^([A-Za-zÁÉÍÓÚáéíóúÑñ.]+)\s+a\s+([A-Za-zÁÉÍÓÚáéíóúÑñ.]+)\s*-\s*(.+)$/i);
+    if (dayRangeMatch) {
+      const fromDay = this.translateDay(dayRangeMatch[1]);
+      const toDay = this.translateDay(dayRangeMatch[2]);
+      const hoursValue = this.formatHours(dayRangeMatch[3]) || 'No definido';
+      return { day: `${fromDay} a ${toDay}`, hours: hoursValue };
+    }
+
+    const parts = value.split(/\s+/);
+    const day = this.translateDay(parts[0] || '');
+    const rawHours = parts.slice(1).join(' ').trim();
+    const upperHours = rawHours.toUpperCase();
+    const hours = (upperHours === 'CLOSED' || upperHours === 'CERRADO')
+      ? 'Cerrado'
+      : (this.formatHours(rawHours) || 'No definido');
+
+    return { day, hours };
   }
 
   private translateDay(day: string): string {
+    const numericDay = Number(day);
+    if (Number.isFinite(numericDay)) {
+      const sundayFirst = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const mondayFirst = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+      if (numericDay >= 0 && numericDay <= 6) return sundayFirst[numericDay];
+      if (numericDay >= 1 && numericDay <= 7) return mondayFirst[numericDay - 1];
+    }
+
+    const normalizedDay = this.normalizeDayKey(day);
     const days: { [key: string]: string } = {
-      'MONDAY': 'Lunes',
-      'TUESDAY': 'Martes',
-      'WEDNESDAY': 'Miércoles',
-      'THURSDAY': 'Jueves',
-      'FRIDAY': 'Viernes',
-      'SATURDAY': 'Sábado',
-      'SUNDAY': 'Domingo'
+      MONDAY: 'Lunes',
+      LUNES: 'Lunes',
+      MON: 'Lunes',
+      LUN: 'Lunes',
+      TUESDAY: 'Martes',
+      MARTES: 'Martes',
+      TUE: 'Martes',
+      MAR: 'Martes',
+      WEDNESDAY: 'Miércoles',
+      MIERCOLES: 'Miércoles',
+      WED: 'Miércoles',
+      MIE: 'Miércoles',
+      THURSDAY: 'Jueves',
+      JUEVES: 'Jueves',
+      THU: 'Jueves',
+      JUE: 'Jueves',
+      FRIDAY: 'Viernes',
+      VIERNES: 'Viernes',
+      FRI: 'Viernes',
+      VIE: 'Viernes',
+      SATURDAY: 'Sábado',
+      SABADO: 'Sábado',
+      SAT: 'Sábado',
+      SAB: 'Sábado',
+      SUNDAY: 'Domingo',
+      DOMINGO: 'Domingo',
+      SUN: 'Domingo',
+      DOM: 'Domingo'
     };
-    return days[day] || day;
+    return days[normalizedDay] || 'Día desconocido';
   }
 
   private formatHours(hours: string): string {
-    if (hours.includes('-')) {
-      const [start, end] = hours.split('-');
-      return `${start} - ${end}`;
+    const value = String(hours || '').trim();
+    if (!value) return '';
+
+    if (value.includes('-')) {
+      const [start, end] = value.split('-');
+      return `${this.normalizeTime(start)} - ${this.normalizeTime(end)}`;
     }
-    return hours;
+
+    return value;
+  }
+
+  private normalizeTime(value: any): string {
+    if (value === null || value === undefined) return '';
+    const text = String(value).trim();
+    if (!text) return '';
+    return text.length >= 5 ? text.slice(0, 5) : text;
+  }
+
+  private normalizeDayKey(value: string): string {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .trim();
+  }
+
+  private toBoolean(value: any): boolean {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') return ['true', '1', 'si', 'sí', 'yes'].includes(value.toLowerCase());
+    if (typeof value === 'number') return value === 1;
+    return false;
   }
 
   // Método para obtener coordenadas como array

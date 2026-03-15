@@ -88,4 +88,11 @@ export class PromocionesPublicasPage implements OnInit {
   goBack() {
     this.router.navigate(['/home']);
   }
+
+  openPromotionDetail(promocion: Promocion): void {
+    const promotionId = Number(promocion?.idBusinessPromo || 0);
+    this.router.navigate(['/detalle-promocion', promotionId], {
+      state: { promocion },
+    });
+  }
 }

@@ -218,7 +218,7 @@
             <ion-col *ngFor="let promocion of promociones" size="auto">
               <ion-card
                 class="business-card"
-                (click)="openBusinessById(promocion.businessId)"
+                (click)="openPromotionDetail(promocion)"
               >
                 <div class="promotion-badge">
                   {{ getTipoPromocionLabel(promocion.tipoPromocion) }}

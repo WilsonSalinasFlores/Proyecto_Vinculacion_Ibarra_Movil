@@ -40,7 +40,7 @@
   </div>
 
   <div class="promo-list">
-    <ion-card *ngFor="let promocion of promociones" class="promotion-card">
+    <ion-card *ngFor="let promocion of promociones" class="promotion-card" (click)="openPromotionDetail(promocion)">
       <div class="promotion-badge">
         {{ getTipoPromocionLabel(promocion.tipoPromocion) }}
       </div>
