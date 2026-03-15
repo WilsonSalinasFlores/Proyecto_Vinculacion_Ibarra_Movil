@@ -264,3 +264,13 @@ Si quieres, genero un `docs/` más completo con capturas por página y ejemplos 
 - Perfil: se elimina edición/visualización del campo `usuario`.
 - Formularios de negocio: ajustes de orden de campos (incluyendo `Productos/Servicios` y `Descripción`) y validaciones relacionadas.
 
+## Cambios de versión 1.1.0
+
+- UI global: unificación del estilo de barras de título (`ion-toolbar`) en todas las vistas, menú y modales, con iconografía en color blanco.
+- Detalles de negocio: se eliminó la visualización de `Tipo de Venta` en detalle privado y público.
+- Promociones: nueva pantalla de detalle de promoción con navegación desde Home y desde promociones públicas.
+- Home: promociones ordenadas por fecha de vencimiento más próxima (`fechaPromoFin` ascendente).
+- Mis documentos (APK Android): corrección de descargas usando plugins nativos (`@capacitor/filesystem` y `@capacitor/browser`) para evitar bloqueos de `window.open` en WebView.
+- Horarios de negocio: mejora de parseo/visualización para formatos con abreviaturas y rangos (ej. `Lun a Dom - 08:00-20:00`).
+- Formularios (registro y edición): guía de formato de horarios + validación por regex en el campo `schedules`.
+
