@@ -274,12 +274,12 @@
     <div class="form-field-wrapper">
       <ion-item class="form-field" fill="outline" [class.error-field]="hasError('schedules')">
         <ion-label position="stacked">Horarios <span class="required">*</span></ion-label>
-        <ion-textarea formControlName="schedules" placeholder="Ej: Lun a Dom - 08:00-20:00" autoGrow="true"
+        <ion-textarea formControlName="schedules" placeholder="Ej: Lunes a Viernes 08:00 - 20:00, Sabados de 08:00 a 03:00" autoGrow="true"
           maxlength="200"></ion-textarea>
         <ion-icon slot="end" name="alert-circle-outline" color="danger" *ngIf="hasError('schedules')"></ion-icon>
       </ion-item>
       <div style="display:block; margin-top:6px; color:#6b7280; font-size:12px;">
-        Formato: Lun a Dom - 08:00-20:00 o Dom CLOSED
+        Ingreso libre. Solo separe cada horario con coma. Ejemplo: Lunes a Viernes 08:00 - 20:00, Sabados de 08:00 a 03:00
       </div>
       <div class="error-message" *ngIf="hasError('schedules')">
         {{ getErrorMessage('schedules') }}
@@ -309,8 +309,8 @@
       </ion-item>
     </div>
 
-    <!-- Upload de logo - Solo visible si validationStatus es REJECTED -->
-    <div class="form-field-wrapper" *ngIf="validationStatus === 'REJECTED'">
+    <!-- Upload de logo - Solo visible si es negocio rechazado -->
+    <div class="form-field-wrapper" *ngIf="isRejectedBusiness()">
       <label class="upload-label" for="logoFileInput">Logo del Negocio (opcional)</label>
       <div class="upload-box" (dragover)="onDragOver($event)" (drop)="onDrop($event, 'logoFile')">
         <ion-icon name="folder-open" class="upload-icon"></ion-icon>
@@ -332,8 +332,8 @@
       </div>
     </div>
 
-    <!-- Upload de carrusel - Solo visible si validationStatus es REJECTED -->
-    <div class="form-field-wrapper" *ngIf="validationStatus === 'REJECTED'">
+    <!-- Upload de carrusel - Solo visible si es negocio rechazado -->
+    <div class="form-field-wrapper" *ngIf="isRejectedBusiness()">
       <label class="upload-label" for="carrouselPhotosInput">
         Carrusel de Imágenes (opcional) - Máximo 5 fotos
       </label>
@@ -343,7 +343,7 @@
         <input id="carrouselPhotosInput" type="file" multiple accept=".jpg,.jpeg,.png"
           title="Fotos de productos (JPG o PNG, máx. 2 MB cada una)" (change)="onFileChange($event, 'carrouselPhotos')" />
       </div>
-      <div class="file-list" *ngIf="carrouselPhotos?.length">
+      <div class="file-list" *ngIf="carrouselPhotos.length">
         <div class="file-item" *ngFor="let photo of carrouselPhotos; let i = index">
           <ion-icon name="image-outline"></ion-icon>
           <span>{{ photo.name }}</span>
@@ -366,8 +366,8 @@
           <ion-icon name="information-circle-outline" color="primary"></ion-icon>
           <p>
             <strong>Información:</strong> Para negocios en estado 
-            <span [class]="validationStatus === 'PENDING' ? 'status-pending' : 'status-approved'">
-              {{ validationStatus === 'PENDING' ? 'PENDIENTE' : 'APROBADO' }}
+            <span [class]="normalizedStatus === 'PENDING' ? 'status-pending' : 'status-approved'">
+              {{ normalizedStatus === 'PENDING' ? 'PENDIENTE' : 'APROBADO' }}
             </span>, 
             solo se pueden editar ciertos campos como información de contacto, redes sociales y descripción.
             Para cambiar la categoría, servicio de delivery o subir nuevas imágenes, 

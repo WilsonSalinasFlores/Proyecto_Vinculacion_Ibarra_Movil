@@ -138,4 +138,8 @@ export class NegociosPage implements OnInit {
     this.categoriaNombre = '';
     this.cargarNegocios(1);
   }
+
+  goBack() {
+    this.router.navigate(['/']);
+  }
 }

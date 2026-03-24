@@ -139,14 +139,9 @@
     <!-- Schedules and Social Media Row -->
     <div class="form-row">
       <!-- Schedules -->
-      <div class="form-group half-width" *ngIf="formattedSchedules.length > 0">
+      <div class="form-group half-width" *ngIf="schedulesText">
         <label class="form-label">Horarios de Atención</label>
-        <div class="schedules-container">
-          <div class="schedule-item" *ngFor="let schedule of formattedSchedules">
-            <span class="day">{{ schedule.day }}</span>
-            <span class="hours" [class.closed]="schedule.hours === 'Cerrado'">{{ schedule.hours }}</span>
-          </div>
-        </div>
+        <div class="input-display" style="white-space: pre-line">{{ schedulesText }}</div>
       </div>
 
       <!-- Social Media -->

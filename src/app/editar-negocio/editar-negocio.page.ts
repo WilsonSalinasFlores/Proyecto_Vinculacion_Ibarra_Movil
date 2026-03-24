@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Business, DetallePrivadoService } from '../services/detalle-privado.service';
@@ -19,7 +19,6 @@ declare var L: any;
   imports: [CommonModule, IonicModule, FormsModule, ReactiveFormsModule],
 })
 export class EditarNegocioPage implements OnInit {
-  private readonly SCHEDULE_PATTERN = /^(([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s+a\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d)|([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*(?:-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d|CLOSED|Cerrado|cerrado)))$/;
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   editBusiness!: FormGroup;
@@ -53,7 +52,7 @@ export class EditarNegocioPage implements OnInit {
 
   async ngOnInit() {
     this.businessId = this.route.snapshot.paramMap.get('id')!;
-    this.validationStatus = this.route.snapshot.paramMap.get('validationStatus')!;
+    this.validationStatus = this.route.snapshot.paramMap.get('validationStatus') || '';
     this.backUrl = `/detalle-negocio/${this.businessId}`;
     
     // Cargar datos
@@ -101,7 +100,7 @@ export class EditarNegocioPage implements OnInit {
       tiktok: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(100)]],
       productsServices: ['', [Validators.required, Validators.maxLength(50)]],
-      schedules: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(this.SCHEDULE_PATTERN)]],
+      schedules: ['', [Validators.required, Validators.maxLength(200), this.validateSchedulesCommaSeparated.bind(this)]],
       email: ['', [Validators.email, Validators.maxLength(100)]]
     });
 
@@ -198,23 +197,6 @@ export class EditarNegocioPage implements OnInit {
     return result;
   }
 
-  // Método para normalizar el estado de validación
-  private normalizeValidationStatus(status: string): string {
-    if (!status) return 'UNKNOWN';
-    
-    const normalizedStatus = status.toUpperCase().trim();
-    
-    // Mapear  variaciones
-    const statusMap: { [key: string]: string } = {
-     
-      'VALIDATED': 'APPROVED', 
-      'VALIDADO': 'APPROVED',   
-     
-    };
-    
-    return statusMap[normalizedStatus] || normalizedStatus;
-  }
-
   // Método alternativo más robusto para verificar estados
   private getBusinessStatus(status: string): 'REJECTED' | 'APPROVED' | 'PENDING' | 'UNKNOWN' {
     if (!status) return 'UNKNOWN';
@@ -241,20 +223,21 @@ export class EditarNegocioPage implements OnInit {
 
   // Método para verificar si es un negocio rechazado
   isRejectedBusiness(): boolean {
-    const status = this.getBusinessStatus(this.validationStatus);
-    return status === 'REJECTED';
+    return this.normalizedStatus === 'REJECTED';
   }
 
   // Método para verificar si es un negocio aceptado o pendiente
   isAcceptedOrPendingBusiness(): boolean {
-    const status = this.getBusinessStatus(this.validationStatus);
-    return ['PENDING', 'APPROVED'].includes(status);
+    return ['PENDING', 'APPROVED'].includes(this.normalizedStatus);
   }
 
   // Método adicional para verificar si está validado/aprobado específicamente
   isValidatedBusiness(): boolean {
-    const status = this.getBusinessStatus(this.validationStatus);
-    return status === 'APPROVED';
+    return this.normalizedStatus === 'APPROVED';
+  }
+
+  get normalizedStatus(): 'REJECTED' | 'APPROVED' | 'PENDING' | 'UNKNOWN' {
+    return this.getBusinessStatus(this.validationStatus);
   }
 
   // Método mejorado para deshabilitar campos según el estado
@@ -308,12 +291,32 @@ export class EditarNegocioPage implements OnInit {
     return !!(control && control.invalid && (control.touched || control.dirty));
   }
 
+  private validateSchedulesCommaSeparated(control: AbstractControl): ValidationErrors | null {
+    const rawValue = String(control.value ?? '').trim();
+    if (!rawValue) return null;
+
+    if (rawValue.includes(';') || rawValue.includes('|')) {
+      return { commaSeparator: true };
+    }
+
+    if (/^,|,,|,$/.test(rawValue)) {
+      return { commaSeparator: true };
+    }
+
+    const items = rawValue.split(',').map(item => item.trim());
+    if (items.some(item => item.length === 0)) {
+      return { commaSeparator: true };
+    }
+
+    return null;
+  }
+
   getErrorMessage(controlName: string): string {
     const control = this.editBusiness.get(controlName);
     if (!control || !control.errors) return '';
 
-    if (controlName === 'schedules' && control.errors['pattern']) {
-      return 'Formato inválido. Usa: Lun a Dom - 08:00-20:00 o Dom CLOSED';
+    if (controlName === 'schedules' && control.errors['commaSeparator']) {
+      return 'Use solo comas para separar cada horario. Ej: Lunes a Viernes 08:00 - 20:00, Sabados de 08:00 a 03:00';
     }
 
     const genericMessages: Record<string, string> = {
@@ -415,7 +418,7 @@ export class EditarNegocioPage implements OnInit {
     
     try {
       const formValue = this.editBusiness.value;
-      const businessStatus = this.getBusinessStatus(this.validationStatus);
+      const businessStatus = this.normalizedStatus;
       
       // Condición según el estado de validación
       if (businessStatus === 'REJECTED') {
