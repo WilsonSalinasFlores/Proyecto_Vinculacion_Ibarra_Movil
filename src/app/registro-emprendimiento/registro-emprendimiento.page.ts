@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonToggle, IonTextarea, IonIcon, IonModal, IonButtons, IonSpinner, IonChip, IonMenuButton } from '@ionic/angular/standalone';
@@ -23,7 +25,6 @@ declare var L: any;
   imports: [CommonModule, FormsModule, ReactiveFormsModule, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonToggle, IonTextarea, IonIcon, IonModal, IonButtons, IonSpinner, IonChip, IonMenuButton],
 })
 export class RegistroEmprendimientoPage implements OnInit, AfterViewInit {
-  private readonly SCHEDULE_PATTERN = /^(([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s+a\s+[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d)|([A-Za-zÁÉÍÓÚáéíóúÑñ]{3,9}\s*(?:-\s*(?:[01]\d|2[0-3]):[0-5]\d\s*-\s*(?:[01]\d|2[0-3]):[0-5]\d|CLOSED|Cerrado|cerrado)))$/;
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
 
   registerBusiness!: FormGroup;
@@ -156,7 +157,7 @@ private loadParish(type?: string) {
       instagram: ['', [Validators.maxLength(100)]],
       tiktok: ['', [Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(100)]],
-      schedules: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(this.SCHEDULE_PATTERN)]],
+      schedules: ['', [Validators.required, Validators.maxLength(200), this.validateSchedulesCommaSeparated.bind(this)]],
       productsServices: ['', [Validators.required, Validators.maxLength(50)]],
     });
 
@@ -287,6 +288,26 @@ private loadParish(type?: string) {
     return !!(control && control.invalid && (control.touched || control.dirty));
   }
 
+  private validateSchedulesCommaSeparated(control: AbstractControl): ValidationErrors | null {
+    const rawValue = String(control.value ?? '').trim();
+    if (!rawValue) return null;
+
+    if (rawValue.includes(';') || rawValue.includes('|')) {
+      return { commaSeparator: true };
+    }
+
+    if (/^,|,,|,$/.test(rawValue)) {
+      return { commaSeparator: true };
+    }
+
+    const items = rawValue.split(',').map(item => item.trim());
+    if (items.some(item => item.length === 0)) {
+      return { commaSeparator: true };
+    }
+
+    return null;
+  }
+
   getErrorMessage(controlName: string): string {
     const control = this.registerBusiness.get(controlName);
     if (!control || !control.errors) return '';
@@ -329,7 +350,7 @@ private loadParish(type?: string) {
       'schedules': {
         'required': 'El horario es obligatorio',
         'maxlength': 'Máximo 200 caracteres',
-        'pattern': 'Formato inválido. Usa: Lun a Dom - 08:00-20:00 o Dom CLOSED'
+        'commaSeparator': 'Use solo comas para separar cada horario. Ej: Lunes a Viernes 08:00 - 20:00, Sabados de 08:00 a 03:00'
       },
     };
 
