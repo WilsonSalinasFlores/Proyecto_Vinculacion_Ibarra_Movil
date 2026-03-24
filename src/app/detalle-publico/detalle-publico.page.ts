@@ -214,6 +214,23 @@ export class DetallePublicoPage implements OnInit {
     return this.business?.commercialName || '';
   }
 
+  get schedulesText(): string {
+    const s: any = this.business?.schedules;
+    if (!s) return '';
+    let items: string[];
+    if (typeof s === 'string') {
+      items = s.split(',');
+    } else if (Array.isArray(s)) {
+      items = s.map(String);
+    } else {
+      items = [String(s)];
+    }
+    return items
+      .map(i => i.replace(/[\[\]"']/g, '').trim())
+      .filter(i => i.length > 0)
+      .join('\n');
+  }
+
   // Manejo de errores en imágenes
   handleImageError(event: any, imageType: string = 'carousel') {
     if (imageType === 'carousel') {

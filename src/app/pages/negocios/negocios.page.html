@@ -1,14 +1,26 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="home-header-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
+      <ion-back-button defaultHref="/" color="light" text="" icon="chevron-back"></ion-back-button>
     </ion-buttons>
-    <ion-title>Lista de Negocios</ion-title>
+    <ion-title class="app-title">
+      <div class="title-content">
+        <img
+          src="assets/icon/EscudoIbarra2.png"
+          alt="Logo GAD Ibarra"
+          class="header-logo"
+        />
+        <div class="title-text">
+          <div class="subtitle">GAD Municipal San Miguel de Ibarra</div>
+          <div class="brand">Lista de Negocios</div>
+        </div>
+      </div>
+    </ion-title>
 
-    <!-- Botón para limpiar filtros -->
-    <ion-buttons slot="end" *ngIf="categoriaSeleccionada">
-      <ion-button (click)="limpiarFiltros()">
-        <ion-icon name="close-circle-outline"></ion-icon>
+    <ion-buttons slot="end">
+      <!-- Botón cerrar (siempre visible) -->
+      <ion-button (click)="goBack()" fill="clear" title="Cerrar">
+        <ion-icon slot="icon-only" name="close" color="light"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
